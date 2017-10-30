@@ -1,18 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
-import LoginForm from './build/components/LoginForm';
+import { LoginForm } from '../../src/components/LoginForm';
 
 export class Login extends React.Component {
     render() {
-        return (<View style={styles.container}>
-            <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require('../../images/Karavaan.png')} />
+        return (
+            <View style={styles.container}>
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
+                </View>
+                <View style={styles.formContainer}>
+                    <LoginForm />
+                </View>
             </View>
-            <View style={styles.formContainer}>
-                </LoginForm>
-            </View>
-        </View>);
+        );
     }
 }
 
@@ -34,5 +36,8 @@ const styles = StyleSheet.create({
         color: '#FFF',
         marginTop: 10,
         width: 160
+    },
+    formContainer: {
+
     }
 });
