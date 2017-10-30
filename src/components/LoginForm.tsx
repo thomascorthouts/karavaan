@@ -18,10 +18,11 @@ export class LoginForm extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#4B9382'
+        flex: 1
     },
     input: {
-
+        height: 40,
+        backgroundColor: 'black',
+        fontSize: 19
     }
 });

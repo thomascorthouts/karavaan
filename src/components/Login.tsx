@@ -9,6 +9,7 @@ export class Login extends React.Component {
             <View style={styles.container}>
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
+                    <Text></Text>
                 </View>
                 <View style={styles.formContainer}>
                     <LoginForm />
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
         width: 160
     },
     formContainer: {
-
+        flex: 1,
+        backgroundColor: 'red'
     }
 });
