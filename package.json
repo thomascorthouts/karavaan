@@ -1,5 +1,5 @@
 {
-  "name": "typescript-sample",
+  "name": "karavaan",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -8,17 +8,20 @@
     "jest-expo": "~19.0.0",
     "react-native-scripts": "1.1.0",
     "react-test-renderer": "16.0.0-alpha.12",
-    "typescript": "^2.5.3"
+    "typescript": "^2.5.3",
+    "tslint": "^4.5.1",
+    "concurrently": "^3.4.0"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "build": "tsc --watch",
+    "build": "tsc",
     "start": "react-native-scripts start",
     "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
+    "ios": "npm run build && concurrently -r \"npm run watch\" \"react-native-scripts ios\"",
+    "android": "npm run build && concurrently -r \"npm run watch\" \"react-native-scripts android\"",
     "test": "node node_modules/jest/bin/jest.js --watch",
-    "lint": "tslint src/**/*.ts"
+    "lint": "tslint src/**/*.ts",
+    "watch": "tsc --watch"
   },
   "jest": {
     "preset": "jest-expo"
@@ -26,6 +29,8 @@
   "dependencies": {
     "expo": "^19.0.0",
     "react": "16.0.0-alpha.12",
-    "react-native": "^0.46.1"
+    "react-native": "^0.46.1",
+    "react-navigation": "^1.0.0-beta.15",
+    "react-redux": "^5.0.2"
   }
 }
