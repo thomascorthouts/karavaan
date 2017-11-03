@@ -1,9 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Login } from './build/src/components/Login';
+import { LoginScreen } from './build/src/components/LoginScreen';
+import { HomeScreen } from './build/src/components/HomeScreen';
+import { StackNavigator } from 'react-navigation';
 
-export default class App extends React.Component {
-  render() {
-    return <Login />;
+const RootNavigator = StackNavigator({
+  Login: {
+      screen: LoginScreen,
+  },
+  Home: {
+      screen: HomeScreen,
   }
-}
+},
+{
+  headerMode: 'none'
+});
+
+export default RootNavigator;

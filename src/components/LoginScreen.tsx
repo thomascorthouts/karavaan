@@ -3,7 +3,11 @@ import { StyleSheet, Text, View, Image, KeyboardAvoidingView } from 'react-nativ
 
 import { LoginForm } from '../../src/components/LoginForm';
 
-export class Login extends React.Component {
+export class LoginScreen extends React.Component<ILoginProps, {}> {
+    constructor(props: ILoginProps) {
+        super(props);
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -11,7 +15,7 @@ export class Login extends React.Component {
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
                 <KeyboardAvoidingView behavior='padding'>
-                    <LoginForm />
+                    <LoginForm navigation={this.props.navigation}/>
                 </KeyboardAvoidingView>
             </View>
         );
