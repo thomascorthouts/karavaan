@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, ToastAndroid } from 'react-native';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
 
 export class HomeScreen extends Component<IHomeProps, IHomeState> {
@@ -17,6 +17,7 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
         let expenses = this.state.expenseArray.map((val, key) => {
             return <ExpenseItem key={key} keyval={key} val={val} deleteMethod={() => this.deleteExpense(key)} />;
         });
+
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -38,6 +39,7 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
             </View>
         );
     }
+
     addExpense() {
         if (this.state.expenseText) {
             let d = new Date();
@@ -46,9 +48,23 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
             this.setState({ 'expenseText': '' });
         }
     }
+
     deleteExpense(key: number) {
         this.state.expenseArray.splice(key, 1);
         this.setState({ expenseArray: this.state.expenseArray });
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    handleBackButton() {
+        ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT);
+        return true;
     }
 }
 const styles = StyleSheet.create({

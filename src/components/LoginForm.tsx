@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
+import { resetAction } from '../NavigationActions';
 
 export class LoginForm extends React.Component<ILoginProps, {}> {
     constructor(props: ILoginProps) {
@@ -30,14 +31,19 @@ export class LoginForm extends React.Component<ILoginProps, {}> {
                     placeholder={'Password'}
                     returnKeyType={'go'}
                     ref={(input) => (this as any).passwordInput = input}
-                    onSubmitEditing={() => navigate('Home')}
+                    onSubmitEditing={() => this.login(navigate)}
                 />
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => navigate('Home')}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(navigate)}>
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>
             </View>
         );
+    }
+
+    login(navigate: any) {
+        this.props.navigation.dispatch(resetAction);
+        navigate('Home');
     }
 }
 
