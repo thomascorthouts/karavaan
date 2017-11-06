@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert } from 'react-native';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
 
 export class HomeScreen extends Component<IHomeProps, IHomeState> {
@@ -63,7 +63,13 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
     }
 
     handleBackButton() {
-        ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT);
+        Alert.alert('Warning', 'Do you really want to close the application?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: () => BackHandler.exitApp() }
+            ],
+            { onDismiss: () => undefined }
+        );
         return true;
     }
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
-import { resetAction } from '../NavigationActions';
 
 export class LoginForm extends React.Component<ILoginProps, {}> {
     constructor(props: ILoginProps) {
@@ -42,7 +41,6 @@ export class LoginForm extends React.Component<ILoginProps, {}> {
     }
 
     login(navigate: any) {
-        this.props.navigation.dispatch(resetAction);
         navigate('Home');
     }
 }
