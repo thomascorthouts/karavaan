@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 
-export class LoginForm extends React.Component<ILoginProps, {}> {
-    constructor(props: ILoginProps) {
+export class LoginForm extends React.Component<IDefaultNavProps, {}> {
+    constructor(props: IDefaultNavProps) {
         super(props);
     }
 

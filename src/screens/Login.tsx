@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView } from 'react-native';
-
 import { LoginForm } from '../../src/components/LoginForm';
 
-export class LoginScreen extends React.Component<ILoginProps, {}> {
-    constructor(props: ILoginProps) {
+class LoginScreen extends React.Component<IDefaultNavProps, {}> {
+    constructor(props: IDefaultNavProps) {
         super(props);
     }
 
@@ -21,6 +20,8 @@ export class LoginScreen extends React.Component<ILoginProps, {}> {
         );
     }
 }
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
     container: {

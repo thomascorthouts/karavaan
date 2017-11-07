@@ -8,11 +8,15 @@ export class ExpenseItem extends React.Component<IExpenseProps, {}> {
 
     render() {
         return (
-            <View key={this.props.keyval} style={styles.expense}>
-                <Text style={styles.expenseText}>{this.props.val.date}</Text>
-                <Text style={styles.expenseText}>{this.props.val.expense}</Text>
-                <TouchableOpacity onPress={this.props.deleteMethod} style={styles.expenseDelete} >
-                    <Text style={styles.expenseDeleteText}>D</Text>
+            <View key={this.props.keyval} >
+                <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
+                    <View>
+                        <Text style={styles.detailText}>{this.props.val.name}</Text>
+                        <Text style={styles.detailTextSmall}>{this.props.val.date}</Text>
+                    </View>
+                    <View style={styles.expense}>
+                        <Text>{this.props.val.expense}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         );
@@ -20,29 +24,32 @@ export class ExpenseItem extends React.Component<IExpenseProps, {}> {
 }
 
 const styles = StyleSheet.create({
-    expense: {
+    item: {
+        flex: 1,
         position: 'relative',
         padding: 20,
         paddingRight: 100,
-        borderBottomWidth: 2,
-        borderBottomColor: '#EDEDED'
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#111'
     },
-    expenseText: {
+    detailText: {
         paddingLeft: 20,
         borderLeftWidth: 10,
         borderLeftColor: '#4B9382'
     },
-    expenseDelete: {
+    detailTextSmall: {
+        paddingLeft: 20,
+        borderLeftWidth: 10,
+        borderLeftColor: '#4B9382',
+        fontSize: 12
+    },
+    expense: {
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2980B9',
         padding: 10,
         top: 10,
         bottom: 10,
         right: 10
-    },
-    expenseDeleteText: {
-        color: '#FFF'
     }
 });

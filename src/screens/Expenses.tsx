@@ -1,12 +1,13 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert } from 'react-native';
+import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
+import { users } from '../config/Data';
 
-export class HomeScreen extends Component<IHomeProps, IHomeState> {
+class HomeScreen extends Component<IHomeProps, IHomeState> {
     state = {
-        expenseArray: [] as ExpenseList,
-        expenseText: ''
+        expenseArray: [] as ExpenseList
     };
 
     constructor(props: IHomeProps, state: IHomeState) {
@@ -15,14 +16,11 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
 
     render() {
         let expenses = this.state.expenseArray.map((val, key) => {
-            return <ExpenseItem key={key} keyval={key} val={val} deleteMethod={() => this.deleteExpense(key)} />;
+            return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
         });
 
         return (
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.headertext}>Karavaan</Text>
-                </View>
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
                 </ScrollView>
@@ -30,37 +28,30 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
                     <TouchableOpacity onPress={this.addExpense.bind(this)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
-                    <TextInput style={styles.textinput} onChangeText={(expenseText) => this.setState({ expenseText })}
-                        value={this.state.expenseText}
-                        underlineColorAndroid={'transparent'}
-                        placeholder='> New Expense'>
-                    </TextInput>
                 </KeyboardAvoidingView>
             </View>
         );
     }
 
     addExpense() {
-        if (this.state.expenseText) {
-            let d = new Date();
-            this.state.expenseArray.push({ 'date': d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(), 'expense': this.state.expenseText });
-            this.setState({ expenseArray: this.state.expenseArray });
-            this.setState({ 'expenseText': '' });
-        }
+        let user = users[this.state.expenseArray.length]
+        let d = new Date();
+        this.state.expenseArray.push({ 'date':  d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(), 'expense': user.expense, 'name': `${user.name.first} ${user.name.last}` });
+        this.setState({ expenseArray: this.state.expenseArray });
     }
 
-    deleteExpense(key: number) {
+    viewDetails(key: number) {
         this.state.expenseArray.splice(key, 1);
         this.setState({ expenseArray: this.state.expenseArray });
     }
 
-    componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    }
+    // componentDidMount() {
+    //     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    // }
 
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-    }
+    // componentWillUnmount() {
+    //     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    // }
 
     handleBackButton() {
         Alert.alert('Warning', 'Do you really want to close the application?',
@@ -73,25 +64,15 @@ export class HomeScreen extends Component<IHomeProps, IHomeState> {
         return true;
     }
 }
+
+export default HomeScreen;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    header: {
-        backgroundColor: '#287E6F',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomWidth: 2,
-        borderBottomColor: '#FFF'
-    },
-    headertext: {
-        color: '#FFF',
-        fontSize: 20,
-        padding: 20
-    },
     ScrollContainer: {
         flex: 1,
-        marginBottom: 100
     },
     footer: {
         position: 'absolute',
@@ -109,21 +90,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 8,
-        marginBottom: -65,
         zIndex: 10
     },
     addButtonText: {
         color: '#FFF',
         fontSize: 24
-    },
-    textinput: {
-        alignSelf: 'stretch',
-        color: '#FFF',
-        padding: 15,
-        paddingTop: 56,
-        paddingBottom: 0,
-        backgroundColor: '#252525',
-        borderTopWidth: 22,
-        borderTopColor: '#EDEDED'
     }
 });
