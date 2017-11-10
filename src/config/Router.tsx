@@ -1,11 +1,11 @@
 import React from 'react';
-import { TabNavigator, StackNavigator } from 'react-navigation';
-import { Icon } from 'react-native-elements';
+import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation';
 
 import ExpenseFeed from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
 import ExpenseDetail from '../screens/ExpenseDetail';
 import Groups from '../screens/Groups';
+import Converter from '../screens/Converter';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -21,7 +21,7 @@ export const ExpenseStack = StackNavigator(
     }
 );
 
-export const Tabs = TabNavigator(
+export const Expenses = TabNavigator(
     {
         ExpenseFeed: {
             screen: ExpenseStack,
@@ -45,13 +45,30 @@ export const Tabs = TabNavigator(
     }
 );
 
+export const Drawer = DrawerNavigator(
+    {
+        Item1: {
+            screen: Expenses,
+            navigationOptions: {
+                title: 'Expenses'
+            }
+        },
+        Item2: {
+            screen: Converter,
+            navigationOptions: {
+                title: 'Currency converter'
+            }
+        }
+    }
+);
+
 const Root = StackNavigator(
     {
         Login: {
             screen: LoginScreen
         },
         Home: {
-            screen: Tabs
+            screen: Drawer
         }
     }, {
         mode: 'modal',
