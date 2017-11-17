@@ -1,5 +1,19 @@
 # Karavaan
 
+## When starting working on new issue
+
+When all your changed are merged to master, always in master folder on pc: 
+```
+`git pull`
+`git checkout <name>`
+`git merge master`
+`npm install`
+```
+
+
+
+
+
 You can use the [editor on GitHub](https://github.com/thomascorthouts/karavaan/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
 ### Markdown
