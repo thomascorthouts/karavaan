@@ -1,9 +1,10 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
 import { users } from '../config/Data';
+import { Container } from '../components/Container/index';
 
 class HomeScreen extends Component<IHomeProps, IHomeState> {
     state = {
@@ -20,7 +21,8 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         });
 
         return (
-            <View style={styles.container}>
+            <Container>
+                <StatusBar translucent={false} barStyle='light-content' />
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
                 </ScrollView>
@@ -29,7 +31,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
-            </View>
+            </Container>
         );
     }
 
@@ -68,11 +70,8 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
     ScrollContainer: {
-        flex: 1,
+        flex: 1
     },
     footer: {
         position: 'absolute',
