@@ -15,6 +15,8 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
     }
 
     render() {
+        const { navigate } = this.props.navigation;
+        
         let expenses = this.state.expenseArray.map((val, key) => {
             return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
         });
@@ -25,12 +27,15 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                     {expenses}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={this.addExpense.bind(this)} style={styles.addButton}>
+                    <TouchableOpacity onPress={() => this.adduser(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
         );
+    }
+    adduser(navigate: any) {
+        navigate('User');
     }
 
     addExpense() {

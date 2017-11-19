@@ -3,12 +3,14 @@ import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation'
 
 import ExpenseFeed from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
+import UserScreen from '../screens/User';
 import ExpenseDetail from '../screens/ExpenseDetail';
 import Groups from '../screens/Groups';
 import Converter from '../screens/Converter';
 
 export const ExpenseStack = StackNavigator(
     {
+        
         ExpenseFeed: {
             screen: ExpenseFeed
         },
@@ -62,6 +64,7 @@ export const Drawer = DrawerNavigator(
     }
 );
 
+
 const Root = StackNavigator(
     {
         Login: {
@@ -70,6 +73,8 @@ const Root = StackNavigator(
         Home: {
             screen: Drawer
         }
+     
+       
     }, {
         mode: 'modal',
         headerMode: 'none'
