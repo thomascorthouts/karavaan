@@ -1,20 +1,14 @@
 import React from 'react';
 import { View, Text, TouchableHighlight, TextInput, TextInputProperties } from 'react-native';
-import { textStyles } from './styles';
+import { textInputStyles } from './styles';
 
 const InputWithoutLabel = (props: IProps) => {
     return (
         <View>
             <TextInput
-                style={textStyles.input}
+                style={textInputStyles.input}
                 underlineColorAndroid={'transparent'}
-                placeholder={props.placeholder}
-                returnKeyType={props.returnKeyType}
-                keyboardType={props.keyboardType}
-                autoCapitalize={props.autoCapitalize}
-                autoCorrect={props.autoCorrect}
-                secureTextEntry={props.secureTextEntry}
-                onSubmitEditing={props.onSubmitEditing}
+                {...props}
             />
         </View>
     );

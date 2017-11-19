@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
 import { Container } from './Container';
-import { textStyles } from './TextInput/styles';
+import { textInputStyles } from './TextInput/styles';
 
 export class LoginForm extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -26,7 +26,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
                 />
 
                 <TextInput
-                    style={textStyles.input}
+                    style={textInputStyles.input}
                     underlineColorAndroid={'transparent'}
                     secureTextEntry
                     placeholder={'Password'}

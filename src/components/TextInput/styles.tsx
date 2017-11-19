@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
-const textStyles = StyleSheet.create({
+const textInputStyles = StyleSheet.create({
     input: {
         height: 40,
         backgroundColor: 'rgba(255,255,255,0.2)',
@@ -11,4 +11,4 @@ const textStyles = StyleSheet.create({
     }
 });
 
-export { textStyles }
+export { textInputStyles }
