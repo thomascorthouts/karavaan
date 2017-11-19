@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView } from 'react-native';
-import { UserForm } from '../../src/components/UserForm';
+import { UserForm } from '../../src/components/Userform';
 
 class UserScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
