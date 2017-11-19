@@ -2,43 +2,41 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 
 export class UserForm extends React.Component<IDefaultNavProps, {}> {
-        constructor(props: IDefaultNavProps) {
+    constructor(props: IDefaultNavProps) {
         super(props);
     }
 
-    render(){
+    render() {
         const { navigate } = this.props.navigation;
 
         return (
             <View style={styles.container}>
-            <StatusBar barStyle={'light-content'} />
-           
-            <TextInput
-                style={styles.input}
-                underlineColorAndroid={'transparent'}
-                placeholder={'Firstname'}
-                returnKeyType={'next'}
-                autoCapitalize={'none'}
-                autoCorrect={false}
-               
-            />
+                <StatusBar barStyle={'light-content'} />
+
+                <TextInput
+                    style={styles.input}
+                    underlineColorAndroid={'transparent'}
+                    placeholder={'Firstname'}
+                    returnKeyType={'next'}
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                />
 
                 <TextInput
                     style={styles.input}
                     underlineColorAndroid={'transparent'}
                     secureTextEntry
                     placeholder={'Lastname'}
-                    returnKeyType={'go'}  
+                    returnKeyType={'go'}
                 />
 
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(navigate)}>
                     <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
-
-             </View>
+            </View>
         );
-
     }
+
     save(navigate: any) {
         navigate('Home');
     }

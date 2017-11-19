@@ -16,7 +16,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
 
     render() {
         const { navigate } = this.props.navigation;
-        
+
         let expenses = this.state.expenseArray.map((val, key) => {
             return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
         });
@@ -35,7 +35,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         );
     }
     adduser(navigate: any) {
-        navigate('User');
+        navigate('NewExpense');
     }
 
     addExpense() {

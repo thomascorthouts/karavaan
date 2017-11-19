@@ -10,12 +10,14 @@ import Converter from '../screens/Converter';
 
 export const ExpenseStack = StackNavigator(
     {
-        
         ExpenseFeed: {
             screen: ExpenseFeed
         },
         ExpenseDetail: {
             screen: ExpenseDetail
+        },
+        NewExpense: {
+            screen: UserScreen
         }
     }, {
         mode: 'modal',
@@ -64,7 +66,6 @@ export const Drawer = DrawerNavigator(
     }
 );
 
-
 const Root = StackNavigator(
     {
         Login: {
@@ -73,8 +74,6 @@ const Root = StackNavigator(
         Home: {
             screen: Drawer
         }
-     
-       
     }, {
         mode: 'modal',
         headerMode: 'none'
