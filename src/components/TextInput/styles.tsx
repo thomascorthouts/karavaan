@@ -1,0 +1,14 @@
+import React from 'react';
+import { StyleSheet } from 'react-native';
+
+const textStyles = StyleSheet.create({
+    input: {
+        height: 40,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    }
+});
+
+export { textStyles }

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Keyboa
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
 import { users } from '../config/Data';
-import { Container } from '../components/Container/index';
+import { Container } from '../components/Container';
 
 class HomeScreen extends Component<IHomeProps, IHomeState> {
     state = {
@@ -21,7 +21,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         });
 
         return (
-            <Container>
+            <Container flex={1}>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
