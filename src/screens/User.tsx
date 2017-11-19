@@ -22,7 +22,7 @@ export default UserScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#4B9381',
+        backgroundColor: '#4B9382',
         alignSelf: 'stretch'
     }
 });
