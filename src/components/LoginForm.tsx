@@ -13,7 +13,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
         const { navigate } = this.props.navigation;
 
         return (
-            <Container padding={20}>
+            <Container style={ {padding: 20} }>
                 <StatusBar barStyle={'light-content'} />
                 
                 <InputWithoutLabel

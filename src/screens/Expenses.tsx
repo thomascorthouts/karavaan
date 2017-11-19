@@ -21,7 +21,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         });
 
         return (
-            <Container flex={1}>
+            <Container style={ {flex: 1} }>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}

@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { InputWithoutLabel } from './InputWithoutLabel';
 import { textInputStyles } from './styles';
 
 const InputWithLabel = (props: IPropsWithLabel) => {
+    const combinedStyle = StyleSheet.flatten([textInputStyles.label, props.labelStyle]);
+
     return (
         <View>
-            <Text>{props.labelText}</Text>
+            <Text style={combinedStyle}>{props.labelText}</Text>
             <InputWithoutLabel
                 {...props}
             />

@@ -8,6 +8,9 @@ const textInputStyles = StyleSheet.create({
         marginBottom: 10,
         color: '#FFF',
         paddingHorizontal: 10
+    },
+    label: {
+
     }
 });
 

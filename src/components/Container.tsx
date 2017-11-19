@@ -4,18 +4,12 @@ import { View } from 'react-native';
 interface IProps
 {
   children: JSX.Element[];
-  padding?: number;
-  flex?: number;
+  style?: any;
 }
 
 const Container = (props: IProps) => {
-  const customstyle = {
-    padding: props.padding,
-    flex: props.flex
-  };
-
   return (
-    <View style={[customstyle]}>
+    <View style={props.style}>
       {props.children}
     </View>
   );
