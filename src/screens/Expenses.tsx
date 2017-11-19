@@ -27,7 +27,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                     {expenses}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={() => this.adduser(navigate)} style={styles.addButton}>
+                    <TouchableOpacity onPress={ () => this.adduser(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>

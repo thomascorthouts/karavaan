@@ -25,6 +25,16 @@ export const ExpenseStack = StackNavigator(
     }
 );
 
+export const ExpenseStack1 = StackNavigator(
+    {
+        NewExpense: {
+            screen: UserScreen
+        }
+    }, {
+        mode: 'modal',
+        headerMode: 'none'
+    }
+);
 export const Expenses = TabNavigator(
     {
         ExpenseFeed: {
