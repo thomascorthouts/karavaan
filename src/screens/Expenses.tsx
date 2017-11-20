@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
+import { UserForm } from '../../src/components/Userform';
 import { users } from '../config/Data';
 
 class HomeScreen extends Component<IHomeProps, IHomeState> {
@@ -34,10 +35,11 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
             </View>
         );
     }
+    
     adduser(navigate: any) {
         navigate('NewExpense');
     }
-
+    //this.addExpense.bind(this)
     addExpense() {
         let user = users[this.state.expenseArray.length]
         let d = new Date();

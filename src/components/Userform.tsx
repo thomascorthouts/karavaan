@@ -88,7 +88,7 @@ export class UserForm extends Component<IDefaultNavProps, any> {
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this._handlePress()}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => {this._handlePress(), this.save(navigate)}} >
                     <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
 
@@ -96,7 +96,7 @@ export class UserForm extends Component<IDefaultNavProps, any> {
         );
     }
 
-    
+  
 
     save(navigate: any) {
         navigate('Home');
