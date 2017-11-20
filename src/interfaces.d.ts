@@ -1,4 +1,5 @@
 interface IDefaultNavProps {
+   
     navigation: any;
 }
 
