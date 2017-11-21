@@ -1,5 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
+import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
+import { Container } from './Container';
+import { textInputStyles } from './TextInput/styles';
 
 export class LoginForm extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -10,11 +13,10 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
         const { navigate } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <Container style={ {padding: 20} }>
                 <StatusBar barStyle={'light-content'} />
-                <TextInput
-                    style={styles.input}
-                    underlineColorAndroid={'transparent'}
+                
+                <InputWithoutLabel
                     placeholder={'Username'}
                     returnKeyType={'next'}
                     keyboardType={'email-address'}
@@ -24,7 +26,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
                 />
 
                 <TextInput
-                    style={styles.input}
+                    style={textInputStyles.input}
                     underlineColorAndroid={'transparent'}
                     secureTextEntry
                     placeholder={'Password'}
@@ -36,7 +38,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(navigate)}>
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>
-            </View>
+            </Container>
         );
     }
 
@@ -46,16 +48,6 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20
-    },
-    input: {
-        height: 40,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        marginBottom: 10,
-        color: '#FFF',
-        paddingHorizontal: 10
-    },
     buttonContainer: {
         backgroundColor: '#287E6F',
         paddingVertical: 15
