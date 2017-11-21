@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView } from 'react-native';
 import { LoginForm } from '../../src/components/LoginForm';
+import { ColumnContainer } from '../components/Container/ColumnContainer';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -9,14 +10,14 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
     render() {
         return (
-            <View style={styles.container}>
+            <ColumnContainer style={styles.container}>
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
                 <KeyboardAvoidingView behavior='padding'>
                     <LoginForm navigation={this.props.navigation}/>
                 </KeyboardAvoidingView>
-            </View>
+            </ColumnContainer>
         );
     }
 }

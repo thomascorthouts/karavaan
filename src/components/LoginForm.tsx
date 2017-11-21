@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
-import { Container } from './Container';
+import { ColumnContainer } from './Container/ColumnContainer';
 import { textInputStyles } from './TextInput/styles';
 
 export class LoginForm extends React.Component<IDefaultNavProps, {}> {
@@ -13,7 +13,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
         const { navigate } = this.props.navigation;
 
         return (
-            <Container style={ {padding: 20} }>
+            <ColumnContainer style={ {padding: 20, flex: 0} }>
                 <StatusBar barStyle={'light-content'} />
                 
                 <InputWithoutLabel
@@ -38,7 +38,7 @@ export class LoginForm extends React.Component<IDefaultNavProps, {}> {
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(navigate)}>
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>
-            </Container>
+            </ColumnContainer>
         );
     }
 
