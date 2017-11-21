@@ -9,6 +9,7 @@ interface IHomeProps {
 interface IHomeState {
     [index: number]: Expense;
     expenseArray: ExpenseList;
+    isLoading: boolean;
 }
 
 interface Expense {

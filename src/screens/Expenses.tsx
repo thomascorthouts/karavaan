@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
 import { users } from '../config/Data';
@@ -8,7 +8,8 @@ import { ColumnContainer } from '../components/Container/ColumnContainer';
 
 class HomeScreen extends Component<IHomeProps, IHomeState> {
     state = {
-        expenseArray: [] as ExpenseList
+        expenseArray: [] as ExpenseList,
+        isLoading: true
     };
 
     constructor(props: IHomeProps, state: IHomeState) {
@@ -21,7 +22,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         });
 
         return (
-            <ColumnContainer>
+            <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
@@ -31,7 +32,7 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
-            </ColumnContainer>
+            </View>
         );
     }
 
@@ -40,6 +41,16 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         let d = new Date();
         this.state.expenseArray.push({ 'date':  d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(), 'expense': user.expense, 'name': `${user.name.first} ${user.name.last}` });
         this.setState({ expenseArray: this.state.expenseArray });
+
+        this.addToStorage(JSON.stringify(this.state.expenseArray), 'expenses');
+    }
+
+    async addToStorage(value: string, key: string) {
+        try {
+            await AsyncStorage.setItem(key, value);
+        } catch (error) {
+            // TODO
+        }
     }
 
     viewDetails(key: number) {
@@ -47,29 +58,29 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
         this.setState({ expenseArray: this.state.expenseArray });
     }
 
-    // componentDidMount() {
-    //     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    // }
+    componentDidMount() {
+        AsyncStorage.getItem('expenses')
+            .then((value) => {
+                if (value !== null) {
+                    this.setState({
+                        expenseArray: JSON.parse(value)
+                    });
+                }
+            });
 
-    // componentWillUnmount() {
-    //     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-    // }
-
-    handleBackButton() {
-        Alert.alert('Warning', 'Do you really want to close the application?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'OK', onPress: () => BackHandler.exitApp() }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
+        this.setState({
+            isLoading: false
+        });
     }
+
 }
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     ScrollContainer: {
         flex: 1
     },
