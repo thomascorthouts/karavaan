@@ -102,10 +102,6 @@ export class AddExpense extends Component<IDefaultNavProps, any> {
     save(navigate: any) {
         navigate('Home');
     }
-
-    componentWillReceiveProps(nextProps: any) {
-        const {focus} = nextProps;
-    }
 }
 
 export default AddExpense;
