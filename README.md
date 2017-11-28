@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Karavaan
 
 ## When starting working on new issue
