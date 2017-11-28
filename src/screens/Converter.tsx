@@ -6,44 +6,14 @@ interface IState {
 };
 
 interface ICurrencies{
+    [index: string]: number;
 
-    'AUD': number;
-    'BGN': number;
-    'BRL': number;
-    'CAD': number;
-    'CHF': number;
-    'CNY': number;
-    'CZK': number;
-    'DKK': number;
-    'GBP': number;
-    'HKD': number;
-    'HRK': number;
-    'HUF': number;
-    'IDR': number;
-    'ILS': number;
-    'INR': number;
-    'JPY': number;
-    'KRW': number;
-    'MXN': number;
-    'MYR': number;
-    'NOK': number;
-    'NZD': number;
-    'PHP': number;
-    'PLN': number;
-    'RON': number;
-    'RUB': number;
-    'SEK': number;
-    'SGD': number;
-    'THB': number;
-    'TRY': number;
-    'USD': number;
-    'ZAR': number;
 }
 
 class Converter extends Component< {}, IState> {
 
     state = {
-        currencies: {} as IState
+        currencies: {} as ICurrencies
     };
 
     constructor(state: IState) {
@@ -59,13 +29,13 @@ class Converter extends Component< {}, IState> {
     }
 
     convert = (amount: number, from: string, to: string) => {
-        return amount * this.getRate(this.state.currencies, from, to);
+        return amount * this.getRate(from, to);
 
     }
 
-    getRate = (currencies: { [index: string ]: number }, from: string, to: string) => {
-        const rateFrom = currencies[from];
-        const rateTo = currencies[to];
+    getRate = ( from: string, to: string) => {
+        const rateFrom = this.state.currencies[from];
+        const rateTo = this.state.currencies[to];
 
         return rateTo / rateFrom;
 
@@ -74,7 +44,7 @@ class Converter extends Component< {}, IState> {
     fetchData = () => {
         fetch('https://api.fixer.io/latest')
             .then((resp) => resp.json())
-            .then((data) => this.currencies = data.rates);
+            .then((data) => this.state.currencies = data.rates);
 
     }
 }
