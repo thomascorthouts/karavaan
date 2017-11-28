@@ -1,18 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
-import { GroupForm } from '../components/GroupForm'
+import { GroupForm } from '../../components/GroupForm';
 
 class AddGroupScreen extends React.Component<IDefaultNavProps, IAddGroupState> {
 
     constructor(props: IDefaultNavProps, state: IAddGroupState) {
         super(props, state);
         let dat = new Date();
-        state = {
+        this.state = {
             name: '',
             date: dat.getDate + '/' + dat.getMonth + '/' + dat.getFullYear,
             personArray: [] as PersonList,
             groupArray: [] as GroupList
-            //group: {name: '', date: new Date(), personArray: [] as PersonList},
+            // group: {name: '', date: new Date(), personArray: [] as PersonList},
         }
     }
 
@@ -24,7 +24,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IAddGroupState> {
                 <StatusBar barStyle={'light-content'} />
                
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
+                    <Image style={styles.logo} source={require('../../../../images/Karavaan.png')} />
                 </View>
                
                 <TextInput

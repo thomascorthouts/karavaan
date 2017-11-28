@@ -3,17 +3,21 @@ import { View, Text, StyleSheet } from 'react-native';
 import { InputWithoutLabel } from './InputWithoutLabel';
 import { textInputStyles } from './styles';
 
-const InputWithLabel = (props: IPropsWithLabel) => {
-    const combinedStyle = StyleSheet.flatten([textInputStyles.label, props.labelStyle]);
+export class InputWithLabel extends React.Component<IPropsWithLabel, {}> {
+    constructor(props: IPropsWithLabel) {
+        super(props);
+    }
 
-    return (
-        <View>
-            <Text style={combinedStyle}>{props.labelText}</Text>
-            <InputWithoutLabel
-                {...props}
-            />
-        </View>
-    );
-};
+    render() {
+        const combinedStyle = StyleSheet.flatten([textInputStyles.label, this.props.labelStyle]);
 
-export { InputWithLabel }
+        return (
+            <View>
+                <Text style={combinedStyle}>{this.props.labelText}</Text>
+                <InputWithoutLabel
+                {...this.props}
+                />
+            </View>
+        );
+    }
+}

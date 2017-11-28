@@ -2,18 +2,16 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage } from 'react-native';
 import { TabNavigator } from 'react-navigation';
-import { ExpenseItem } from '../../src/components/ExpenseItem';
-import { UserForm } from '../../src/components/Userform';
-import { users } from '../config/Data';
-import { ColumnContainer } from '../components/Container/ColumnContainer';
+import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { users } from '../../config/Data';
 
-class HomeScreen extends Component<IHomeProps, IHomeState> {
-    state = {
-        expenseArray: [] as ExpenseList,
-    };
-
+class ExpenseFeed extends Component<IHomeProps, IHomeState> {
     constructor(props: IHomeProps, state: IHomeState) {
         super(props, state);
+
+        this.state = {
+            expenseArray: [] as ExpenseList
+        };
     }
 
     render() {
@@ -30,26 +28,28 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                     {expenses}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={ () => this.adduser(navigate)} style={styles.addButton}>
+                    <TouchableOpacity onPress={() => this.addExpense(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
         );
     }
-    
-    adduser(navigate: any) {
-        navigate('NewExpense');
+
+    addExpense(navigate: any) {
+        navigate('AddExpense');
     }
-    //this.addExpense.bind(this)
+
+    /*
     addExpense() {
-        let user = users[this.state.expenseArray.length]
+        let user = users[this.state.expenseArray.length];
         let d = new Date();
-        this.state.expenseArray.push({ 'date':  d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(), 'expense': user.expense, 'name': `${user.name.first} ${user.name.last}` });
+        this.state.expenseArray.push({ 'date': d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(), 'expense': user.expense, 'name': `${user.name.first} ${user.name.last}` });
         this.setState({ expenseArray: this.state.expenseArray });
 
         this.addToStorage(JSON.stringify(this.state.expenseArray), 'expenses');
     }
+    */
 
     async addToStorage(value: string, key: string) {
         try {
@@ -67,17 +67,16 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
     componentDidMount() {
         AsyncStorage.getItem('expenses')
             .then((value) => {
-                if (value !== null) {
+                if (value !== undefined) {
                     this.setState({
                         expenseArray: JSON.parse(value)
                     });
                 }
             });
     }
-
 }
 
-export default HomeScreen;
+export default ExpenseFeed;
 
 const styles = StyleSheet.create({
     container: {

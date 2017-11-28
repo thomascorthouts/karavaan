@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, StatusBar } from 'react-native';
-import { ColumnContainer } from '../components/Container/ColumnContainer';
+import { View, Text, StatusBar } from 'react-native';
 
 class Settings extends Component {
     render() {
         return (
-            <ColumnContainer>
+            <View>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <Text>TODO</Text>
-            </ColumnContainer>
+            </View>
         );
     }
 }

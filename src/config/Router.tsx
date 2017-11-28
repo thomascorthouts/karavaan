@@ -1,12 +1,15 @@
 import React from 'react';
 import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation';
 
-import ExpenseFeed from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
-import UserScreen from '../screens/User';
-import ExpenseDetail from '../screens/ExpenseDetail';
-import Groups from '../screens/Groups';
-import AddGroupForm from '../screens/AddGroupForm';
+
+import ExpenseFeed from '../screens/ExpenseTab/ExpenseFeed';
+import AddExpense from '../screens/ExpenseTab/AddExpense';
+import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
+
+import GroupFeed from '../screens/GroupTab/GroupFeed';
+import AddGroup from '../screens/GroupTab/AddGroup';
+
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 
@@ -18,8 +21,8 @@ export const ExpenseStack = StackNavigator(
         ExpenseDetail: {
             screen: ExpenseDetail
         },
-        NewExpense: {
-            screen: UserScreen
+        AddExpense: {
+            screen: AddExpense
         }
     }, {
         mode: 'modal',
@@ -30,10 +33,10 @@ export const ExpenseStack = StackNavigator(
 export const GroupStack = StackNavigator(
     {
         GroupFeed: {
-            screen: Groups
+            screen: GroupFeed
         },
         AddGroup: {
-            screen: AddGroupForm
+            screen: AddGroup
         }
     }, {
         mode: 'modal',
@@ -49,7 +52,7 @@ export const Expenses = TabNavigator(
                 tabBarLabel: 'Expenses'
             }
         },
-        Groups: {
+        GroupFeed: {
             screen: GroupStack,
             navigationOptions: {
                 tabBarLabel: 'Groups'

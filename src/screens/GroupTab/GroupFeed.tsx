@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage } from 'react-native';
-import { GroupItem } from '../../src/components/GroupItem';
+import { GroupItem } from '../../components/GroupFeedItem';
 
 class Groups extends Component<IDefaultNavProps, IGroupState> {
   state = { 

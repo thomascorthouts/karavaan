@@ -7,7 +7,6 @@ interface IHomeProps {
     navigation: any;
 }
 
-
 interface IHomeState {
     [index: number]: Expense;
     expenseArray: ExpenseList;

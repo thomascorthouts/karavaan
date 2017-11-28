@@ -17,8 +17,6 @@ export class GroupItem extends React.Component<IGroupProps, {}> {
             </View>
         );
     }
-
-    
 }
 
 const styles = StyleSheet.create({

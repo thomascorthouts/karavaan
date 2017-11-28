@@ -5,19 +5,17 @@ interface IState {
     currencies: ICurrencies;
 };
 
-interface ICurrencies{
+interface ICurrencies {
     [index: string]: number;
-
 }
 
 class Converter extends Component< {}, IState> {
-
-    state = {
-        currencies: {} as ICurrencies
-    };
-
     constructor(state: IState) {
         super(state);
+
+        this.state = {
+            currencies: {} as ICurrencies
+        };
     }
 
     render() {
@@ -44,7 +42,7 @@ class Converter extends Component< {}, IState> {
     fetchData = () => {
         fetch('https://api.fixer.io/latest')
             .then((resp) => resp.json())
-            .then((data) => this.state.currencies = data.rates);
+            .then((data) => this.setState({'currencies': data.rates}));
 
     }
 }
