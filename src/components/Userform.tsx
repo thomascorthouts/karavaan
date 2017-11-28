@@ -5,18 +5,34 @@ import Form from 'react-form';
 
 
 export class UserForm extends Component<IDefaultNavProps, any> {
-
+    
     constructor(props: IDefaultNavProps) {
         super(props);
+       
         this.state = {
             firstname: '',
             lastname: '',
             itemValue: '',
             amount: '',
+            error: ''
           }
+          
     }
-
-    _handlePress() {
+     
+    _handlePress(nav : any) {
+        if(this.state.firstname == '' || this.state.lastname == '' || this.state.amount == '')
+        {
+            this.setState({error : 'Please fill out all fields'});
+            console.log("error:" + this.state.error);
+            
+            
+        }
+        
+        else{
+            this.save(nav);
+        // Do something here which you want to if all the Text Input is filled.
+         
+        }
         console.log(this.state.firstname);
         console.log(this.state.lastname);
         console.log(this.state.itemValue );
@@ -25,6 +41,7 @@ export class UserForm extends Component<IDefaultNavProps, any> {
    
 
     render() {
+        
         const { navigate } = this.props.navigation;
         const values = ['1', '2'];
         const optionsGender = ['Male', 'Female']
@@ -39,10 +56,10 @@ export class UserForm extends Component<IDefaultNavProps, any> {
 
             <View style={styles.container}>
                 <StatusBar barStyle={'light-content'} />
+
+                <Text style={styles.title}> Form</Text>
+                <Text style={styles.errorStyle}> {this.state.error} </Text>
                
-                <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
-                </View>
                
                 <TextInput
                     style={styles.input}
@@ -77,7 +94,7 @@ export class UserForm extends Component<IDefaultNavProps, any> {
                     style={styles.inputAmount}
                     underlineColorAndroid={'transparent'}
                     placeholder={'Amount'}
-                    onChangeText={(text) => this.setState({amount:text})}
+                    onChangeText={(number) => this.setState({amount:number})}
                     returnKeyType={'go'}
 
                 />
@@ -88,7 +105,7 @@ export class UserForm extends Component<IDefaultNavProps, any> {
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => {this._handlePress(), this.save(navigate)}} >
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this._handlePress(navigate)} >
                     <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
 
@@ -96,7 +113,6 @@ export class UserForm extends Component<IDefaultNavProps, any> {
         );
     }
 
-  
 
     save(navigate: any) {
         navigate('Home');
@@ -106,6 +122,14 @@ export class UserForm extends Component<IDefaultNavProps, any> {
 }
 
 const styles = StyleSheet.create({
+   title:{
+    fontSize:40,
+    color:'#287E6F',
+    fontWeight: 'bold',
+    textAlign: 'center'
+    
+   },
+   
     container: {
 
         padding: 20
@@ -121,6 +145,14 @@ const styles = StyleSheet.create({
      
         width:'100%'
     },
+errorStyle:{
+    
+    padding: 20,
+    color: 'red',
+    paddingHorizontal: 10,
+    marginBottom: 10
+}
+    ,
     inputAmount: {
         flexDirection: 'row',
         alignItems: 'center',
