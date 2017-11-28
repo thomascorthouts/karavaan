@@ -1,2 +1,0 @@
-# karavaan
-Serhat
