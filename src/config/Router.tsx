@@ -5,6 +5,7 @@ import ExpenseFeed from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
 import ExpenseDetail from '../screens/ExpenseDetail';
 import Groups from '../screens/Groups';
+import AddGroupForm from '../screens/AddGroupForm';
 import Converter from '../screens/Converter';
 
 export const ExpenseStack = StackNavigator(
@@ -21,6 +22,20 @@ export const ExpenseStack = StackNavigator(
     }
 );
 
+export const GroupStack = StackNavigator(
+    {
+        GroupFeed: {
+            screen: Groups
+        },
+        AddGroup: {
+            screen: AddGroupForm
+        }
+    }, {
+        mode: 'modal',
+        headerMode: 'none'
+    }
+);
+
 export const Expenses = TabNavigator(
     {
         ExpenseFeed: {
@@ -30,7 +45,7 @@ export const Expenses = TabNavigator(
             }
         },
         Groups: {
-            screen: Groups,
+            screen: GroupStack,
             navigationOptions: {
                 tabBarLabel: 'Groups'
             }
