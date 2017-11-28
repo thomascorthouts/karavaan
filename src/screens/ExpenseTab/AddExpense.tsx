@@ -12,8 +12,7 @@ export class AddExpense extends Component<IDefaultNavProps, any> {
             lastname: '',
             itemValue: '',
             amount: '',
-            error: '',
-            textInputFocus: ''
+            error: ''
         };
     }
 
@@ -102,10 +101,6 @@ export class AddExpense extends Component<IDefaultNavProps, any> {
 
     save(navigate: any) {
         navigate('Home');
-    }
-
-    focus() {
-        (this as any)._component.focus();
     }
 
     componentWillReceiveProps(nextProps: any) {
