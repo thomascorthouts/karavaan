@@ -24,3 +24,38 @@ interface IExpenseProps {
     val: Expense;
     viewDetails(): void;
 }
+
+interface IGroupProps {
+    keyval: any;
+    val: Group;
+    viewDetails(): void;
+}
+
+interface IGroupState {
+    [index: number]: Group;
+    groupArray: GroupList;
+    isLoading: boolean;
+}
+
+interface IAddGroupState {
+    //group: Group;
+    name: string;
+    date: string;
+    personArray: PersonList;
+    groupArray: GroupList;
+}
+
+interface GroupList extends Array<Group> { }
+
+interface Group {
+    name: string;
+    personArray: PersonList;
+    date: string;
+}
+
+interface PersonList extends Array<Person> { }
+
+interface Person {
+    firstname: string;
+    lastname: string;
+}
