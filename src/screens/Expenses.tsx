@@ -9,7 +9,6 @@ import { ColumnContainer } from '../components/Container/ColumnContainer';
 class HomeScreen extends Component<IHomeProps, IHomeState> {
     state = {
         expenseArray: [] as ExpenseList,
-        isLoading: true
     };
 
     constructor(props: IHomeProps, state: IHomeState) {
@@ -67,10 +66,6 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                     });
                 }
             });
-
-        this.setState({
-            isLoading: false
-        });
     }
 
 }

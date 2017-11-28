@@ -6,6 +6,7 @@ import LoginScreen from '../screens/Login';
 import ExpenseDetail from '../screens/ExpenseDetail';
 import Groups from '../screens/Groups';
 import Converter from '../screens/Converter';
+import Settings from '../screens/Settings';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -57,6 +58,12 @@ export const Drawer = DrawerNavigator(
             screen: Converter,
             navigationOptions: {
                 title: 'Currency converter'
+            }
+        },
+        Item3: {
+            screen: Settings,
+            navigationOptions: {
+                title: 'Settings'
             }
         }
     }
