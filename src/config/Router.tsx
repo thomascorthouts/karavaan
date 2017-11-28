@@ -3,6 +3,7 @@ import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation'
 
 import ExpenseFeed from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
+import UserScreen from '../screens/User';
 import ExpenseDetail from '../screens/ExpenseDetail';
 import Groups from '../screens/Groups';
 import AddGroupForm from '../screens/AddGroupForm';
@@ -15,6 +16,9 @@ export const ExpenseStack = StackNavigator(
         },
         ExpenseDetail: {
             screen: ExpenseDetail
+        },
+        NewExpense: {
+            screen: UserScreen
         }
     }, {
         mode: 'modal',

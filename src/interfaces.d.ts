@@ -1,10 +1,12 @@
 interface IDefaultNavProps {
+   
     navigation: any;
 }
 
 interface IHomeProps {
     navigation: any;
 }
+
 
 interface IHomeState {
     [index: number]: Expense;

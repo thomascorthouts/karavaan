@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../src/components/ExpenseItem';
+import { UserForm } from '../../src/components/Userform';
 import { users } from '../config/Data';
 import { Container } from '../components/Container';
 
@@ -16,6 +17,8 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
     }
 
     render() {
+        const { navigate } = this.props.navigation;
+
         let expenses = this.state.expenseArray.map((val, key) => {
             return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
         });
@@ -27,14 +30,18 @@ class HomeScreen extends Component<IHomeProps, IHomeState> {
                     {expenses}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={this.addExpense.bind(this)} style={styles.addButton}>
+                    <TouchableOpacity onPress={ () => this.adduser(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </Container>
         );
     }
-
+    
+    adduser(navigate: any) {
+        navigate('NewExpense');
+    }
+    //this.addExpense.bind(this)
     addExpense() {
         let user = users[this.state.expenseArray.length]
         let d = new Date();
