@@ -33,7 +33,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             secureTextEntry
                             placeholder={'Password'}
                             returnKeyType={'go'}
-                            inputref={(input: any) => {(this as any).passwordInput = input;}}
+                            inputref={(input: any) => (this as any).passwordInput = input}
                             onSubmitEditing={() => this.login(navigate)}
                         />
 

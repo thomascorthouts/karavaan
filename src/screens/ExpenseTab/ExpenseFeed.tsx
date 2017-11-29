@@ -5,8 +5,13 @@ import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
 import { users } from '../../config/Data';
 
-class ExpenseFeed extends Component<IHomeProps, IHomeState> {
-    constructor(props: IHomeProps, state: IHomeState) {
+interface IState {
+    [index: number]: Expense;
+    expenseArray: ExpenseList;
+}
+
+class ExpenseFeed extends Component<IDefaultNavProps, IState> {
+    constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
         this.state = {
@@ -17,8 +22,15 @@ class ExpenseFeed extends Component<IHomeProps, IHomeState> {
     render() {
         const { navigate } = this.props.navigation;
 
-        let expenses = this.state.expenseArray.map((val, key) => {
-            return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
+        let expenseArray;
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.expenseArray) {
+            expenseArray = this.props.navigation.state.params.expenseArray;
+        } else {
+            expenseArray = this.state.expenseArray || [];
+        }
+
+        let expenses = expenseArray.map((val: any, key: any) => {
+            return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />;
         });
 
         return (
@@ -37,7 +49,7 @@ class ExpenseFeed extends Component<IHomeProps, IHomeState> {
     }
 
     addExpense(navigate: any) {
-        navigate('AddExpense');
+        navigate('AddExpense', {expenseArray: this.state.expenseArray});
     }
 
     /*
@@ -51,25 +63,24 @@ class ExpenseFeed extends Component<IHomeProps, IHomeState> {
     }
     */
 
-    async addToStorage(value: string, key: string) {
-        try {
-            await AsyncStorage.setItem(key, value);
-        } catch (error) {
-            // TODO
-        }
-    }
-
-    viewDetails(key: number) {
-        this.state.expenseArray.splice(key, 1);
-        this.setState({ expenseArray: this.state.expenseArray });
+    viewDetails(key: number, navigate: any) {
+        let expense = this.state.expenseArray[key];
+        navigate('ExpenseDetail', {expense: expense});
     }
 
     componentDidMount() {
+        // AsyncStorage.removeItem('expenses');
+        // AsyncStorage.removeItem('groups');
+
         AsyncStorage.getItem('expenses')
             .then((value) => {
-                if (value !== undefined) {
+                if (value) {
                     this.setState({
                         expenseArray: JSON.parse(value)
+                    });
+                } else {
+                    this.setState({
+                        expenseArray: []
                     });
                 }
             });

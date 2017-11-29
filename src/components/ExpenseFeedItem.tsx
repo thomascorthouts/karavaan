@@ -1,8 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export class ExpenseItem extends React.Component<IExpenseProps, {}> {
-    constructor(props: IExpenseProps) {
+interface IProps {
+    keyval: any;
+    val: Expense;
+    viewDetails(): void;
+}
+
+export class ExpenseItem extends React.Component<IProps, {}> {
+    constructor(props: IProps) {
         super(props);
     }
 
@@ -11,11 +17,11 @@ export class ExpenseItem extends React.Component<IExpenseProps, {}> {
             <View key={this.props.keyval} >
                 <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
                     <View>
-                        <Text style={styles.detailText}>{this.props.val.name}</Text>
+                        <Text style={styles.detailText}>{this.props.val.firstname} {this.props.val.lastname}</Text>
                         <Text style={styles.detailTextSmall}>{this.props.val.date}</Text>
                     </View>
                     <View style={styles.expense}>
-                        <Text>{this.props.val.expense}</Text>
+                        <Text>{this.props.val.amount} {this.props.val.currency.split(' ')[1]}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

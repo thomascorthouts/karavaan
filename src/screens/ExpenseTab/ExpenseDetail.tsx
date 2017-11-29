@@ -1,20 +1,31 @@
 import React, { Component } from 'react';
 import { ScrollView, Text } from 'react-native';
 
-class ExpenseDetail extends Component<IDefaultNavProps, {}> {
-  constructor(props: IDefaultNavProps) {
-    super(props);
-  }
+interface IState {
+    expense: Expense;
+}
 
-  render() {
-    const { name } = this.props.navigation.state.params;
+class ExpenseDetail extends Component<IDefaultNavProps, IState> {
+    constructor(props: IDefaultNavProps, state: IState) {
+        super(props, state);
 
-    return (
-      <ScrollView>
-        <Text> {name.first} {name.last} </Text>
-      </ScrollView>
-    );
-  }
+        console.log(this.props.navigation.state.params);
+        this.state = {
+            expense: this.props.navigation.state.params.expense
+        }
+    }
+
+    render() {
+        return (
+            <ScrollView>
+                <Text> {this.state.expense.firstname} </Text>
+                <Text> {this.state.expense.lastname} </Text>
+                <Text> {this.state.expense.amount} </Text>
+                <Text> {this.state.expense.currency} </Text>
+                <Text> {this.state.expense.date} </Text>
+            </ScrollView>
+        );
+    }
 }
 
 export default ExpenseDetail;
