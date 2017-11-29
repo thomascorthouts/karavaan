@@ -2,72 +2,83 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage } from 'react-native';
 import { GroupItem } from '../../components/GroupFeedItem';
 
-class Groups extends Component<IDefaultNavProps, IGroupState> {
-  state = { 
-    groupArray: [] as GroupList,
-    isLoading: true
-  };
-  
-  constructor(props: IDefaultNavProps, state: IGroupState){
-    super(props, state);
-  }
-  
-  render() {
-    const { navigate } = this.props.navigation;
-
-    let groups = this.state.groupArray.map((val,key) => {
-      return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
-    });
-
-    return (
-      <View style = {styles.container}>
-        <ScrollView style = {styles.ScrollContainer}>
-          {groups}
-        </ScrollView>
-        <KeyboardAvoidingView behavior = 'padding' style={styles.footer} >
-          <TouchableOpacity onPress={ () => this.props.navigation.navigate('AddGroup', {})} style={styles.addButton}> 
-            <Text style={styles.addButtonText}> + </Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
-      </View>
-    );
-  }
-
-  viewDetails(key:number) {
-    
-  }
-
-  addGroup(group: Group){
-    this.state.groupArray.push({ 'name': group.name, 'date': group.date, 'personArray': group.personArray});
-    this.setState({ groupArray: this.state.groupArray});
-    
-  }
-  componentDidMount(){
-    AsyncStorage.getItem('groups')
-      .then((value) => {
-        if (value !== null) {
-          this.setState({
-            groupArray: JSON.parse(value)
-          });
-        };
-      });
-
-      this.setState({
-        isLoading: false
-      });
-  }
+interface IProps {
+    navigation: any;
+    groupArray: GroupList;
 }
 
+interface IState {
+    [index: number]: Group;
+    groupArray: GroupList;
+}
+
+class Groups extends Component<IProps, IState> {
+    constructor(props: IProps, state: IState) {
+        super(props, state);
+
+        this.state = {
+            groupArray: [] as GroupList
+        };
+    }
+
+    render() {
+        const { navigate } = this.props.navigation;
+
+        let groupArray;
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.groupArray) {
+            console.log('navigation props');
+            groupArray = this.props.navigation.state.params.groupArray;
+        } else {
+            groupArray = this.state.groupArray || [];
+        }
+
+        let groups = groupArray.map((val: any, key: any) => {
+            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
+        });
+
+        return (
+            <View style={styles.container}>
+                <ScrollView style={styles.ScrollContainer}>
+                    {groups}
+                </ScrollView>
+                <KeyboardAvoidingView behavior='padding' style={styles.footer} >
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('AddGroup')} style={styles.addButton}>
+                        <Text style={styles.addButtonText}> + </Text>
+                    </TouchableOpacity>
+                </KeyboardAvoidingView>
+            </View>
+        );
+    }
+
+    viewDetails(key: number) {
+        this.state.groupArray.splice(key, 1);
+        this.setState({ groupArray: this.state.groupArray });
+    }
+
+    componentDidMount() {
+        AsyncStorage.getItem('groups')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        groupArray: JSON.parse(value)
+                    });
+                } else {
+                    this.setState({
+                        groupArray: []
+                    });
+                }
+            });
+    }
+}
 
 export default Groups;
-
 
 const styles = StyleSheet.create({
     container: {
         flex: 1
     },
     ScrollContainer: {
-        flex: 1,
+        flex: 1
     },
     footer: {
         position: 'absolute',

@@ -2,91 +2,113 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
 import { GroupForm } from '../../components/GroupForm';
 
-class AddGroupScreen extends React.Component<IDefaultNavProps, IAddGroupState> {
+interface IState {
+    group: Group;
+    groupArray: GroupList;
+}
 
-    constructor(props: IDefaultNavProps, state: IAddGroupState) {
+class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
+
+    constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
+
         let dat = new Date();
         this.state = {
-            name: '',
-            date: dat.getDate + '/' + dat.getMonth + '/' + dat.getFullYear,
-            personArray: [] as PersonList,
+            group: {
+                name: '',
+                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
+                personArray: [] as PersonList,
+                expenseArray: [] as ExpenseList
+            },
             groupArray: [] as GroupList
-            // group: {name: '', date: new Date(), personArray: [] as PersonList},
-        }
+        };
     }
 
     render() {
+        const { navigate } = this.props.navigation;
+
         return (
             <View style={styles.container}>
                 <KeyboardAvoidingView behavior='padding'>
-                <View style={styles.formcontainer}>
-                <StatusBar barStyle={'light-content'} />
-               
-                <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../../../../images/Karavaan.png')} />
-                </View>
-               
-                <TextInput
-                    style={styles.input}
-                    underlineColorAndroid={'transparent'}
-                    placeholder={'Group name'}
-                    onChangeText={(text) => this.setState({name:text})}
-                    returnKeyType={'next'}
-                />
-          
-                <TextInput
-                    style={styles.input}
-                    underlineColorAndroid={'transparent'}
-                    value={this.state.date}
-                    onChangeText={(text) => this.setState({date:text})}
-                    returnKeyType={'next'}
-                />
+                    <View style={styles.formcontainer}>
+                        <StatusBar barStyle={'light-content'} />
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save()}>
-                    <Text style={styles.buttonText}>BACK</Text>
-                </TouchableOpacity>
+                        <TextInput
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            placeholder={'Group name'}
+                            onChangeText={(text) => {
+                                const group = Object.assign({}, this.state.group, { name: text });
+                                this.setState({ group });
+                            }}
+                            returnKeyType={'next'}
+                        />
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => {this._handlePress(), this.save()}} >
-                    <Text style={styles.buttonText}>SAVE</Text>
-                </TouchableOpacity>
+                        <TextInput
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            value={this.state.group.date}
+                            onChangeText={(text) => {
+                                const group = Object.assign({}, this.state.group, { date: text });
+                                this.setState({ group });
+                            }}
+                            returnKeyType={'next'}
+                        />
 
-            </View>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.back(navigate)}>
+                            <Text style={styles.buttonText}>BACK</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(navigate)}>
+                            <Text style={styles.buttonText}>SAVE</Text>
+                        </TouchableOpacity>
+
+                    </View>
                 </KeyboardAvoidingView>
             </View>
         );
     }
 
-    save() {
-        this.props.navigation.navigate('Groups');
-        
+    back(navigate: any) {
+        navigate('GroupFeed');
     }
 
-    _handlePress() {
-        console.log(this.state.name);
-        console.log(this.state.date);
-        this.addGroupToStorage();
-        this.save();
-     }
+    save(navigate: any) {
+        this.addGroupToStorage()
+            .then(() => {
+                navigate('GroupFeed', { groupArray: this.state.groupArray });
+            });
+    }
 
+    async addGroupToStorage() {
+        try {
+            this.state.groupArray.push({
+                'name': this.state.group.name,
+                'date': this.state.group.date,
+                'personArray': this.state.group.personArray,
+                'expenseArray': []
+            });
 
-     async addGroupToStorage(){
-         try{
-             AsyncStorage.getItem('groups') 
-                .then((value) => {
-                    if(value !== null) {
-                        // Hoe dit doen zonder variabele grouplijst in state?
-                        this.setState({
-                            groupArray: JSON.parse(value)
-                        });
-                    }
-                })
-                this.state.groupArray.push({'name': this.state.name, 'date': this.state.date, 'personArray': this.state.personArray})
-                await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray))
-         } catch (error) {
-             //TODO
-         }
-     }
+            await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    componentDidMount() {
+        AsyncStorage.getItem('groups')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        groupArray: JSON.parse(value)
+                    });
+                } else {
+                    this.setState({
+                        groupArray: []
+                    });
+                }
+            });
+    }
 }
 export default AddGroupScreen;
 
@@ -99,46 +121,33 @@ const styles = StyleSheet.create({
     formcontainer: {
         padding: 20
     },
-            input: {
-                height: 41,
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                marginBottom: 10,
-                color: '#FFF',
-                paddingHorizontal: 10
-            },
-            picker:{
-             
-                width:'100%'
-            },
-            inputAmount: {
-                flexDirection: 'row',
-                alignItems: 'center',
-                width:'100%',
-                height: 41,
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                marginBottom: 10,
-                color: '#FFF',
-                paddingHorizontal: 10
-            },
-            buttonContainer: {
-                backgroundColor: '#287E6F',
-                paddingVertical: 15,
-                marginBottom: 10,
-        
-        
-        
-            },
-            buttonText: {
-                textAlign: 'center',
-                color: '#FFFFFF'
-            },
-            logoContainer: {
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexGrow: 1
-            },
-            logo: {
-                width: 200,
-                height: 200
-            }
+    input: {
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
+    picker: {
+        width: '100%'
+    },
+    inputAmount: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
+    buttonContainer: {
+        backgroundColor: '#287E6F',
+        paddingVertical: 15,
+        marginBottom: 10
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: '#FFFFFF'
+    }
 });

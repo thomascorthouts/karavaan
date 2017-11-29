@@ -1,34 +1,30 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlexStyle, StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image, Button, ListView, Picker, Alert, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 
-export class AddExpense extends Component<IDefaultNavProps, any> {
+interface IState {
+    expense: Expense;
+    error: string;
+    expenseArray: ExpenseList;
+}
 
-    constructor(props: IDefaultNavProps) {
-        super(props);
+export class AddExpense extends Component<IDefaultNavProps, IState> {
 
+    constructor(props: IDefaultNavProps, state: IState) {
+        super(props, state);
+
+        let dat = new Date();
         this.state = {
-            firstname: '',
-            lastname: '',
-            itemValue: '',
-            amount: '',
+            expense: {
+                firstname: '',
+                lastname: '',
+                currency: 'EUR €',
+                amount: 0,
+                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear()
+            },
+            expenseArray: this.props.navigation.state.params.expenseArray,
             error: ''
         };
-    }
-
-    _handlePress(nav: any) {
-        if (this.state.firstname === '' || this.state.lastname === '' || this.state.amount === '') {
-            this.setState({ error: 'Please fill out all fields' });
-            console.log('error:' + this.state.error);
-        } else {
-            this.save(nav);
-            // Do something here which you want to if all the Text Input is filled.
-        }
-
-        console.log(this.state.firstname);
-        console.log(this.state.lastname);
-        console.log(this.state.itemValue);
-        console.log(this.state.amount);
     }
 
     render() {
@@ -52,55 +48,106 @@ export class AddExpense extends Component<IDefaultNavProps, any> {
                 <KeyboardAvoidingView behavior='padding'>
                     <InputWithoutLabel
                         placeholder={'Firstname'}
-                        onChangeText={(text: string) => this.setState({ firstname: text })}
+                        onChangeText={(text: string) => {
+                            const expense = Object.assign({}, this.state.expense, { firstname: text });
+                            this.setState({ expense });
+                        }}
                         onSubmitEditing={() => (this as any).lastname.focus()}
                         returnKeyType={'next'}
                     />
 
                     <InputWithoutLabel
                         placeholder={'Lastname'}
-                        onChangeText={(text: string) => this.setState({ lastname: text })}
+                        onChangeText={(text: string) => {
+                            const expense = Object.assign({}, this.state.expense, { lastname: text });
+                            this.setState({ expense });
+                        }}
                         returnKeyType={'next'}
                         onSubmitEditing={() => (this as any).amount.focus()}
-                        inputref={(input: any) => {(this as any).lastname = input;}}
+                        inputref={(input: any) => { (this as any).lastname = input; }}
                     />
 
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                         <View style={styles.inputAmount}>
                             <InputWithoutLabel
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
-                                onChangeText={(value: number) => this.setState({ amount: value })}
+                                onChangeText={(value: number) => {
+                                    const expense = Object.assign({}, this.state.expense, { amount: value });
+                                    this.setState({ expense });
+                                }}
                                 returnKeyType={'done'}
-                                inputref={(input: any) => {(this as any).amount = input;}}
+                                inputref={(input: any) => { (this as any).amount = input; }}
                             />
                         </View>
 
                         <Picker
                             style={styles.picker}
-                            selectedValue={this.state.itemValue}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ itemValue: itemValue })} >
-                            <Picker.Item label='EUR / €' value='EUR' />
-                            <Picker.Item label='CAD / $' value='CAD' />
-                            <Picker.Item label='GBP / £' value='GBP' />
-                            <Picker.Item label='USD / $' value='USD' />
+                            selectedValue={this.state.expense.currency}
+                            onValueChange={(itemValue, itemIndex) => {
+                                const expense = Object.assign({}, this.state.expense, { currency: itemValue });
+                                this.setState({ expense });
+                            }} >
+                            <Picker.Item label='EUR / €' value='EUR €' />
+                            <Picker.Item label='CAD / $' value='CAD $' />
+                            <Picker.Item label='GBP / £' value='GBP £' />
+                            <Picker.Item label='USD / $' value='USD $' />
                         </Picker>
                     </View>
                 </KeyboardAvoidingView>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(navigate)}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.back(navigate)}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this._handlePress(navigate)} >
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(navigate)}>
                     <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
             </View>
         );
     }
 
+    back(navigate: any) {
+        navigate('ExpenseFeed');
+    }
+
     save(navigate: any) {
-        navigate('Home');
+        this.addExpenseToStorage()
+            .then(() => {
+                navigate('ExpenseFeed', {expenseArray: this.state.expenseArray});
+            });
+    }
+
+    validate(navigate: any) {
+        console.log(this.state.expense.firstname);
+        console.log(this.state.expense.lastname);
+        console.log(this.state.expense.currency);
+        console.log(this.state.expense.amount);
+
+        if (this.state.expense.firstname === '' || this.state.expense.lastname === '' || this.state.expense.amount < 0) {
+            this.setState({ error: 'Please fill out all fields' });
+            console.log('error:' + this.state.error);
+        } else {
+            this.save(navigate);
+        }
+    }
+
+    async addExpenseToStorage() {
+        try {
+            this.state.expenseArray.push({
+                'date': this.state.expense.date,
+                'amount': this.state.expense.amount,
+                'currency': this.state.expense.currency,
+                'firstname': this.state.expense.firstname,
+                'lastname': this.state.expense.lastname
+            });
+
+            console.log(this.state.expenseArray);
+
+            await AsyncStorage.setItem('expenses', JSON.stringify(this.state.expenseArray));
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

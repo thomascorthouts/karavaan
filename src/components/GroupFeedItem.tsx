@@ -1,8 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export class GroupItem extends React.Component<IGroupProps, {}> {
-    constructor(props: IGroupProps) {
+interface IProps {
+    keyval: any;
+    val: Group;
+    viewDetails(): void;
+}
+
+export class GroupItem extends React.Component<IProps, {}> {
+    constructor(props: IProps) {
         super(props);
     }
 
