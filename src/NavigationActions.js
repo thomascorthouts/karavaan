@@ -1,8 +1,8 @@
 import { NavigationActions } from 'react-navigation';
 
-export const resetAction = NavigationActions.reset({
+export const goHome = NavigationActions.reset({
     index: 0,
     actions: [
-      NavigationActions.navigate({ routeName: '_ExpenseFeed'})
+      NavigationActions.navigate({ routeName: 'Home'})
     ]
 });

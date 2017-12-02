@@ -24,16 +24,10 @@ class Groups extends Component<IProps, IState> {
     render() {
         const { navigate } = this.props.navigation;
 
-        let groupArray;
-        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.groupArray) {
-            console.log('navigation props');
-            groupArray = this.props.navigation.state.params.groupArray;
-        } else {
-            groupArray = this.state.groupArray || [];
-        }
+        let groupArray = this.state.groupArray || [];
 
         let groups = groupArray.map((val: any, key: any) => {
-            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key)} />;
+            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewExpenses(key, navigate)} />;
         });
 
         return (
@@ -42,7 +36,7 @@ class Groups extends Component<IProps, IState> {
                     {groups}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('AddGroup')} style={styles.addButton}>
+                    <TouchableOpacity onPress={() => this.addGroup(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
@@ -50,9 +44,25 @@ class Groups extends Component<IProps, IState> {
         );
     }
 
-    viewDetails(key: number) {
-        this.state.groupArray.splice(key, 1);
-        this.setState({ groupArray: this.state.groupArray });
+    updateState = (data: any) => {
+        this.setState(data);
+    }
+
+    addGroup(navigate: any) {
+        navigate('AddGroup', { groupArray: this.state.groupArray, updateFeedState: this.updateState });
+    }
+
+    async viewExpenses(key: number, navigate: any) {
+        let group = this.state.groupArray[key];
+        let expenseArray = await AsyncStorage.getItem(group.expenseArrayId)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return [];
+                }
+            });
+        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: group.expenseArrayId, groupName: group.name });
     }
 
     componentDidMount() {
