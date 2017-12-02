@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { textInputStyles } from '../components/TextInput/styles';
+import { goHome } from '../NavigationActions';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -9,7 +10,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { dispatch } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -34,10 +35,10 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             placeholder={'Password'}
                             returnKeyType={'go'}
                             inputref={(input: any) => (this as any).passwordInput = input}
-                            onSubmitEditing={() => this.login(navigate)}
+                            onSubmitEditing={() => this.login(dispatch)}
                         />
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(navigate)}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(dispatch)}>
                             <Text style={styles.buttonText}>LOGIN</Text>
                         </TouchableOpacity>
                     </View>
@@ -46,8 +47,8 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
         );
     }
 
-    login(navigate: any) {
-        navigate('Home');
+    login(dispatch: any) {
+        dispatch(goHome);
     }
 }
 

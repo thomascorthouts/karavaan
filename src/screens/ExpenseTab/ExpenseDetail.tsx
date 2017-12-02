@@ -9,10 +9,9 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        console.log(this.props.navigation.state.params);
         this.state = {
             expense: this.props.navigation.state.params.expense
-        }
+        };
     }
 
     render() {

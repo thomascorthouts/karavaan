@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
-import { GroupForm } from '../../components/GroupForm';
 
 interface IState {
     group: Group;
@@ -18,20 +17,22 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                 name: '',
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 personArray: [] as PersonList,
-                expenseArray: [] as ExpenseList
+                expenseArrayId: ''
             },
-            groupArray: [] as GroupList
+            groupArray: this.props.navigation.state.params.groupArray
         };
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { goBack } = this.props.navigation;
 
         return (
             <View style={styles.container}>
                 <KeyboardAvoidingView behavior='padding'>
                     <View style={styles.formcontainer}>
                         <StatusBar barStyle={'light-content'} />
+
+                        <Text style={styles.title}>New Expense</Text>
 
                         <TextInput
                             style={styles.input}
@@ -55,11 +56,11 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                             returnKeyType={'next'}
                         />
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.back(navigate)}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                             <Text style={styles.buttonText}>BACK</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(navigate)}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(goBack)}>
                             <Text style={styles.buttonText}>SAVE</Text>
                         </TouchableOpacity>
 
@@ -69,14 +70,11 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         );
     }
 
-    back(navigate: any) {
-        navigate('GroupFeed');
-    }
-
-    save(navigate: any) {
+    save(goBack: any) {
         this.addGroupToStorage()
             .then(() => {
-                navigate('GroupFeed', { groupArray: this.state.groupArray });
+                goBack();
+                this.props.navigation.state.params.updateFeedState({ groupArray: this.state.groupArray });
             });
     }
 
@@ -86,28 +84,13 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                 'name': this.state.group.name,
                 'date': this.state.group.date,
                 'personArray': this.state.group.personArray,
-                'expenseArray': []
+                'expenseArrayId': this.state.group.name + '#' + new Date().toISOString()
             });
 
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
         } catch (error) {
             console.log(error);
         }
-    }
-
-    componentDidMount() {
-        AsyncStorage.getItem('groups')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        groupArray: JSON.parse(value)
-                    });
-                } else {
-                    this.setState({
-                        groupArray: []
-                    });
-                }
-            });
     }
 }
 export default AddGroupScreen;
@@ -117,6 +100,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#4B9382',
         alignSelf: 'stretch'
+    },
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
     formcontainer: {
         padding: 20
