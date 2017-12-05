@@ -9,3 +9,14 @@ git checkout <name>
 git merge master
 npm install
 ```
+
+
+When you have an error like 
+```
+ReactComponentTreeHook.purgeUnmountedComponents is not a function
+```
+
+--> 
+```
+npm install react@16.0.0-alpha.12
+```
