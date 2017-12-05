@@ -10,7 +10,7 @@ git merge master
 npm install
 ```
 
-
+## Error/bug fixes
 When you have an error like 
 ```
 ReactComponentTreeHook.purgeUnmountedComponents is not a function
