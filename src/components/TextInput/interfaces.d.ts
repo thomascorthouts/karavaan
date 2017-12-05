@@ -23,7 +23,7 @@ interface IProps {
     placeholder?: string;
     placeholderTextColor?: any;
     inputref?: any;
-    returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';    
+    returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
     secureTextEntry?: boolean;
     selectTextOnFocus?: boolean;
     selection?: {start: number, end: number};
@@ -35,4 +35,17 @@ interface IProps {
 interface IPropsWithLabel extends IProps {
     labelStyle?: any;
     labelText: string;
+}
+
+interface IPropsWithButton extends IProps{
+
+    buttonText: string;
+    selectCurrency(): void;
+}
+
+interface ICurrencyPicker extends IProps{
+
+    currentCurrency: Currency;
+    currencies: Map<string, Currency>;
+    selectThisCurrency(curr: string): void;
 }

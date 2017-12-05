@@ -1,39 +1,47 @@
 import React, {Component} from 'react';
-import {ScrollView, Text} from 'react-native';
+import {View, Text} from 'react-native';
+import { InputWithButton } from '../components/TextInput/InputWithButton';
 
 interface IState {
-    currencies: ICurrencies;
+    currencies: Currencies;
 };
 
-interface ICurrencies {
-    [index: string]: number;
-}
+
 
 class Converter extends Component< {}, IState> {
     constructor(state: IState) {
         super(state);
 
         this.state = {
-            currencies: {} as ICurrencies
+            currencies: {} as Currencies
         };
     }
 
     render() {
         return (
-            <ScrollView>
-                <Text>{this.convert(50, 'EUR', 'USD')}</Text>
-            </ScrollView>
+            <View>
+                <InputWithButton buttonText={'EUR'} selectCurrency={this.selectCurrency}/>
+                <InputWithButton buttonText={'EUR'} selectCurrency={this.selectCurrency} editable={false} value={this.convert(50, 'EUR', 'USD').toString()}/>
+            </View>
         );
+    }
+
+    selectCurrency = () => {
+
+    }
+
+    selectThisCurrency = (tag: string) => {
+        return this.state.currencies.get(tag);
     }
 
     convert = (amount: number, from: string, to: string) => {
         return amount * this.getRate(from, to);
-
     }
 
     getRate = ( from: string, to: string) => {
-        const rateFrom = this.state.currencies[from];
-        const rateTo = this.state.currencies[to];
+        const currencies = this.state.currencies;
+        const rateFrom = currencies[from].rate;
+        const rateTo = currencies[to].rate;
 
         return rateTo / rateFrom;
 
@@ -42,7 +50,7 @@ class Converter extends Component< {}, IState> {
     fetchData = () => {
         fetch('https://api.fixer.io/latest')
             .then((resp) => resp.json())
-            .then((data) => this.setState({'currencies': data.rates}));
+            .then((data) => this.setState({currencies: data.rates}));
 
     }
 }
