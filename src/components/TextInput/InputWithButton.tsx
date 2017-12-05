@@ -18,6 +18,7 @@ export class InputWithButton extends React.Component<IPropsWithButton, {}> {
                 </TouchableHighlight>
                 <InputWithoutLabel
                     {...this.props}
+                    value = {this.props.value}
                     keyboardType={'numeric'}
                 />
             </View>
