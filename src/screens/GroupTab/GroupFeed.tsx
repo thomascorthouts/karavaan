@@ -62,7 +62,7 @@ class Groups extends Component<IProps, IState> {
                     return [];
                 }
             });
-        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: group.expenseArrayId, groupName: group.name });
+        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: group.expenseArrayId, group: group});
     }
 
     componentDidMount() {
