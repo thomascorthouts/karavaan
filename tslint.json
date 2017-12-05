@@ -29,7 +29,7 @@
     ],
     "ban": false,
     "curly": false,
-    "forin": true,
+    "forin": false,
     "label-position": true,
     "no-arg": true,
     "no-bitwise": true,

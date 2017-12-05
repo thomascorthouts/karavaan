@@ -43,6 +43,6 @@ interface Currency {
     rate: number;
 }
 
-interface Currencies extends Map<string, Currency> {
-    [key: string]: any;
+interface Currencies {
+    [key: string]: Currency;
 }

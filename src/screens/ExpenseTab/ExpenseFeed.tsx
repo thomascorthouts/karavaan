@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
-import { users } from '../../config/Data';
 
 interface IState {
     [index: number]: Expense;
