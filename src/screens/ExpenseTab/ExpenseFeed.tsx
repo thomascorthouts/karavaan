@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage, Button } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
 import { users } from '../../config/Data';
@@ -14,10 +14,16 @@ interface IState {
 class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: {navigation: any}) => {
-        const { state } = navigation;
-        const title = state.params ? state.params.groupName : '';
-        return {
-            headerTitle: `${title}`
+        const { state, navigate } = navigation;
+        if (state.params) {
+            const title = state.params.group.name;
+            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group})}></Button>;
+            return {
+                headerTitle: `${title}`,
+                headerRight: headerRight
+            }
+        } else {
+            return {};
         }
     };
 
