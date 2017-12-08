@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage, Image, CameraRoll, TouchableHighlight } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 
 interface IState {
@@ -16,17 +16,22 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         let dat = new Date();
         this.state = {
+
             expense: {
                 firstname: '',
                 lastname: '',
-                currency: 'EUR €',
+                category: '',
                 amount: 0,
+                currency: 'EUR €',
+                photos: [],
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear()
             },
             expenseArray: this.props.navigation.state.params.expenseArray,
             expenseArrayId: this.props.navigation.state.params.expenseArrayId || 'expenses',
             error: ''
         };
+
+
     }
 
     render() {
@@ -46,6 +51,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
                 <Text style={styles.title}>New Expense</Text>
                 <Text style={styles.errorStyle}> {this.state.error} </Text>
+
+
 
                 <KeyboardAvoidingView behavior='padding'>
                     <InputWithoutLabel
@@ -71,6 +78,19 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         autoCapitalize={'words'}
                     />
 
+                    <InputWithoutLabel
+                        placeholder={'Category'}
+                        onChangeText={(text: string) => {
+                            const expense = Object.assign({}, this.state.expense, { category: text });
+                            this.setState({ expense });
+                        }}
+                        returnKeyType={'next'}
+                        onSubmitEditing={() => (this as any).amount.focus()}
+                        inputref={(input: any) => { (this as any).category = input; }}
+                        autoCapitalize={'words'}
+                    />
+
+
                     <View style={{ flexDirection: 'row' }}>
                         <View style={styles.inputAmount}>
                             <InputWithoutLabel
@@ -92,14 +112,61 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                 const expense = Object.assign({}, this.state.expense, { currency: itemValue });
                                 this.setState({ expense });
                             }} >
-                            <Picker.Item label='EUR / €' value='EUR €' />
-                            <Picker.Item label='CAD / $' value='CAD $' />
-                            <Picker.Item label='GBP / £' value='GBP £' />
-                            <Picker.Item label='USD / $' value='USD $' />
+                            <Picker.Item label="EUR / €" value="EUR" />
+                            <Picker.Item label="USD / $" value="USD" />
+                            <Picker.Item label="AUD / $A" value="AUD" />
+                            <Picker.Item label="BGN / Lv" value="BGN" />
+                            <Picker.Item label="BRL / R$" value="BRL" />
+                            <Picker.Item label="CAD / C$" value="CAD" />
+                            <Picker.Item label="CHF / SFr" value="CHF" />
+                            <Picker.Item label="CNY / C$" value="CNY" />
+                            <Picker.Item label="CZK / C$" value="CZK" />
+                            <Picker.Item label="DKK / C$" value="DKK" />
+                            <Picker.Item label="GBP / £" value="GBP" />
+                            <Picker.Item label="HKD / £" value="HKD" />
+                            <Picker.Item label="HRK / £" value="HRK" />
+                            <Picker.Item label="HUF / £" value="HUF" />
+                            <Picker.Item label="IDR / £" value="IDR" />
+                            <Picker.Item label="ILS / £" value="ILS" />
+                            <Picker.Item label="INR / £" value="INR" />
+                            <Picker.Item label="JPY / £" value="JPY" />
+                            <Picker.Item label="KRW / £" value="KRW" />
+                            <Picker.Item label="MXN / £" value="MXN" />
+                            <Picker.Item label="MYR / £" value="MYR" />
+                            <Picker.Item label="NOK / £" value="NOKk" />
+                            <Picker.Item label="NZD / £" value="NZD" />
+                            <Picker.Item label="PHP / £" value="PHP" />
+                            <Picker.Item label="PLN / £" value="PLN" />
+                            <Picker.Item label="RON / £" value="RON" />
+                            <Picker.Item label="RUB / £" value="RUB" />
+                            <Picker.Item label="SEK / £" value="SEK" />
+                            <Picker.Item label="SGD / £" value="SGD" />
+                            <Picker.Item label="THB / £" value="THB" />
+                            <Picker.Item label="TRY / £" value="TRY" />
+                            <Picker.Item label="ZAR / £" value="ZAR" />
                         </Picker>
                     </View>
                 </KeyboardAvoidingView>
+                
+                <ScrollView>
+                    {this.state.expense.photos.map((p: any, i: any) => {
+                        return (
+                            <Image
+                                key={i}
+                                style={{
+                                    width: 300,
+                                    height: 100,
+                                }}
+                                source={{ uri: p.node.image.uri }}
+                            />
+                        );
+                    })}
+                </ScrollView>
 
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>  this._handleButtonPress}>
+                    <Text style={styles.buttonText}>Add picture</Text>
+                </TouchableOpacity>
+                
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
@@ -110,6 +177,22 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             </View>
         );
     }
+    
+
+    _handleButtonPress = () => {
+        CameraRoll.getPhotos({
+            first: 4,
+            assetType: 'All',
+        })
+            .then(r => {
+                const expense = Object.assign({}, this.state.expense, { photos: r.edges });
+                this.setState({ expense });
+            })
+            .catch((err) => {
+                //Error Loading Images
+            });
+    };
+
 
     save(goBack: any) {
         this.addExpenseToStorage()
@@ -138,9 +221,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
                 'amount': this.state.expense.amount,
+                'category': this.state.expense.category,
                 'currency': this.state.expense.currency,
                 'firstname': this.state.expense.firstname,
-                'lastname': this.state.expense.lastname
+                'lastname': this.state.expense.lastname,
+                'photos': this.state.expense.photos,
             });
 
             await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
@@ -185,5 +270,15 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: '#FFFFFF'
-    }
+    },
+    imageGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+    },
+    image: {
+        width: 100,
+        height: 100,
+        margin: 10,
+    },
 });

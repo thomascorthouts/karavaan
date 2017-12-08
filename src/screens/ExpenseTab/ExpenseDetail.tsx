@@ -19,6 +19,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             <ScrollView>
                 <Text> {this.state.expense.firstname} </Text>
                 <Text> {this.state.expense.lastname} </Text>
+                <Text> {this.state.expense.category} </Text>
                 <Text> {this.state.expense.amount} </Text>
                 <Text> {this.state.expense.currency} </Text>
                 <Text> {this.state.expense.date} </Text>
