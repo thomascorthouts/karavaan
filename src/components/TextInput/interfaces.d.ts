@@ -40,12 +40,13 @@ interface IPropsWithLabel extends IProps {
 interface IPropsWithButton extends IProps{
 
     buttonText: string;
-    selectCurrency(): void;
+    onPress: any;
 }
 
-interface ICurrencyPicker extends IProps{
 
+interface ICurrencyPicker extends IProps{
     currentCurrency: Currency;
     currencies: Map<string, Currency>;
-    selectThisCurrency(curr: string): void;
+    selectCurrency(currentTag: string): void;
+
 }

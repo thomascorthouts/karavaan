@@ -1,7 +1,7 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, Component} from 'react';
 import {View, Picker} from 'react-native';
 
-export class CurrencyPicker extends React.Component<ICurrencyPicker, {}> {
+export class CurrencyPicker extends Component<ICurrencyPicker, {}> {
     constructor(props: ICurrencyPicker) {
         super(props);
     }
@@ -15,7 +15,7 @@ export class CurrencyPicker extends React.Component<ICurrencyPicker, {}> {
         }
         return (
             <View>
-                <Picker selectedValue={this.props.currentCurrency}>
+                <Picker>
                     {currenciesItems}
                 </Picker>
             </View>

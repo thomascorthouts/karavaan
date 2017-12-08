@@ -11,9 +11,9 @@ interface IState {
     isLoading: boolean;
 };
 
-class Converter extends Component<{}, IState> {
-    constructor(state: IState) {
-        super(state);
+class Converter extends Component<IDefaultNavProps, IState> {
+    constructor(props: IDefaultNavProps , state: IState) {
+        super(props, state);
 
         this.state = {
             currencies: currencies,
@@ -32,13 +32,10 @@ class Converter extends Component<{}, IState> {
                 <View>
                     <InputWithButton
                         buttonText={this.state.currency1}
-                        selectCurrency={this.selectCurrency}
                         value={this.state.value}
-                        onChangeText={(text: string) => {
-                            this.setState({ value: text });
-                        }}
+                        onPress={() => this.pressButton(this.props.navigation, 1)}
                     />
-                    <InputWithButton buttonText={this.state.currency2} selectCurrency={this.selectCurrency} editable={false}
+                    <InputWithButton buttonText={this.state.currency2} editable={false} onPress={() => this.pressButton(this.props.navigation, 2)}
                         value={this.convert(parseInt(this.state.value, 10), this.state.currency1, this.state.currency2).toString()} />
                 </View>
             );
@@ -63,6 +60,14 @@ class Converter extends Component<{}, IState> {
         return rateTo / rateFrom;
     }
 
+    pressButton (navigate: any, index: number) {
+        let buttonText;
+        if ( index === 1 )
+            buttonText = this.state.currency1;
+        else buttonText = this.state.currency2;
+        navigate('selectCurrency', {current: buttonText});
+    }
+
     async componentWillMount() {
         try {
             fetch('https://api.fixer.io/latest')
@@ -71,23 +76,20 @@ class Converter extends Component<{}, IState> {
                     if (data.rates) {
                         let key;
                         for (key in data.rates) {
-                            console.log(key);
                             this.state.currencies[key].rate = data.rates[key];
                         }
                         this.setState({
                             currencies: this.state.currencies, isLoading: false
                         });
                     } else {
-                        throw 'Thomas';
+                        throw 'Mattias';
                     }
                 });
             await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-            console.log('test');
         } catch (error) {
             AsyncStorage.getItem('currencies')
                 .then((value) => {
                     if (value) {
-                        console.log('value' + value);
                         this.setState({
                             currencies: JSON.parse(value), isLoading: false
                         });

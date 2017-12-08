@@ -13,7 +13,7 @@ export class InputWithButton extends React.Component<IPropsWithButton, {}> {
 
         return (
             <View>
-                <TouchableHighlight onPress={this.props.selectCurrency}>
+                <TouchableHighlight onPress={() => this.props.pressButton}>
                     <Text style={combinedStyle}>{this.props.buttonText}</Text>
                 </TouchableHighlight>
                 <InputWithoutLabel
@@ -24,4 +24,7 @@ export class InputWithButton extends React.Component<IPropsWithButton, {}> {
             </View>
         );
     }
+
+
+
 }
