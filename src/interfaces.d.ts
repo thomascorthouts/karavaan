@@ -8,8 +8,10 @@ interface Expense {
     date: string;
     firstname: string;
     lastname: string;
+    category: string;
     amount: number;
     currency: string;
+    photos: Array<any>;
 }
 
 interface ExpenseList extends Array<Expense> { }
