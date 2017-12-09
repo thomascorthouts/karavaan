@@ -33,3 +33,16 @@ interface Person {
 }
 
 interface PersonList extends Array<Person> { }
+
+// Currency
+
+interface Currency {
+    name: string;
+    tag: string;
+    symbol: string;
+    rate: number;
+}
+
+interface Currencies {
+    [key: string]: Currency;
+}
