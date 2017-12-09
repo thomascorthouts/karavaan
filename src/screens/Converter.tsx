@@ -43,7 +43,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         selectedValue={this.state.currency2}
                         editable={false} currentCurrency={this.state.currency2} currencies={this.state.currencies}
                                                onValueChange={(currency2: any) => this.setState({currency2})}
-                        value={this.convert(parseInt(this.state.value, 10), this.state.currency1, this.state.currency2).toString()} />
+                        value={this.convert(parseFloat(this.state.value), this.state.currency1, this.state.currency2).toString()} />
                 </View>
             );
         }
