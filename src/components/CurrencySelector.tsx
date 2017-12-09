@@ -7,15 +7,14 @@ export class CurrencyPicker extends Component<ICurrencyPicker, {}> {
     }
     render() {
         let currenciesItems: ReactNode[] = new Array();
-        let mapIter = this.props.currencies.values();
-        let currency;
-        for (let i = 0; i < this.props.currencies.size ; ++i ) {
-            currency = mapIter.next();
-            currenciesItems.push(<Picker.Item label={currency.value.name} value={currency.value.tag}/>);
+        let current;
+        for (let currency in this.props.currencies) {
+            current = this.props.currencies[currency];
+            currenciesItems.push(<Picker.Item label={current.name} value={current.tag} key={current.tag}/>);
         }
         return (
             <View>
-                <Picker>
+                <Picker onValueChange={this.props.onValueChange}>
                     {currenciesItems}
                 </Picker>
             </View>

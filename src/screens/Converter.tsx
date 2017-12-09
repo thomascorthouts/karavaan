@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, AsyncStorage, ActivityIndicator } from 'react-native';
-import { InputWithButton } from '../components/TextInput/InputWithButton';
+import { InputWithCurrencySelector } from '../components/TextInput/InputWithCurrencySelector';
 import { currencies } from '../config/Data';
 
 interface IState {
@@ -25,24 +25,27 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
+
         if (this.state.isLoading) {
             return <ActivityIndicator />;
         } else {
             return (
-                <View>
-                    <InputWithButton
-                        buttonText={this.state.currency1}
-                        value={this.state.value}
-                        onPress={() => this.pressButton(this.props.navigation, 1)}
+                <View style={{
+                    justifyContent: 'center'}}>
+
+                    <InputWithCurrencySelector
+                        currentCurrency={this.state.currency1} currencies={this.state.currencies}
+                        onChangeText={(value: any) => this.setState({value})}
+                        onValueChange={(currency1: any) => this.setState(currency1)}
                     />
-                    <InputWithButton buttonText={this.state.currency2} editable={false} onPress={() => this.pressButton(this.props.navigation, 2)}
+                    <InputWithCurrencySelector editable={false} currentCurrency={this.state.currency2} currencies={this.state.currencies}
+                                               onValueChange={(currency2: any) => this.setState(currency2)}
                         value={this.convert(parseInt(this.state.value, 10), this.state.currency1, this.state.currency2).toString()} />
                 </View>
             );
         }
     }
 
-    selectCurrency = () => { };
 
     selectThisCurrency = (tag: string) => {
         return this.state.currencies[tag];
@@ -60,12 +63,21 @@ class Converter extends Component<IDefaultNavProps, IState> {
         return rateTo / rateFrom;
     }
 
-    pressButton (navigate: any, index: number) {
-        let buttonText;
-        if ( index === 1 )
-            buttonText = this.state.currency1;
-        else buttonText = this.state.currency2;
-        navigate('selectCurrency', {current: buttonText});
+    changeBaseCurrency (navigate: any) {
+        try {
+            navigate('selectCurrency', {current: this.state.currency1});
+        } catch (err) {
+            console.log(err);
+        }
+
+    }
+    changeToCurrency (navigate: any) {
+        try {
+            navigate('selectCurrency', {current: this.state.currency2});
+        } catch (err) {
+            console.log(err);
+        }
+
     }
 
     async componentWillMount() {
