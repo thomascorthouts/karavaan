@@ -5,7 +5,7 @@ export const currencies = {
     'CAD': { name: 'Canadian Dollar', tag: 'CAD', rate: 1.4966, symbol: '$'},
     'CHF': { name: 'Swiss Franc', tag: 'CHF', rate: 1.1673, symbol: 'CHF'},
     'CNY': { name: 'Chinese Yen (Yuan)', tag: 'CNY', rate: 7.8356, symbol: '¥'},
-    'CZK': { name: 'Czech Koruna', tag: 'CAK', rate: 25.653, symbol: 'Kč'},
+    'CZK': { name: 'Czech Koruna', tag: 'CZK', rate: 25.653, symbol: 'Kč'},
     'DKK': { name: 'Danish Krone', tag: 'DKK', rate: 7.4415, symbol: 'kr'},
     'EUR': { name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'},
     'GBP': { name: 'Pound Sterling', tag: 'GBP', rate: 0.88183, symbol: '£'},

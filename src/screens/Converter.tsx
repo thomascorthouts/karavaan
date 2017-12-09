@@ -17,7 +17,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         this.state = {
             currencies: currencies,
-            value: '0',
+            value: '20',
             currency1: 'EUR',
             currency2: 'EUR',
             isLoading: true
@@ -34,12 +34,15 @@ class Converter extends Component<IDefaultNavProps, IState> {
                     justifyContent: 'center'}}>
 
                     <InputWithCurrencySelector
+                        selectedValue={this.state.currency1}
                         currentCurrency={this.state.currency1} currencies={this.state.currencies}
                         onChangeText={(value: any) => this.setState({value})}
-                        onValueChange={(currency1: any) => this.setState(currency1)}
+                        onValueChange={(currency1: any) => this.setState({currency1})}
                     />
-                    <InputWithCurrencySelector editable={false} currentCurrency={this.state.currency2} currencies={this.state.currencies}
-                                               onValueChange={(currency2: any) => this.setState(currency2)}
+                    <InputWithCurrencySelector
+                        selectedValue={this.state.currency2}
+                        editable={false} currentCurrency={this.state.currency2} currencies={this.state.currencies}
+                                               onValueChange={(currency2: any) => this.setState({currency2})}
                         value={this.convert(parseInt(this.state.value, 10), this.state.currency1, this.state.currency2).toString()} />
                 </View>
             );

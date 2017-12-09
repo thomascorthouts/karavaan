@@ -41,11 +41,13 @@ interface IPropsWithCurrencyPicker extends IProps{
     currentCurrency: string;
     currencies: Currencies;
     onValueChange: any;
+    selectedValue: string;
 }
 
 interface ICurrencyPicker extends IProps{
     currentCurrency: string;
     currencies: Currencies;
-    onValueChange:any;
+    onValueChange: any;
+    selectedValue: string;
 
 }
