@@ -149,6 +149,35 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             console.log(error);
         }
     }
+
+    splitEven(users: Array<string>, amount:number){
+        let amounts = {} as any;
+        const share = amount / users.length;
+        for (let user in users) {
+            amounts[user] = share;
+        }
+        return amounts;
+    }
+
+    splitByBill(users: Array<string>, bill: Map<string, object>) {
+        let amounts = {} as any;
+        let amount;
+        for (let user in users){
+            amounts[user] = 0;
+        }
+
+
+        //TODO: fix issue with type assigning.
+        for (let dish in bill.values()) {
+
+            amount = dish['amount']/ dish['users'].length;
+            for (let user in dish['users']) {
+                amounts[user] += amount;
+            }
+        }
+
+        return amounts;
+    }
 }
 
 export default AddExpense;
