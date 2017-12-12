@@ -159,22 +159,24 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         return amounts;
     }
 
-    splitByBill(users: Array<string>, bill: Map<string, object>) {
+    splitByBill(users: Array<string>, bill: Map<string, Dish>) {
         let amounts = {} as any;
         let amount;
+
         for (let user in users){
             amounts[user] = 0;
         }
 
 
-        //TODO: fix issue with type assigning.
-        for (let dish in bill.values()) {
 
+        bill.forEach((dish: Dish, name: string) => {
             amount = dish['amount']/ dish['users'].length;
             for (let user in dish['users']) {
                 amounts[user] += amount;
             }
-        }
+        })
+
+
 
         return amounts;
     }
