@@ -46,3 +46,11 @@ interface Currency {
 interface Currencies {
     [key: string]: Currency;
 }
+
+// Bill Splitting
+
+interface Dish{
+    name?: string;
+    amount: number;
+    users: PersonList;
+}
