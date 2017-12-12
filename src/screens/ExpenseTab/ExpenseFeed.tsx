@@ -1,32 +1,44 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage, Button } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
 
 interface IState {
     [index: number]: Expense;
     expenseArray: ExpenseList;
+    expenseArrayId: string;
 }
 
 class ExpenseFeed extends Component<IDefaultNavProps, IState> {
+
+    static navigationOptions = ({ navigation }: {navigation: any}) => {
+        const { state, navigate } = navigation;
+        if (state.params) {
+            const title = state.params.group.name;
+            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group})}></Button>;
+            return {
+                headerTitle: `${title}`,
+                headerRight: headerRight
+            }
+        } else {
+            return {};
+        }
+    };
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
         this.state = {
-            expenseArray: [] as ExpenseList
+            expenseArray: [] as ExpenseList,
+            expenseArrayId: this.props.navigation.state.params ? this.props.navigation.state.params.expenseArrayId : 'expenses'
         };
     }
 
     render() {
         const { navigate } = this.props.navigation;
 
-        let expenseArray;
-        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params && this.props.navigation.state.params.expenseArray) {
-            expenseArray = this.props.navigation.state.params.expenseArray;
-        } else {
-            expenseArray = this.state.expenseArray || [];
-        }
+        let expenseArray = this.state.expenseArray || [];
 
         let expenses = expenseArray.map((val: any, key: any) => {
             return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />;
@@ -47,31 +59,23 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         );
     }
 
+    updateState = (data: any) => {
+        this.setState(data);
+    }
+
     addExpense(navigate: any) {
-        navigate('AddExpense', {expenseArray: this.state.expenseArray});
+        let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
+        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
     }
-
-    /*
-    addExpense() {
-        let user = users[this.state.expenseArray.length];
-        let d = new Date();
-        this.state.expenseArray.push({ 'date': d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(), 'expense': user.expense, 'name': `${user.name.first} ${user.name.last}` });
-        this.setState({ expenseArray: this.state.expenseArray });
-
-        this.addToStorage(JSON.stringify(this.state.expenseArray), 'expenses');
-    }
-    */
 
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
-        navigate('ExpenseDetail', {expense: expense});
+        let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
+        navigate(screen, {expense: expense});
     }
 
     componentDidMount() {
-        // AsyncStorage.removeItem('expenses');
-        // AsyncStorage.removeItem('groups');
-
-        AsyncStorage.getItem('expenses')
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {
                     this.setState({

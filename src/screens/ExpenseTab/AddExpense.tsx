@@ -6,6 +6,7 @@ interface IState {
     expense: Expense;
     error: string;
     expenseArray: ExpenseList;
+    expenseArrayId: string;
 }
 
 export class AddExpense extends Component<IDefaultNavProps, IState> {
@@ -23,12 +24,13 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear()
             },
             expenseArray: this.props.navigation.state.params.expenseArray,
+            expenseArrayId: this.props.navigation.state.params.expenseArrayId || 'expenses',
             error: ''
         };
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { goBack } = this.props.navigation;
         const values = ['1', '2'];
         const optionsGender = ['Male', 'Female'];
         const currencies = [
@@ -54,6 +56,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         }}
                         onSubmitEditing={() => (this as any).lastname.focus()}
                         returnKeyType={'next'}
+                        autoCapitalize={'words'}
                     />
 
                     <InputWithoutLabel
@@ -65,6 +68,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         returnKeyType={'next'}
                         onSubmitEditing={() => (this as any).amount.focus()}
                         inputref={(input: any) => { (this as any).lastname = input; }}
+                        autoCapitalize={'words'}
                     />
 
                     <View style={{ flexDirection: 'row' }}>
@@ -96,25 +100,22 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     </View>
                 </KeyboardAvoidingView>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.back(navigate)}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(navigate)}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(goBack)}>
                     <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
             </View>
         );
     }
 
-    back(navigate: any) {
-        navigate('ExpenseFeed');
-    }
-
-    save(navigate: any) {
+    save(goBack: any) {
         this.addExpenseToStorage()
             .then(() => {
-                navigate('ExpenseFeed', {expenseArray: this.state.expenseArray});
+                goBack();
+                this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
             });
     }
 
@@ -142,9 +143,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'lastname': this.state.expense.lastname
             });
 
-            console.log(this.state.expenseArray);
-
-            await AsyncStorage.setItem('expenses', JSON.stringify(this.state.expenseArray));
+            await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
         } catch (error) {
             console.log(error);
         }

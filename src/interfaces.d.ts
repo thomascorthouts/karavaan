@@ -19,7 +19,7 @@ interface ExpenseList extends Array<Expense> { }
 interface Group {
     name: string;
     personArray: PersonList;
-    expenseArray: ExpenseList;
+    expenseArrayId: string;
     date: string;
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation';
+import { Button } from 'react-native';
 
 import LoginScreen from '../screens/Login';
 
@@ -9,6 +10,7 @@ import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import AddGroup from '../screens/GroupTab/AddGroup';
+import GroupDetail from '../screens/GroupTab/GroupDetail';
 
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
@@ -22,7 +24,10 @@ export const ExpenseStack = StackNavigator(
             screen: ExpenseDetail
         },
         AddExpense: {
-            screen: AddExpense
+            screen: AddExpense,
+            navigationOptions: {
+                tabBarVisible: false
+            }
         }
     }, {
         mode: 'modal',
@@ -33,14 +38,41 @@ export const ExpenseStack = StackNavigator(
 export const GroupStack = StackNavigator(
     {
         GroupFeed: {
-            screen: GroupFeed
+            screen: GroupFeed,
+            navigationOptions: {
+                header: null
+            }
         },
         AddGroup: {
-            screen: AddGroup
+            screen: AddGroup,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+        },
+        GroupDetail: {
+            screen: GroupDetail,
+            navigationOptions: {
+                headerStyle: { 'backgroundColor': '#4B9382' }
+            }
+        },
+        GroupExpenseFeed: {
+            screen: ExpenseFeed
+        },
+        GroupExpenseDetail: {
+            screen: ExpenseDetail,
+            navigationOptions: {
+                header: null
+            }
+        },
+        GroupAddExpense: {
+            screen: AddExpense,
+            navigationOptions: {
+                header: null
+            }
         }
     }, {
-        mode: 'modal',
-        headerMode: 'none'
+        mode: 'modal'
     }
 );
 
