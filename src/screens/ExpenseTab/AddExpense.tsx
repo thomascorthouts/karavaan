@@ -169,8 +169,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
 
         bill.forEach((dish: Dish, name: string) => {
-            amount = dish['amount']/ dish['users'].length;
-            for (let user in dish['users']) {
+            amount = dish.amount / dish.users.length;
+            for (let user in dish.users) {
                 amounts[user] += amount;
             }
         })

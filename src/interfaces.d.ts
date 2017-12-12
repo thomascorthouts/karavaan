@@ -49,7 +49,7 @@ interface Currencies {
 
 // Bill Splitting
 
-interface Dish {
+interface Dish{
     name?: string;
     amount: number;
     users: PersonList;
