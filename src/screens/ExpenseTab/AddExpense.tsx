@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage, Image, CameraRoll, TouchableHighlight } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
-
+import pick from '../../components/picker.js';
+import uploadFile from '../../components/upload.js';
 interface IState {
     expense: Expense;
     error: string;
@@ -16,14 +17,14 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         let dat = new Date();
         this.state = {
-
             expense: {
                 firstname: '',
                 lastname: '',
                 category: '',
                 amount: 0,
                 currency: 'EUR €',
-                photos: [],
+                avatarSource: null,
+                data: null,
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear()
             },
             expenseArray: this.props.navigation.state.params.expenseArray,
@@ -31,6 +32,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             error: ''
         };
     }
+
 
     render() {
         const { goBack } = this.props.navigation;
@@ -42,7 +44,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             'GBP',          // British Pound
             'USD'           // US Dollar
         ];
-
+        let img = this.state.expense.avatarSource == null ? null :
+            <Image
+                source={this.state.expense.avatarSource}
+                style={{ height: 200, width: 200 }}
+            />
         return (
             <View style={styles.container}>
                 <StatusBar barStyle={'light-content'} />
@@ -143,24 +149,17 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     </View>
                 </KeyboardAvoidingView>
 
-                <ScrollView>
-                    {this.state.expense.photos.map((p: any, i: any) => {
-                        return (
-                            <Image
-                                key={i}
-                                style={{
-                                    width: 300,
-                                    height: 100
-                                }}
-                                source={{ uri: p.node.image.uri }}
-                            />
-                        );
-                    })}
-                </ScrollView>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this._handleButtonPress()}>
-                    <Text style={styles.buttonText}>Add picture</Text>
+
+                <TouchableOpacity style={styles.buttonContainer} onPress={this.show.bind(this)}>
+                    <Text style={styles.buttonText}>Show Image Picker</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonContainer} onPress={this.upload.bind(this)}>
+                    <Text style={styles.buttonText}>Upload</Text>
+                </TouchableOpacity>
+                {img}
+
+                
 
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
@@ -173,20 +172,22 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    _handleButtonPress = () => {
-        CameraRoll.getPhotos({
-            first: 4,
-            assetType: 'All'
-        })
-            .then(r => {
-                console.log(r.edges);
-                const expense = Object.assign({}, this.state.expense, { photos: r.edges });
-                this.setState({ expense });
-            })
-            .catch((err) => {
-                console.log('error');
-            });
-    };
+    show() {
+        console.log("Show functie")
+        pick((source: any, data: any) => {
+            const expense = Object.assign({}, this.state.expense, { avatarSource: source, data: data });
+            this.setState({ expense });
+        });
+    }
+    
+    upload() {
+        uploadFile([
+            { name: 'info', data: 'KhoaPham' },
+            { name: 'avatar', filename: 'avatar.png', data: this.state.expense.data }
+        ])
+
+    }
+
 
     save(goBack: any) {
         this.addExpenseToStorage()
@@ -219,7 +220,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'currency': this.state.expense.currency,
                 'firstname': this.state.expense.firstname,
                 'lastname': this.state.expense.lastname,
-                'photos': this.state.expense.photos
+                'avatarSource': this.state.expense.avatarSource,
+                'data': this.state.expense.data
             });
 
             await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));

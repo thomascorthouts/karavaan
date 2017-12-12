@@ -29,9 +29,11 @@
   },
   "dependencies": {
     "expo": "^19.0.0",
+    "glamor": "^2.20.40",
     "react": "^16.0.0-alpha.12",
     "react-native": "^0.46.1",
     "react-navigation": "^1.0.0-beta.14",
-    "react-redux": "^5.0.2"
+    "react-redux": "^5.0.2",
+    "react-responsive-picture": "^2.0.0"
   }
 }

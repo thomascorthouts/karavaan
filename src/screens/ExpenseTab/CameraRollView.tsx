@@ -26,12 +26,13 @@ class CameraRollView extends Component<any,any> {
 
   componentDidMount() {
     // get photos from camera roll
-    CameraRoll.getPhotos(this.state.fetchParams, this._storeImages, this._logImageError);
+    CameraRoll.getPhotos({ _storeImages(), _logImageError()});
   }
 
   // callback which processes received images from camera roll and stores them in an array
   _storeImages(data:any) {
     const assets = data.edges;
+
     const images = assets.map( asset => asset.node.image );
     this.setState({
         images: images,

@@ -11,7 +11,8 @@ interface Expense {
     category: string;
     amount: number;
     currency: string;
-    photos: Array<any>;
+   avatarSource:any;
+   data:any;
 }
 
 interface ExpenseList extends Array<Expense> { }
