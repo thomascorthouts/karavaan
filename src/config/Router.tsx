@@ -14,6 +14,7 @@ import GroupDetail from '../screens/GroupTab/GroupDetail';
 
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
+import GroupExpense from '../screens/ExpenseTab/GroupExpense';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -66,8 +67,9 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupAddExpense: {
-            screen: AddExpense,
+            screen: GroupExpense,
             navigationOptions: {
+                tabBarVisible: false,
                 header: null
             }
         }
