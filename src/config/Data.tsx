@@ -32,3 +32,5 @@ export const currencies = {
     'USD': { name: 'US Dollar', tag: 'USD', rate: 1.1847, symbol: '$'},
     'ZAR': { name: 'South African Rand', tag: 'ZAR', rate: 16.008, symbol: 'R'}
 };
+
+export const friends: Array<string> = new Array('Thomas Corthouts', 'Mathias Spanhove', 'Franci Haest', 'Serhat Erdogan');

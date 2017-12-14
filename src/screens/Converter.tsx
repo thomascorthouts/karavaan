@@ -49,7 +49,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
         }
     }
 
-
     selectThisCurrency = (tag: string) => {
         return this.state.currencies[tag];
     }

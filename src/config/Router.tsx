@@ -12,6 +12,7 @@ import GroupFeed from '../screens/GroupTab/GroupFeed';
 import AddGroup from '../screens/GroupTab/AddGroup';
 import GroupDetail from '../screens/GroupTab/GroupDetail';
 
+import BillSplitter from '../screens/BillSplitter';
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 import GroupExpense from '../screens/ExpenseTab/GroupExpense';
@@ -120,6 +121,12 @@ export const Drawer = DrawerNavigator(
             screen: Settings,
             navigationOptions: {
                 title: 'Settings'
+            }
+        },
+        Item4: {
+            screen: BillSplitter,
+            navigationOptions: {
+                title: 'BillSplitter'
             }
         }
     }
