@@ -149,7 +149,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         }
     }
 
-    splitEven(users: Array<string>, amount:number){
+    splitEven(users: Array<string>, amount: number) {
         let amounts = {} as any;
         const share = amount / users.length;
         for (let user in users) {
@@ -162,20 +162,16 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         let amounts = {} as any;
         let amount;
 
-        for (let user in users){
+        for (let user in users) {
             amounts[user] = 0;
         }
-
-
 
         bill.forEach((dish: Dish, name: string) => {
             amount = dish.amount / dish.users.length;
             for (let user in dish.users) {
                 amounts[user] += amount;
             }
-        })
-
-
+        });
 
         return amounts;
     }

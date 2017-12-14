@@ -20,7 +20,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
-            }
+            };
         } else {
             return {};
         }
