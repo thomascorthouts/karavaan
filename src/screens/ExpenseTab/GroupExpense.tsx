@@ -40,7 +40,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <Picker.Item label={'Bill Splitter'} value={'bill'} key={'bill'}/>
                         <Picker.Item label={'Exact amounts'} value={'amounts'} key={'amounts'}/>
                     </Picker>
-                    <Button title={'NEXT'} onPress={() => this.nextScreen(navigate)}}/>
+                    <Button title={'NEXT'} onPress={() => this.nextScreen(navigate)}/>
                     </View>
             );
     }
