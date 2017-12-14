@@ -7,6 +7,7 @@ import {currencies} from '../../config/Data';
 interface IState {
     currency: string;
     currencies: Currencies;
+    amount: string;
     splitMode: string;
 }
 
@@ -18,6 +19,7 @@ class GroupExpense extends Component<{}, IState> {
         this.state = {
             currency: 'EUR',
             currencies: currencies,
+            amount: '0',
             splitMode: 'trans'
         };
     }
@@ -26,8 +28,9 @@ class GroupExpense extends Component<{}, IState> {
             return (
                 <View>
                     <InputWithLabel labelText={'description'}/>
-                    <InputWithCurrencySelector currentCurrency={this.state.currency} currencies={this.state.currencies}
-                                               onValueChange={(currency: any) => { this.setState(currency); }} selectedValue= { this.state.currency }/>
+                    <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
+                                               value={ this.state.amount }
+                                               onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
                         <Picker.Item label={'Transaction'} value={'trans'} key={'trans'}/>
                         <Picker.Item label={'Split evenly'} value={'even'} key={'even'}/>
