@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
-import { View, Picker} from 'react-native';
+import { View, Picker, Button} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
 
 interface IState {
+    group: Group;
     currency: string;
     currencies: Currencies;
     amount: string;
     splitMode: string;
 }
 
-class GroupExpense extends Component<{}, IState> {
+class GroupExpense extends Component<IDefaultNavProps, IState> {
 
-    constructor(state: IState) {
-        super(state);
+    constructor(props: IDefaultNavProps, state: IState) {
+        super(props, state);
 
         this.state = {
+            group: this.props.navigation.state.params.group,
             currency: 'EUR',
             currencies: currencies,
             amount: '0',
@@ -25,6 +27,7 @@ class GroupExpense extends Component<{}, IState> {
     }
 
     render() {
+            const {navigate} = this.props.navigation;
             return (
                 <View>
                     <InputWithLabel labelText={'description'}/>
@@ -37,8 +40,21 @@ class GroupExpense extends Component<{}, IState> {
                         <Picker.Item label={'Bill Splitter'} value={'bill'} key={'bill'}/>
                         <Picker.Item label={'Exact amounts'} value={'amounts'} key={'amounts'}/>
                     </Picker>
+                    <Button title={'NEXT'} onPress={() => this.nextScreen(navigate)}}/>
                     </View>
             );
+    }
+
+    nextScreen = (navigate: any) => {
+
+
+        if(this.state.splitMode === 'bill') {
+           // navigate('billSplit', );
+        } else if (this.state.splitMode === 'trans') {
+           // navigate('transSplit', );
+        } else {
+            navigate('amountSplit', {group:  this.state.group , opts: {splitMode: this.state.splitMode, currency: this.state.currency, amount: this.state.amount}});
+        }
     }
 }
 
