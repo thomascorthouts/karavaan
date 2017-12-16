@@ -12,7 +12,7 @@ import GroupFeed from '../screens/GroupTab/GroupFeed';
 import AddGroup from '../screens/GroupTab/AddGroup';
 import GroupDetail from '../screens/GroupTab/GroupDetail';
 
-import BillSplitter from '../screens/BillSplitter';
+import BillSplitter from '../screens/ExpenseTab/AmountSplit';
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 import GroupExpense from '../screens/ExpenseTab/GroupExpense';

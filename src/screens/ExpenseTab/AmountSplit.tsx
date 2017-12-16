@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, TouchableOpacity, StyleSheet } from 'react-native';
-import BillSplitterItem from '../components/BillSplitterItem';
+import BillSplitterItem from '../../components/BillSplitterItem';
 
 interface IProps {
     navigation: any;
