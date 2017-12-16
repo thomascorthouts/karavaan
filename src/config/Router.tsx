@@ -76,7 +76,8 @@ export const GroupStack = StackNavigator(
             navigationOptions: {
                 tabBarVisible: false,
                 header: null
-            },
+            }
+        },
         GroupAddTransaction: {
             screen: TransSplit,
             navigationOptions: {
@@ -89,15 +90,14 @@ export const GroupStack = StackNavigator(
             navigationOptions: {
                 tabBarVisible: false,
                 header: null
-            },
+            }
+        },
         GroupAddByAmount: {
             screen: AmountSplit,
             navigationOptions: {
                 tabBarVisible: false,
                 header: null
             }
-        }
-        }
         }
     }, {
         mode: 'modal'

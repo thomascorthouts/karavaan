@@ -17,8 +17,8 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     render() {
         return (
             <ScrollView>
-                <Text> {this.state.expense.firstname} </Text>
-                <Text> {this.state.expense.lastname} </Text>
+                <Text> {this.state.expense.donor} </Text>
+                <Text> {this.state.expense.receiver} </Text>
                 <Text> {this.state.expense.amount} </Text>
                 <Text> {this.state.expense.currency} </Text>
                 <Text> {this.state.expense.date} </Text>

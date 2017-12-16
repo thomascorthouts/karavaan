@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button, AsyncStorage, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
-import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
+import { View, Button, ScrollView } from 'react-native';
 import {currencies} from '../../config/Data';
 
 interface Options {
@@ -32,8 +30,13 @@ class BillSplit extends Component<IProps, IState> {
 
     render() {
         const {navigate} = this.props.navigation;
+        let items;
+        // TODO
         return (
             <View>
+                <ScrollView >
+                    {items}
+                </ScrollView>
                 <Button title={'Add Item'} onPress={ () => this.addItem()}/>
             </View>
         );
@@ -42,6 +45,24 @@ class BillSplit extends Component<IProps, IState> {
     addItem () {
         // TODO
         const test = 1;
+    }
+
+    splitByBill(users: Array<string>, bill: Map<string, Dish>) {
+        let amounts = {} as any;
+        let amount;
+
+        for (let user in users) {
+            amounts[user] = 0;
+        }
+
+        bill.forEach((dish: Dish, name: string) => {
+            amount = dish.amount / dish.users.length;
+            for (let user in dish.users) {
+                amounts[user] += amount;
+            }
+        });
+
+        return amounts;
     }
 }
 
