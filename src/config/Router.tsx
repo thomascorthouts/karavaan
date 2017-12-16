@@ -17,6 +17,10 @@ import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 import GroupExpense from '../screens/ExpenseTab/GroupExpense';
 
+import TransSplit from '../screens/ExpenseTab/TransSplit';
+import AmountSplit from '../screens/ExpenseTab/AmountSplit';
+import BillSplit from '../screens/ExpenseTab/BillSplit';
+
 export const ExpenseStack = StackNavigator(
     {
         ExpenseFeed: {
@@ -72,7 +76,28 @@ export const GroupStack = StackNavigator(
             navigationOptions: {
                 tabBarVisible: false,
                 header: null
+            },
+        GroupAddTransaction: {
+            screen: TransSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
             }
+            },
+        GroupAddBill: {
+            screen: BillSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            },
+        GroupAddByAmount: {
+            screen: AmountSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+        }
+        }
         }
     }, {
         mode: 'modal'

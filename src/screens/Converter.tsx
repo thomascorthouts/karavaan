@@ -38,11 +38,13 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         currentCurrency={this.state.currency1} currencies={this.state.currencies}
                         onChangeText={(value: any) => this.setState({value})}
                         onValueChange={(currency1: any) => this.setState({currency1})}
+                        returnKeyType={'done'}
                     />
                     <InputWithCurrencySelector
                         selectedValue={this.state.currency2}
                         editable={false} currentCurrency={this.state.currency2} currencies={this.state.currencies}
                                                onValueChange={(currency2: any) => this.setState({currency2})}
+                        returnKeyType={'done'}
                         value={this.convert(parseFloat(this.state.value), this.state.currency1, this.state.currency2).toString()} />
                 </View>
             );
@@ -83,7 +85,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     async componentWillMount() {
-        try {
+
             fetch('https://api.fixer.io/latest')
                 .then((resp) => resp.json())
                 .then((data) => {
@@ -98,22 +100,22 @@ class Converter extends Component<IDefaultNavProps, IState> {
                     } else {
                         throw 'Mattias';
                     }
+                })
+                .catch(() => {
+                    AsyncStorage.getItem('currencies')
+                        .then((value) => {
+                            if (value) {
+                                this.setState({
+                                    currencies: JSON.parse(value), isLoading: false
+                                });
+                            } else {
+                                this.setState({
+                                    currencies: currencies, isLoading: false
+                                });
+                            }
+                        });
                 });
             await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-        } catch (error) {
-            AsyncStorage.getItem('currencies')
-                .then((value) => {
-                    if (value) {
-                        this.setState({
-                            currencies: JSON.parse(value), isLoading: false
-                        });
-                    } else {
-                        this.setState({
-                            currencies: currencies, isLoading: false
-                        });
-                    }
-                });
-        }
     }
 }
 
