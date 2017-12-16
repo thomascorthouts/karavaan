@@ -80,14 +80,12 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                 inputref={(input: any) => { (this as any).amount = input; }}
                             />
                         </View>
-
-                        <CurrencyPicker currentCurrency={this.state.expense.currency} currencies={this.state.currencies} onValueChange={(currency: any) => {
-                            const expense = Object.assign({}, this.state.expense, { currency: currency });
-                            this.setState({ expense });
-                        }} selectedValue={this.state.expense.currency}/>
                     </View>
                 </KeyboardAvoidingView>
-
+                <CurrencyPicker currentCurrency={this.state.expense.currency} currencies={this.state.currencies} onValueChange={(currency: any) => {
+                    const expense = Object.assign({}, this.state.expense, { currency: currency });
+                    this.setState({ expense });
+                }} selectedValue={this.state.expense.currency}/>
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
