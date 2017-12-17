@@ -11,15 +11,14 @@ import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import AddGroup from '../screens/GroupTab/AddGroup';
 import GroupDetail from '../screens/GroupTab/GroupDetail';
+import GroupExpense from '../screens/GroupTab/GroupExpense';
 
-import BillSplitter from '../screens/ExpenseTab/AmountSplit';
+import TransSplit from '../screens/SplitOptions/TransSplit';
+import AmountSplit from '../screens/SplitOptions/AmountSplit';
+import BillSplit from '../screens/SplitOptions/BillSplit';
+
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
-import GroupExpense from '../screens/ExpenseTab/GroupExpense';
-
-import TransSplit from '../screens/ExpenseTab/TransSplit';
-import AmountSplit from '../screens/ExpenseTab/AmountSplit';
-import BillSplit from '../screens/ExpenseTab/BillSplit';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -146,12 +145,6 @@ export const Drawer = DrawerNavigator(
             screen: Settings,
             navigationOptions: {
                 title: 'Settings'
-            }
-        },
-        Item4: {
-            screen: BillSplitter,
-            navigationOptions: {
-                title: 'BillSplitter'
             }
         }
     }

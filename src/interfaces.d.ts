@@ -5,7 +5,9 @@ interface IDefaultNavProps {
 // Expenses
 
 interface Expense {
+    category: string;
     date: string;
+    description: string;
     donor: string;
     receiver: string;
     amount: number;
