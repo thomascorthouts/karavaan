@@ -6,8 +6,8 @@ interface IDefaultNavProps {
 
 interface Expense {
     date: string;
-    firstname: string;
-    lastname: string;
+    donor: string;
+    receiver: string;
     amount: number;
     currency: string;
 }

@@ -12,10 +12,14 @@ import GroupFeed from '../screens/GroupTab/GroupFeed';
 import AddGroup from '../screens/GroupTab/AddGroup';
 import GroupDetail from '../screens/GroupTab/GroupDetail';
 
-import BillSplitter from '../screens/BillSplitter';
+import BillSplitter from '../screens/ExpenseTab/AmountSplit';
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 import GroupExpense from '../screens/ExpenseTab/GroupExpense';
+
+import TransSplit from '../screens/ExpenseTab/TransSplit';
+import AmountSplit from '../screens/ExpenseTab/AmountSplit';
+import BillSplit from '../screens/ExpenseTab/BillSplit';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -69,6 +73,27 @@ export const GroupStack = StackNavigator(
         },
         GroupAddExpense: {
             screen: GroupExpense,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+        },
+        GroupAddTransaction: {
+            screen: TransSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+            },
+        GroupAddBill: {
+            screen: BillSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+        },
+        GroupAddByAmount: {
+            screen: AmountSplit,
             navigationOptions: {
                 tabBarVisible: false,
                 header: null

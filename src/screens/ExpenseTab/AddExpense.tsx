@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
+import { CurrencyPicker } from '../../components/CurrencySelector';
+import { currencies } from '../../config/Data';
 
 interface IState {
     expense: Expense;
     error: string;
+    currencies: Currencies;
     expenseArray: ExpenseList;
     expenseArrayId: string;
 }
@@ -17,12 +20,13 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         let dat = new Date();
         this.state = {
             expense: {
-                firstname: '',
-                lastname: '',
-                currency: 'EUR €',
+                donor: '',
+                receiver: '',
+                currency: 'EUR',
                 amount: 0,
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear()
             },
+            currencies: currencies,
             expenseArray: this.props.navigation.state.params.expenseArray,
             expenseArrayId: this.props.navigation.state.params.expenseArrayId || 'expenses',
             error: ''
@@ -31,14 +35,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
     render() {
         const { goBack } = this.props.navigation;
-        const values = ['1', '2'];
-        const optionsGender = ['Male', 'Female'];
-        const currencies = [
-            'CAD',          // Canadian Dollar
-            'EUR',          // Euro
-            'GBP',          // British Pound
-            'USD'           // US Dollar
-        ];
 
         return (
             <View style={styles.container}>
@@ -49,25 +45,25 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
                 <KeyboardAvoidingView behavior='padding'>
                     <InputWithoutLabel
-                        placeholder={'Firstname'}
+                        placeholder={'Donor'}
                         onChangeText={(text: string) => {
-                            const expense = Object.assign({}, this.state.expense, { firstname: text });
+                            const expense = Object.assign({}, this.state.expense, { donor: text });
                             this.setState({ expense });
                         }}
-                        onSubmitEditing={() => (this as any).lastname.focus()}
+                        onSubmitEditing={() => (this as any).receiver.focus()}
                         returnKeyType={'next'}
                         autoCapitalize={'words'}
                     />
 
                     <InputWithoutLabel
-                        placeholder={'Lastname'}
+                        placeholder={'Receiver'}
                         onChangeText={(text: string) => {
-                            const expense = Object.assign({}, this.state.expense, { lastname: text });
+                            const expense = Object.assign({}, this.state.expense, { receiver: text });
                             this.setState({ expense });
                         }}
                         returnKeyType={'next'}
                         onSubmitEditing={() => (this as any).amount.focus()}
-                        inputref={(input: any) => { (this as any).lastname = input; }}
+                        inputref={(input: any) => { (this as any).receiver = input; }}
                         autoCapitalize={'words'}
                     />
 
@@ -84,22 +80,12 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                 inputref={(input: any) => { (this as any).amount = input; }}
                             />
                         </View>
-
-                        <Picker
-                            style={styles.picker}
-                            selectedValue={this.state.expense.currency}
-                            onValueChange={(itemValue, itemIndex) => {
-                                const expense = Object.assign({}, this.state.expense, { currency: itemValue });
-                                this.setState({ expense });
-                            }} >
-                            <Picker.Item label='EUR / €' value='EUR €' />
-                            <Picker.Item label='CAD / $' value='CAD $' />
-                            <Picker.Item label='GBP / £' value='GBP £' />
-                            <Picker.Item label='USD / $' value='USD $' />
-                        </Picker>
                     </View>
                 </KeyboardAvoidingView>
-
+                <CurrencyPicker currentCurrency={this.state.expense.currency} currencies={this.state.currencies} onValueChange={(currency: any) => {
+                    const expense = Object.assign({}, this.state.expense, { currency: currency });
+                    this.setState({ expense });
+                }} selectedValue={this.state.expense.currency}/>
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
@@ -120,17 +106,33 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     validate(navigate: any) {
-        console.log(this.state.expense.firstname);
-        console.log(this.state.expense.lastname);
+        console.log(this.state.expense.donor);
+        console.log(this.state.expense.receiver);
         console.log(this.state.expense.currency);
         console.log(this.state.expense.amount);
 
-        if (this.state.expense.firstname === '' || this.state.expense.lastname === '' || this.state.expense.amount < 0) {
+        if (this.state.expense.donor === '' || this.state.expense.receiver === '' || this.state.expense.amount < 0) {
             this.setState({ error: 'Please fill out all fields' });
             console.log('error:' + this.state.error);
         } else {
             this.save(navigate);
         }
+    }
+
+    async componentWillMount() {
+        AsyncStorage.getItem('currencies')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        currencies: JSON.parse(value)
+                    });
+                } else {
+                    this.setState({
+                        currencies: currencies
+                    });
+                }
+            });
+        await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
     }
 
     async addExpenseToStorage() {
@@ -139,41 +141,14 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'date': this.state.expense.date,
                 'amount': this.state.expense.amount,
                 'currency': this.state.expense.currency,
-                'firstname': this.state.expense.firstname,
-                'lastname': this.state.expense.lastname
+                'donor': this.state.expense.donor,
+                'receiver': this.state.expense.receiver
             });
 
             await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
         } catch (error) {
             console.log(error);
         }
-    }
-
-    splitEven(users: Array<string>, amount: number) {
-        let amounts = {} as any;
-        const share = amount / users.length;
-        for (let user in users) {
-            amounts[user] = share;
-        }
-        return amounts;
-    }
-
-    splitByBill(users: Array<string>, bill: Map<string, Dish>) {
-        let amounts = {} as any;
-        let amount;
-
-        for (let user in users) {
-            amounts[user] = 0;
-        }
-
-        bill.forEach((dish: Dish, name: string) => {
-            amount = dish.amount / dish.users.length;
-            for (let user in dish.users) {
-                amounts[user] += amount;
-            }
-        });
-
-        return amounts;
     }
 }
 
