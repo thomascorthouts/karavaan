@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Button, Picker, KeyboardAvoidingView, AsyncStorage, ScrollView } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/CurrencySelector';
 import { currencies } from '../../config/Data';
@@ -20,6 +20,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         let dat = new Date();
         this.state = {
             expense: {
+                description: '',
+                category: '',
                 donor: '',
                 receiver: '',
                 currency: 'EUR',
@@ -38,12 +40,23 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-                <StatusBar barStyle={'light-content'} />
+                <View style={{flex: 1}}>
+                    <Text style={styles.title}>New Expense</Text>
+                    <Text style={styles.errorStyle}> {this.state.error} </Text>
+                </View>
 
-                <Text style={styles.title}>New Expense</Text>
-                <Text style={styles.errorStyle}> {this.state.error} </Text>
+                <KeyboardAvoidingView behavior={'padding'}>
+                    <InputWithoutLabel
+                        placeholder={'Description'}
+                        onChangeText={(text: string) => {
+                            const expense = Object.assign({}, this.state.expense, { description: text });
+                            this.setState({ expense });
+                        }}
+                        onSubmitEditing={() => (this as any).donor.focus()}
+                        returnKeyType={'next'}
+                        autoCapitalize={'words'}
+                    />
 
-                <KeyboardAvoidingView behavior='padding'>
                     <InputWithoutLabel
                         placeholder={'Donor'}
                         onChangeText={(text: string) => {
@@ -51,6 +64,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                             this.setState({ expense });
                         }}
                         onSubmitEditing={() => (this as any).receiver.focus()}
+                        inputref={(input: any) => { (this as any).donor = input; }}
                         returnKeyType={'next'}
                         autoCapitalize={'words'}
                     />
@@ -61,9 +75,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                             const expense = Object.assign({}, this.state.expense, { receiver: text });
                             this.setState({ expense });
                         }}
-                        returnKeyType={'next'}
                         onSubmitEditing={() => (this as any).amount.focus()}
                         inputref={(input: any) => { (this as any).receiver = input; }}
+                        returnKeyType={'next'}
                         autoCapitalize={'words'}
                     />
 
@@ -76,16 +90,34 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                     const expense = Object.assign({}, this.state.expense, { amount: value });
                                     this.setState({ expense });
                                 }}
-                                returnKeyType={'done'}
                                 inputref={(input: any) => { (this as any).amount = input; }}
+                                returnKeyType={'done'}
+                            />
+                        </View>
+                        <View style={styles.picker}>
+                            <CurrencyPicker
+                                currentCurrency={this.state.expense.currency}
+                                currencies={this.state.currencies}
+                                onValueChange={(currency: any) => {
+                                    const expense = Object.assign({}, this.state.expense, { currency: currency });
+                                    this.setState({ expense });
+                                }}
+                                selectedValue={this.state.expense.currency}
                             />
                         </View>
                     </View>
+
+                    <InputWithoutLabel
+                        placeholder={'Category'}
+                        onChangeText={(text: string) => {
+                            const expense = Object.assign({}, this.state.expense, { category: text });
+                            this.setState({ expense });
+                        }}
+                        returnKeyType={'done'}
+                        autoCapitalize={'words'}
+                    />
                 </KeyboardAvoidingView>
-                <CurrencyPicker currentCurrency={this.state.expense.currency} currencies={this.state.currencies} onValueChange={(currency: any) => {
-                    const expense = Object.assign({}, this.state.expense, { currency: currency });
-                    this.setState({ expense });
-                }} selectedValue={this.state.expense.currency}/>
+
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                     <Text style={styles.buttonText}>BACK</Text>
                 </TouchableOpacity>
@@ -142,7 +174,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'amount': this.state.expense.amount,
                 'currency': this.state.expense.currency,
                 'donor': this.state.expense.donor,
-                'receiver': this.state.expense.receiver
+                'receiver': this.state.expense.receiver,
+                'description': this.state.expense.description,
+                'category': this.state.expense.category
             });
 
             await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
@@ -158,8 +192,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#4B9382',
-        alignSelf: 'stretch'
+        backgroundColor: '#4B9382'
     },
     title: {
         fontSize: 40,
