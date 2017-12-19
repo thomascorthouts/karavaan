@@ -13,12 +13,17 @@ interface IProps {
     navigation: any;
 };
 
+interface Amount {
+    person: Person;
+    amount: number;
+}
 interface IState {
     group: Group;
     options: Options;
+    amounts: Array<Amount>;
+    sum: number;
 };
 
-interface FriendList extends Array<string> { }
 
 class AmountSplit extends Component<IProps, IState> {
     constructor(props: IProps, state: IState) {
@@ -26,17 +31,18 @@ class AmountSplit extends Component<IProps, IState> {
 
         this.state = {
             group: this.props.navigation.state.params.group as Group,
-            options: this.props.navigation.state.params.opts as Options
+            options: this.props.navigation.state.params.opts as Options,
+            amounts: [],
+            sum: 0
         };
+        this.countSum();
     }
 
     render() {
         const { navigate } = this.props.navigation;
 
-        let persons = this.state.group.personArray || ['mathias', 'thomas', 'serhat'];
-
-        let splitter = persons.map((val: any, key: any) => {
-            return <BillSplitterItem key={key} keyval={key} val={val} amount={0} submitEditing={() => this.submitEditing()}/>;
+        let splitter = this.state.amounts.map((val: Amount, key: number) => {
+            return <BillSplitterItem key={key} keyval={key} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount} submitEditing={() => this.submitEditing()}/>;
         });
 
         return (
@@ -47,6 +53,7 @@ class AmountSplit extends Component<IProps, IState> {
                     {splitter}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
+                    <Text>Total: {this.state.options.currency}{this.state.sum}</Text>
                     <TouchableOpacity onPress={() => this.confirm(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
                     </TouchableOpacity>
@@ -55,12 +62,29 @@ class AmountSplit extends Component<IProps, IState> {
         );
     }
 
+    countSum() {
+        let sum = this.state.options.amount;
+        this.state.amounts.map((val: Amount, index: number) => {
+           sum -= val.amount;
+        });
+        this.setState({sum});
+    }
+
     submitEditing() {
         console.log('hello');
     }
 
     confirm(navigation: any) {
         console.log('hello');
+    }
+
+    componentWillMount() {
+        let amounts = [] as Amount[];
+        const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.group.personArray.length) : 0;
+        this.state.group.personArray.map((val: Person, index: number) => {
+            amounts.push({ person: val, amount: avg });
+        });
+        this.setState({amounts});
     }
 }
 
