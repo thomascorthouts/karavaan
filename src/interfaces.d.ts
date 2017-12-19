@@ -8,8 +8,7 @@ interface Expense {
     category: string;
     date: string;
     description: string;
-    donor: string;
-    receiver: string;
+    balances: Balances;
     amount: number;
     currency: string;
 }
@@ -22,7 +21,7 @@ interface Group {
     name: string;
     personArray: PersonList;
     expenseArrayId: string;
-    date: string;
+    defaultCurrency: Currency;
 }
 
 interface GroupList extends Array<Group> { }
@@ -30,8 +29,10 @@ interface GroupList extends Array<Group> { }
 // Person
 
 interface Person {
+    id: string; // At the moment this is a string of firstname_lastname
     firstname: string;
     lastname: string;
+    balance: number; // Always in ..?
 }
 
 interface PersonList extends Array<Person> { }
@@ -51,8 +52,18 @@ interface Currencies {
 
 // Bill Splitting
 
-interface Dish{
+interface Dish {
     name?: string;
     amount: number;
     users: PersonList;
 }
+
+// Balance
+
+interface Balance {
+    person: Person;
+    amount: number;
+    currency: Currency;
+}
+
+interface Balances extends Array<Balance> { }

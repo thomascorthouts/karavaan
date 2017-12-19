@@ -34,11 +34,9 @@ class AmountSplit extends Component<IProps, IState> {
         const { navigate } = this.props.navigation;
 
         let persons = this.state.group.personArray || ['mathias', 'thomas', 'serhat'];
-        const average = (this.state.options.splitMode) ? this.state.options.amount / persons.length : 0;
-        let mod = this.state.options.amount - (average * persons.length);
 
         let splitter = persons.map((val: any, key: any) => {
-            return <BillSplitterItem key={key} keyval={key} val={val} amount={average} submitEditing={() => this.submitEditing()}/>;
+            return <BillSplitterItem key={key} keyval={key} val={val} amount={0} submitEditing={() => this.submitEditing()}/>;
         });
 
         return (
@@ -48,7 +46,6 @@ class AmountSplit extends Component<IProps, IState> {
                 <ScrollView style={styles.ScrollContainer}>
                     {splitter}
                 </ScrollView>
-                <Text>{mod}</Text>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
                     <TouchableOpacity onPress={() => this.confirm(navigate)} style={styles.addButton}>
                         <Text style={styles.addButtonText}> + </Text>
@@ -64,15 +61,6 @@ class AmountSplit extends Component<IProps, IState> {
 
     confirm(navigation: any) {
         console.log('hello');
-    }
-    // TODO
-    splitEven(users: Array<string>, amount: number) {
-        let amounts = {} as any;
-        const share = amount / users.length;
-        for (let user in users) {
-            amounts[user] = share;
-        }
-        return amounts;
     }
 }
 
