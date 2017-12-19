@@ -24,17 +24,16 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
 
         return (
             <ScrollView>
-                <Text> {this.state.group.name} </Text>
                 <Text> {this.state.group.date} </Text>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.viewExpenses(navigate)}>
-                    <Text style={styles.buttonText}>View Expense</Text>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.viewPersons(navigate)}>
+                    <Text style={styles.buttonText}>View Persons</Text>
                 </TouchableOpacity>
             </ScrollView>
         );
     }
 
-    async viewExpenses(navigate: any) {
+    async viewPersons(navigate: any) {
         let expenseArray = await AsyncStorage.getItem(this.state.group.expenseArrayId)
             .then((value) => {
                 if (value) {

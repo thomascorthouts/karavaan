@@ -1,30 +1,47 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
 
 interface IState {
     group: Group;
     groupArray: GroupList;
+    nextKey: any;
+    error: string;
 }
+
+// aanpassingen: 
+    //personmap i.p.v. personarray (voor update methode)
+    //nextkey mss op andere manier
+    //veld clearen na member toe te voegen
 
 class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
-
         let dat = new Date();
         this.state = {
             group: {
                 name: '',
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 personArray: [] as PersonList,
-                expenseArrayId: ''
+                expenseArrayId: '',
             },
-            groupArray: this.props.navigation.state.params.groupArray
+            groupArray: this.props.navigation.state.params.groupArray,
+            nextKey: 0,
+            error: ''
         };
     }
 
     render() {
         const { goBack } = this.props.navigation;
+        let members: ReactNode[] = new Array();
+        const personArray = this.state.group.personArray;
+        const num = personArray.map((person: Person) => {
+             members.push(<TextInput style={styles.input} returnKeyType={'next'} autoCapitalize={'words'} 
+             value={person.name} onChangeText={(text) =>  
+                 {
+                 this.updatePerson(person, text);}}/>)
+        });
+
 
         return (
             <View style={styles.container}>
@@ -32,7 +49,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                     <View style={styles.formcontainer}>
                         <StatusBar barStyle={'light-content'} />
 
-                        <Text style={styles.title}>New Expense</Text>
+                        <Text style={styles.title}>New Group</Text>
 
                         <TextInput
                             style={styles.input}
@@ -56,13 +73,28 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                             returnKeyType={'next'}
                         />
 
+                        <Text> Members </Text>
+                        {members}
+                        <TextInput 
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            placeholder={'new member'}
+                            returnKeyType={'next'} 
+                            autoCapitalize={'words'} 
+                            onSubmitEditing={(text) => {
+                                    this.addPerson(this.state.nextKey, text.nativeEvent.text);
+                                }
+                            }
+                        />
+
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                             <Text style={styles.buttonText}>BACK</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(goBack)}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(goBack)}>
                             <Text style={styles.buttonText}>SAVE</Text>
                         </TouchableOpacity>
+                        <Text style={styles.errorText}>{this.state.error}</Text>
 
                     </View>
                 </KeyboardAvoidingView>
@@ -76,6 +108,33 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                 goBack();
                 this.props.navigation.state.params.updateFeedState({ groupArray: this.state.groupArray });
             });
+    }
+
+    validate(navigate: any){
+        if (this.state.group.date === '' || this.state.group.name === '' || this.state.group.personArray.length === 0){
+            this.setState( {error: 'Please fill out all fields'})
+        } else {
+            this.save(navigate);
+        }
+    }
+
+    updatePerson(person: Person, name: string){
+        for (let i = 0; i < this.state.group.personArray.length; i++){
+            if (this.state.group.personArray[i].key === person.key){
+                this.state.group.personArray[i].name = name;
+            }
+        }
+        const group = this.state.group;
+        this.setState({ group: group});
+    }
+
+    addPerson(key: any, name: string) {
+        this.state.group.personArray.push({key: key, name: name});
+        
+        const group = this.state.group;
+        const k = key + 1;
+        this.setState({nextKey: k});
+        this.setState({group: group});
     }
 
     async addGroupToStorage() {
@@ -138,5 +197,8 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: '#FFFFFF'
+    },
+    errorText: {
+        color: 'red'
     }
 });

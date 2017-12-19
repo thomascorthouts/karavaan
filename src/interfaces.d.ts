@@ -25,11 +25,9 @@ interface Group {
 
 interface GroupList extends Array<Group> { }
 
-// Person
+interface PersonList extends Array<Person> { }
 
 interface Person {
-    firstname: string;
-    lastname: string;
+    key: any;
+    name: string;
 }
-
-interface PersonList extends Array<Person> { }
