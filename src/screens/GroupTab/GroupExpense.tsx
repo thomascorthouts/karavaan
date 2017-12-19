@@ -11,6 +11,7 @@ interface IState {
     currencies: Currencies;
     amount: string;
     splitMode: string;
+    category: string;
 }
 
 class GroupExpense extends Component<IDefaultNavProps, IState> {
@@ -24,7 +25,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             currency: 'EUR',
             currencies: currencies,
             amount: '0',
-            splitMode: 'trans'
+            splitMode: 'trans',
+            category: ''
         };
     }
 
@@ -36,6 +38,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
                                                value={ this.state.amount } onChangeText={(amount: any) => this.setState({amount})}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
+                    <InputWithLabel labelText={'category'} onChangeText={(category: any) => this.setState({category})}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
                         <Picker.Item label={'Transaction'} value={'trans'} key={'trans'}/>
                         <Picker.Item label={'Split evenly'} value={'even'} key={'even'}/>
