@@ -1,33 +1,24 @@
 import { Component, ReactNode} from 'react';
-import { View, Text, Picker, ScrollView } from 'react-native';
+import { View, Text, Picker, ScrollView, Button } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
-import { InputWithButton } from '../components/TextInput/InputWithButton';
 
-interface IState {
+interface IPersonPickerProps {
+    currentPerson: string;
     options: PersonList;
     chosenPersons: PersonList;
-    currentOptions: Array<any>;
-    currentPerson: string;
 }
-class PersonPicker extends Component<IDefaultNavProps, IState> {
+class PersonPicker extends Component<IPersonPickerProps, {}}> {
 
-    constructor(props: IDefaultNavProps, state: IState) {
-        super(props,state);
-        this.state = {
-            options: this.props.navigation.state.params.personArray,
-            currentOptions: [],
-            chosenPersons: [],
-            currentPerson: ''
-        };
+    constructor(props: IPersonPickerProps) {
+        super(props);
     }
 
-    // TODO This should be a inputfield that searches in persons and adds all persons you want to a list
 
     render() {
         this.updateOptions();
         return (
             <View>
-                <InputWithoutLabel value={this.state.currentPerson} onChangeText={(text: string) => this.setState({ currentPerson: text})} />
+                <InputWithoutLabel value={this.props.currentPerson} onChangeText={(text: string) => this.props.currentPerson = text} />
                 <ScrollView>
                     {this.state.currentOptions}
                 </ScrollView>
@@ -39,12 +30,23 @@ class PersonPicker extends Component<IDefaultNavProps, IState> {
         this.setState({currentOptions: []});
         let name;
         let opts: ReactNode[] = new Array();
-        this.state.options.map((val: Person, key: number) => {
+        this.props.options.map((val: Person, key: number) => {
             name = val.firstname + ' ' + val.lastname;
-            if (name.includes(this.state.currentPerson)) {
-                opts.push(<Picker.Item label= {name} value={val.id} key={val.id} />);
+            if (name.includes(this.props.currentPerson)) {
+                opts.push(<View><Text>{val.firstname} {val.lastname} </Text>
+                    <Button title={'+'} onPress={() => this.addPerson(val.id)} /></View>);
             }
         });
         this.setState({currentOptions: opts});
+    }
+
+
+    addPerson (id: string) {
+        let persons = this.props.chosenPersons;
+        persons.push(this.props.options.find(this.isPerson));//Remove text from inputfield
+    }
+
+    isPerson(person: Person) {
+        return person.id === this.state.currentID
     }
 }
