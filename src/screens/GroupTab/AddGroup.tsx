@@ -4,29 +4,29 @@ import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexS
 interface IState {
     group: Group;
     groupArray: GroupList;
-    nextKey: any;
     error: string;
 }
 
-// aanpassingen: 
-    //personmap i.p.v. personarray (voor update methode)
-    //nextkey mss op andere manier
-    //veld clearen na member toe te voegen
+// vragen: 
+    //Hoe doe je die waarschuwing weg?
+    //Hoe veld clearen?
+
 
 class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
         let dat = new Date();
+
         this.state = {
+            groupArray: this.props.navigation.state.params.groupArray,
             group: {
+                groupId: '',
                 name: '',
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 personArray: [] as PersonList,
                 expenseArrayId: '',
             },
-            groupArray: this.props.navigation.state.params.groupArray,
-            nextKey: 0,
             error: ''
         };
     }
@@ -35,11 +35,12 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         const { goBack } = this.props.navigation;
         let members: ReactNode[] = new Array();
         const personArray = this.state.group.personArray;
-        const num = personArray.map((person: Person) => {
+
+        const num = personArray.map((person: string, key: any) => {
              members.push(<TextInput style={styles.input} returnKeyType={'next'} autoCapitalize={'words'} 
-             value={person.name} onChangeText={(text) =>  
+             value={person} onChangeText={(text) =>  
                  {
-                 this.updatePerson(person, text);}}/>)
+                 this.updatePerson(text, key);}}/>)
         });
 
 
@@ -81,9 +82,11 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                             placeholder={'new member'}
                             returnKeyType={'next'} 
                             autoCapitalize={'words'} 
-                            onSubmitEditing={(text) => {
-                                    this.addPerson(this.state.nextKey, text.nativeEvent.text);
+                            onSubmitEditing={(text) => 
+                                {
+                                    this.addPerson(text.nativeEvent.text);
                                 }
+                                
                             }
                         />
 
@@ -118,34 +121,27 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         }
     }
 
-    updatePerson(person: Person, name: string){
-        for (let i = 0; i < this.state.group.personArray.length; i++){
-            if (this.state.group.personArray[i].key === person.key){
-                this.state.group.personArray[i].name = name;
-            }
-        }
+    updatePerson(person: string, key: any){
+        this.state.group.personArray[key] = person;
         const group = this.state.group;
         this.setState({ group: group});
     }
 
-    addPerson(key: any, name: string) {
-        this.state.group.personArray.push({key: key, name: name});
-        
+    addPerson(name: string) {
+        this.state.group.personArray.push(name);
         const group = this.state.group;
-        const k = key + 1;
-        this.setState({nextKey: k});
         this.setState({group: group});
     }
 
     async addGroupToStorage() {
         try {
             this.state.groupArray.push({
+                'groupId': 'G' + this.state.group.name + '#' + new Date().toISOString(),
                 'name': this.state.group.name,
                 'date': this.state.group.date,
                 'personArray': this.state.group.personArray,
                 'expenseArrayId': this.state.group.name + '#' + new Date().toISOString()
             });
-
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
         } catch (error) {
             console.log(error);

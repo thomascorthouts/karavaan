@@ -17,6 +17,7 @@ interface ExpenseList extends Array<Expense> { }
 // Groups
 
 interface Group {
+    groupId: any;
     name: string;
     personArray: PersonList;
     expenseArrayId: string;
@@ -25,9 +26,4 @@ interface Group {
 
 interface GroupList extends Array<Group> { }
 
-interface PersonList extends Array<Person> { }
-
-interface Person {
-    key: any;
-    name: string;
-}
+interface PersonList extends Array<string> { }
