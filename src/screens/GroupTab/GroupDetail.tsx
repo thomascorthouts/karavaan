@@ -25,7 +25,6 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
         return (
             <ScrollView>
                 <Text> {this.state.group.name} </Text>
-                <Text> {this.state.group.date} </Text>
 
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => this.viewExpenses(navigate)}>
                     <Text style={styles.buttonText}>View Expense</Text>

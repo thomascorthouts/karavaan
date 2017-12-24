@@ -67,23 +67,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
         return rateTo / rateFrom;
     }
 
-    changeBaseCurrency (navigate: any) {
-        try {
-            navigate('selectCurrency', {current: this.state.currency1});
-        } catch (err) {
-            console.log(err);
-        }
-
-    }
-    changeToCurrency (navigate: any) {
-        try {
-            navigate('selectCurrency', {current: this.state.currency2});
-        } catch (err) {
-            console.log(err);
-        }
-
-    }
-
     async componentWillMount() {
 
             fetch('https://api.fixer.io/latest')

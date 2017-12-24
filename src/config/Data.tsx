@@ -34,3 +34,5 @@ export const currencies = {
 };
 
 export const friends: Array<string> = new Array('Thomas Corthouts', 'Mathias Spanhove', 'Franci Haest', 'Serhat Erdogan');
+
+export const categories: Array<string> = new Array('Food', 'Transport', 'Other');

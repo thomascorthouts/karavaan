@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, TouchableOpacity, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
+import OptionPicker from '../../components/OptionPicker';
 
 interface Options {
     splitMode: boolean;
@@ -22,6 +23,7 @@ interface IState {
     options: Options;
     amounts: Array<Amount>;
     sum: number;
+    payers: Array<Amount>;
 };
 
 
@@ -33,6 +35,7 @@ class AmountSplit extends Component<IProps, IState> {
             group: this.props.navigation.state.params.group as Group,
             options: this.props.navigation.state.params.opts as Options,
             amounts: [],
+            payers: [],
             sum: 0
         };
         this.countSum();
@@ -49,6 +52,10 @@ class AmountSplit extends Component<IProps, IState> {
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <Text>{this.state.options.description}</Text>
+                <ScrollView>
+                    <Text>Here has to come the PersonPicker </Text>
+                </ScrollView>
+                <Text>Receivers</Text>
                 <ScrollView style={styles.ScrollContainer}>
                     {splitter}
                 </ScrollView>

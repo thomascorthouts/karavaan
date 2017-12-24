@@ -1,9 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
+import {CurrencyPicker} from '../../components/CurrencySelector';
+import {currencies} from '../../config/Data';
 
 interface IState {
     group: Group;
     groupArray: GroupList;
+    currencies: Currencies;
+    currentCurrencyTag: string;
 }
 
 class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
@@ -11,16 +15,52 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let dat = new Date();
         this.state = {
             group: {
+                id: '',
                 name: '',
-                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 personArray: [] as PersonList,
-                expenseArrayId: ''
+                expenseArrayId: '',
+                defaultCurrency: {} as Currency
             },
-            groupArray: this.props.navigation.state.params.groupArray
+            groupArray: this.props.navigation.state.params.groupArray,
+            currencies: {} as Currencies,
+            currentCurrencyTag: 'EUR'
         };
+    }
+
+    async componentWillMount() {
+
+        fetch('https://api.fixer.io/latest')
+            .then((resp) => resp.json())
+            .then((data) => {
+                if (data.rates) {
+                    let key;
+                    for (key in data.rates) {
+                        this.state.currencies[key].rate = data.rates[key];
+                    }
+                    this.setState({
+                        currencies: this.state.currencies,
+                    });
+                } else {
+                    throw 'Mattias';
+                }
+            })
+            .catch(() => {
+                AsyncStorage.getItem('currencies')
+                    .then((value) => {
+                        if (value) {
+                            this.setState({
+                                currencies: JSON.parse(value)
+                            });
+                        } else {
+                            this.setState({
+                                currencies: currencies
+                            });
+                        }
+                    });
+            });
+        await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
     }
 
     render() {
@@ -45,17 +85,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                             returnKeyType={'next'}
                         />
 
-                        <TextInput
-                            style={styles.input}
-                            underlineColorAndroid={'transparent'}
-                            value={this.state.group.date}
-                            onChangeText={(text) => {
-                                const group = Object.assign({}, this.state.group, { date: text });
-                                this.setState({ group });
-                            }}
-                            returnKeyType={'next'}
-                        />
-
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
                             <Text style={styles.buttonText}>BACK</Text>
                         </TouchableOpacity>
@@ -63,6 +92,14 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(goBack)}>
                             <Text style={styles.buttonText}>SAVE</Text>
                         </TouchableOpacity>
+                        <CurrencyPicker currentCurrency={this.state.currentCurrencyTag}
+                                        currencies={this.state.currencies}
+                                        onValueChange={(text: any) => {
+                                                    this.setState({currentCurrencyTag: text});
+                                                    const group = Object.assign({}, this.state.group, { defaultCurrency: this.state.currencies[this.state.currentCurrencyTag]});
+                                                    this.setState({ group });
+                                        }}
+                                        selectedValue={this.state.currentCurrencyTag}/>
 
                     </View>
                 </KeyboardAvoidingView>
@@ -82,9 +119,10 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         try {
             this.state.groupArray.push({
                 'name': this.state.group.name,
-                'date': this.state.group.date,
+                'id': this.state.group.id,
                 'personArray': this.state.group.personArray,
-                'expenseArrayId': this.state.group.name + '#' + new Date().toISOString()
+                'expenseArrayId': this.state.group.name + '#' + new Date().toISOString(),
+                'defaultCurrency': this.state.group.defaultCurrency
             });
 
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));

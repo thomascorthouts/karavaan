@@ -1,52 +1,68 @@
-import { Component, ReactNode} from 'react';
-import { View, Text, Picker, ScrollView, Button } from 'react-native';
-import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
+import {Component, ReactNode} from 'react';
+import {View, ScrollView, Text, TouchableOpacity }from 'react-native';
+import OptionPicker from './OptionPicker';
 
-interface IPersonPickerProps {
-    currentPerson: string;
-    options: PersonList;
-    chosenPersons: PersonList;
+interface IProps {
+    persons: PersonList;
+    input: string;
 }
-class PersonPicker extends Component<IPersonPickerProps, {}}> {
 
-    constructor(props: IPersonPickerProps) {
-        super(props);
+interface IState {
+    options: ReactNode[];
+    chosen: PersonList;
+}
+
+// TODO  At the end, all chosen persons are stored in personlist "chosen", communication to parent element?
+
+class PersonPicker extends Component<IProps, IState> {
+
+    constructor(props: IProps, state: IState) {
+        super(props, state);
+        this.state = {
+            options: [] as ReactNode[],
+            chosen: [] as PersonList
+        };
     }
 
+    componentWillMount() {
+        this.update();
+    }
 
     render() {
-        this.updateOptions();
-        return (
+        return(
             <View>
-                <InputWithoutLabel value={this.props.currentPerson} onChangeText={(text: string) => this.props.currentPerson = text} />
+                <OptionPicker inputLabel={'Name:'} onChangeText={() => this.update()} textInput={this.props.input} options={this.state.options}/>
                 <ScrollView>
-                    {this.state.currentOptions}
+                    {this.state.options}
                 </ScrollView>
             </View>
         );
     }
 
-    updateOptions() {
-        this.setState({currentOptions: []});
-        let name;
-        let opts: ReactNode[] = new Array();
-        this.props.options.map((val: Person, key: number) => {
-            name = val.firstname + ' ' + val.lastname;
-            if (name.includes(this.props.currentPerson)) {
-                opts.push(<View><Text>{val.firstname} {val.lastname} </Text>
-                    <Button title={'+'} onPress={() => this.addPerson(val.id)} /></View>);
+    update() {
+        if (this.props.input !== '') {
+            let options = [] as ReactNode[];
+            let name = '';
+            this.props.persons.map((person: Person, index: number) => {
+                name = person.firstname + ' ' + person.lastname;
+                if (name.includes(this.props.input)) {
+                    options.push(<TouchableOpacity onPress={() => this.choose(person.id)}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
+                }
+            });
+
+            this.setState({options: options});
+        }
+    }
+
+    choose(id: string) {
+        this.props.persons.map((person: Person, index: number) => {
+            if (person.id === id) {
+                let chosen = this.state.chosen;
+                chosen.push(person);
+                this.setState({chosen: chosen});
             }
         });
-        this.setState({currentOptions: opts});
-    }
-
-
-    addPerson (id: string) {
-        let persons = this.props.chosenPersons;
-        persons.push(this.props.options.find(this.isPerson));//Remove text from inputfield
-    }
-
-    isPerson(person: Person) {
-        return person.id === this.state.currentID
     }
 }
+
+export default PersonPicker;
