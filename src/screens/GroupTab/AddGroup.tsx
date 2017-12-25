@@ -84,6 +84,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     generateID() {
+        // ID is generated as a random string of length 22 with numbers and letters
         let group = Object.assign({}, this.state.group, {id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)});
         this.setState({group});
     }
