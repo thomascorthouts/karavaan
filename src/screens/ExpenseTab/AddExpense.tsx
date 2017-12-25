@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/CurrencySelector';
 import { currencies } from '../../config/Data';
@@ -45,7 +45,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                     <Text style={styles.title}>New Expense</Text>
                     <Text style={styles.errorStyle}> {this.state.error} </Text>
                 </View>
@@ -137,14 +137,15 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     save(goBack: any) {
-        let balances = [{person: this.state.persons.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency}, {person: this.state.persons.find(this.isReceiver), amount: this.state.expense.amount, currency: this.state.expense.currency}];
+        let balances = [{ person: this.state.persons.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency }, { person: this.state.persons.find(this.isReceiver), amount: this.state.expense.amount, currency: this.state.expense.currency }];
         const expense = Object.assign({}, this.state.expense, { balances: balances });
-        this.setState({ expense });
-        this.addExpenseToStorage()
-            .then(() => {
-                goBack();
-                this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
-            });
+        this.setState({ expense }, () => {
+            this.addExpenseToStorage()
+                .then(() => {
+                    goBack();
+                    this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
+                });
+        });
     }
 
     validate(navigate: any) {

@@ -17,13 +17,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         super(props, state);
 
         this.state = {
-            group: {
-                id: '',
-                name: '',
-                personArray: [] as PersonList,
-                expenseArrayId: '',
-                defaultCurrencies: [] as Array<string>
-            },
+            group: {} as Group,
             groupArray: this.props.navigation.state.params.groupArray,
             currencies: {} as Currencies
         };
