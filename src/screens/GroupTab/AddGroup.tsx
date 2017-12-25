@@ -75,7 +75,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(goBack)}>
                             <Text style={styles.buttonText}>SAVE</Text>
                         </TouchableOpacity>
-                        <CurrencyInputPicker currencyList={this.state.currencies}/>
 
                     </View>
                 </KeyboardAvoidingView>
