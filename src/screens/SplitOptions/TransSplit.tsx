@@ -23,6 +23,7 @@ interface IState {
     donor: string;
     receiver: string;
     expenseArray: ExpenseList;
+    personArray: PersonList;
 };
 
 class TransSplit extends Component<IProps, IState> {
@@ -32,19 +33,20 @@ class TransSplit extends Component<IProps, IState> {
         let date = new Date();
         this.state = {
             group: this.props.navigation.state.params.group,
-            options: this.props.navigation.state.params.options,
+            options: this.props.navigation.state.params.opts,
             expense: {
                 balances: [],
-                description: this.props.navigation.state.params.description,
-                amount: this.props.navigation.state.params.amount,
-                currency:  this.props.navigation.state.params.currency,
-                category: this.props.navigation.state.params.category,
+                description: this.props.navigation.state.params.opts.description,
+                amount: this.props.navigation.state.params.opts.amount,
+                currency:  this.props.navigation.state.params.opts.currency,
+                category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
             currencies: currencies,
             donor: '',
             receiver: '',
-            expenseArray: []
+            expenseArray: [],
+            personArray: [] as PersonList
         };
     }
 
@@ -79,13 +81,12 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     addTransaction (navigate: any) {
-        let balances = [{person: this.state.group.personArray.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency}, {person: this.state.group.personArray.find(this.isReceiver), amount: this.state.expense.amount, currency: this.state.expense.currency}];
+        let balances = [{person: this.state.personArray.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency}, {person: this.state.personArray.find(this.isReceiver), amount: this.state.expense.amount * (-1), currency: this.state.expense.currency}];
         const expense = Object.assign({}, this.state.expense, { balances: balances });
         this.setState({ expense });
-
         this.addExpenseToStorage()
             .then(() => {
-                navigate('GroupFeed' );
+                navigate( 'GroupFeed' );
             });
     }
 
@@ -100,19 +101,29 @@ class TransSplit extends Component<IProps, IState> {
                 'balances': this.state.expense.balances
             });
 
-            await AsyncStorage.setItem(this.state.group.expenseArrayId, JSON.stringify(this.state.expenseArray));
+            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
         } catch (error) {
             console.log(error);
         }
     }
 
     async componentWillMount() {
-
-        AsyncStorage.getItem(this.state.group.expenseArrayId)
+        console.log(this.state.group);
+        console.log(this.state.group.id);
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
                 if (value) {
                     this.setState({
                         expenseArray: JSON.parse(value)
+                    });
+                }
+            });
+
+        AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        personArray: JSON.parse(value)
                     });
                 }
             });

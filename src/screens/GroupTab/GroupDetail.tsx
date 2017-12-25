@@ -34,7 +34,7 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
     }
 
     async viewExpenses(navigate: any) {
-        let expenseArray = await AsyncStorage.getItem(this.state.group.expenseArrayId)
+        let expenseArray = await AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
                 if (value) {
                     return JSON.parse(value);
@@ -42,7 +42,7 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
                     return [];
                 }
             });
-        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: this.state.group.expenseArrayId });
+        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: 'expenses-' + this.state.group.id });
     }
 }
 

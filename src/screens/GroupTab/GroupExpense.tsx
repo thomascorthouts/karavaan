@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Picker, Button} from 'react-native';
+import {View, Picker, Button, AsyncStorage} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
@@ -9,7 +9,7 @@ interface IState {
     group: Group;
     currency: string;
     currencies: Currencies;
-    amount: string;
+    amount: number;
     splitMode: string;
     category: string;
 }
@@ -24,10 +24,11 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             group: this.props.navigation.state.params.group,
             currency: 'EUR',
             currencies: currencies,
-            amount: '0',
+            amount: 0,
             splitMode: 'trans',
             category: ''
         };
+
     }
 
     render() {
@@ -36,7 +37,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                 <View>
                     <InputWithLabel labelText={'description'} onChangeText={(description: any) => this.setState({description})}/>
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
-                                               value={ this.state.amount } onChangeText={(amount: any) => this.setState({amount})}
+                                               value={ this.state.amount.toString() } onChangeText={(amount: any) => this.setState({amount: parseFloat(amount)})}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
                     <InputWithLabel labelText={'category'} onChangeText={(category: any) => this.setState({category})}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
@@ -51,7 +52,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 
     nextScreen = (navigate: any) => {
-        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currency, amount: this.state.amount}};
+        console.log(this.state.group);
+        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currency, amount: this.state.amount, category: this.state.category }};
         if (this.state.splitMode === 'bill') {
            navigate('GroupAddBill', props);
         } else if (this.state.splitMode === 'trans') {

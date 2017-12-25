@@ -24,6 +24,7 @@ interface IState {
     amounts: Array<Amount>;
     sum: number;
     payers: Array<Amount>;
+    personArray: PersonList;
 };
 
 
@@ -36,7 +37,8 @@ class AmountSplit extends Component<IProps, IState> {
             options: this.props.navigation.state.params.opts as Options,
             amounts: [],
             payers: [],
-            sum: 0
+            sum: 0,
+            personArray: [] as PersonList
         };
         this.countSum();
     }
@@ -86,9 +88,18 @@ class AmountSplit extends Component<IProps, IState> {
     }
 
     componentWillMount() {
+        AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        personArray: JSON.parse(value)
+                    });
+                }
+            });
+
         let amounts = [] as Amount[];
-        const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.group.personArray.length) : 0;
-        this.state.group.personArray.map((val: Person, index: number) => {
+        const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) : 0;
+        this.state.personArray.map((val: Person, index: number) => {
             amounts.push({ person: val, amount: avg });
         });
         this.setState({amounts});

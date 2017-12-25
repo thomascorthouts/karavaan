@@ -24,7 +24,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     async componentWillMount() {
-
+        this.generateID();
         AsyncStorage.getItem('currencies')
             .then((value) => {
                 if (value) {
@@ -83,7 +83,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     save(goBack: any) {
-        this.generateID();
         this.addGroupToStorage()
             .then(() => {
                 goBack();
@@ -92,16 +91,17 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     async addGroupToStorage() {
+        this.generateID();
         try {
             this.state.groupArray.push({
                 'name': this.state.group.name,
                 'id': this.state.group.id,
-                'personArray': this.state.group.personArray,
-                'expenseArrayId': this.state.group.name + '#' + new Date().toISOString(),
                 'defaultCurrencies': this.state.group.defaultCurrencies
             });
 
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
+            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify([]));
+            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify([]));
         } catch (error) {
             console.log(error);
         }

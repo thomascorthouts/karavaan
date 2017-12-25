@@ -153,6 +153,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         console.log(this.state.receiver);
         console.log(this.state.expense.currency);
         console.log(this.state.expense.amount);
+        console.log(this.state.expense.category);
 
         if (this.state.donor === '' || this.state.receiver === '' || this.state.expense.amount < 0) {
             this.setState({ error: 'Please fill out all fields' });
