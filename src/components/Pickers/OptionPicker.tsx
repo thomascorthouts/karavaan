@@ -1,6 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { View, ScrollView } from 'react-native';
-import { InputWithLabel } from './TextInput/InputWithLabel';
+import { InputWithLabel } from '../TextInput/InputWithLabel';
 
 interface IProps {
     inputLabel: string;

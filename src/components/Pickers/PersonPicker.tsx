@@ -32,9 +32,6 @@ class PersonPicker extends Component<IProps, IState> {
         return(
             <View>
                 <OptionPicker inputLabel={'Name:'} onChangeText={() => this.update()} textInput={this.props.input} options={this.state.options}/>
-                <ScrollView>
-                    {this.state.options}
-                </ScrollView>
             </View>
         );
     }

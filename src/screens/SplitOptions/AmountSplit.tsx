@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, TouchableOpacity, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
-import OptionPicker from '../../components/OptionPicker';
+import OptionPicker from '../../components/Pickers/OptionPicker';
 
 interface Options {
     splitMode: boolean;

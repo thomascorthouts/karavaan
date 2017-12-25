@@ -18,11 +18,11 @@ interface ExpenseList extends Array<Expense> { }
 // Groups
 
 interface Group {
-    id: string; //Random hash
+    id: string; // Random hash (in generateID in AddGroup)
     name: string;
-    personArray: PersonList; //PersonList will be persons_random hash of group
+    personArray: PersonList; // PersonList will be persons_random hash of group
     expenseArrayId: string; // ExpenseArray will be expenses_random hash of group
-    defaultCurrency: Currency;
+    defaultCurrencies: Array<string>; // Array of the currency tags
 }
 
 interface GroupList extends Array<Group> { }
