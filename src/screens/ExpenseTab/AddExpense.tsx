@@ -182,10 +182,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 } else {
                     this.setState({
                         currencies: currencies
+                    }, () => {
+                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
                     });
                 }
             });
-        await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
     }
 
     async addExpenseToStorage() {

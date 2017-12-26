@@ -17,6 +17,8 @@ import TransSplit from '../screens/SplitOptions/TransSplit';
 import AmountSplit from '../screens/SplitOptions/AmountSplit';
 import BillSplit from '../screens/SplitOptions/BillSplit';
 
+import TableByExpense from '../screens/Summaries/TableByExpense';
+
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
 
@@ -142,6 +144,12 @@ export const Drawer = DrawerNavigator(
             }
         },
         Item3: {
+            screen: TableByExpense,
+            navigationOptions: {
+                title: 'Summaries'
+            }
+        },
+        Item4: {
             screen: Settings,
             navigationOptions: {
                 title: 'Settings'
