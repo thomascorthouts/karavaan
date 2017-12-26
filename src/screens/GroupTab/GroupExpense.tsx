@@ -37,7 +37,9 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                 <View>
                     <InputWithLabel labelText={'description'} onChangeText={(description: any) => this.setState({description})}/>
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
-                                               value={ this.state.amount.toString() } onChangeText={(amount: any) => this.setState({amount: parseFloat(amount)})}
+                                               value={ this.state.amount.toString() }
+                                               onChangeText={(amount: any) => { this.setState({amount: parseFloat(amount)});
+                                                   if (isNaN(parseFloat(amount))) this.setState({amount: 0});}}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
                     <InputWithLabel labelText={'category'} onChangeText={(category: any) => this.setState({category})}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
@@ -53,7 +55,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
 
     nextScreen = (navigate: any) => {
         console.log(this.state.group);
-        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currency, amount: this.state.amount, category: this.state.category }};
+        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currencies[this.state.currency], amount: this.state.amount, category: this.state.category }};
         if (this.state.splitMode === 'bill') {
            navigate('GroupAddBill', props);
         } else if (this.state.splitMode === 'trans') {

@@ -1,52 +1,53 @@
 import React, { Component } from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
-import OptionPicker from '../../components/Pickers/OptionPicker';
+import { friendList } from '../../config/Data';
 
 interface Options {
     splitMode: boolean;
-    currency: string;
+    currency: Currency;
     amount: number;
     description: string;
+    category: string;
 }
 
-interface IProps {
-    navigation: any;
-};
-
-interface Amount {
-    person: Person;
-    amount: number;
-}
 interface IState {
+    expense: Expense;
     group: Group;
     options: Options;
-    amounts: Array<Amount>;
     sum: number;
-    payers: Array<Amount>;
     personArray: PersonList;
+    expenseArray: ExpenseList;
+    currencies: Currencies;
 };
 
-
-class AmountSplit extends Component<IProps, IState> {
-    constructor(props: IProps, state: IState) {
+class AmountSplit extends Component<IDefaultNavProps, IState> {
+    constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let date = new Date();
         this.state = {
             group: this.props.navigation.state.params.group as Group,
             options: this.props.navigation.state.params.opts as Options,
-            amounts: [],
-            payers: [],
+            expense: {
+                balances: [],
+                description: this.props.navigation.state.params.opts.description,
+                amount: this.props.navigation.state.params.opts.amount,
+                currency:  this.props.navigation.state.params.opts.currency.tag,
+                category: this.props.navigation.state.params.opts.category,
+                date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
+            },
             sum: 0,
-            personArray: [] as PersonList
+            personArray: friendList,
+            expenseArray: [] as ExpenseList,
+            currencies: {} as Currencies
         };
-        this.countSum();
     }
 
     render() {
         const { navigate } = this.props.navigation;
 
-        let splitter = this.state.amounts.map((val: Amount, key: number) => {
+        let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={key} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount} submitEditing={() => this.submitEditing()}/>;
         });
 
@@ -55,36 +56,48 @@ class AmountSplit extends Component<IProps, IState> {
                 <StatusBar translucent={false} barStyle='light-content' />
                 <Text>{this.state.options.description}</Text>
                 <ScrollView>
-                    <Text>Here has to come the PersonPicker </Text>
+                    <Text> Who Payed? </Text>
+                    <Text> Here has to come the PersonPicker </Text>
                 </ScrollView>
                 <Text>Receivers</Text>
                 <ScrollView style={styles.ScrollContainer}>
                     {splitter}
                 </ScrollView>
                 <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <Text>Total: {this.state.options.currency}{this.state.sum}</Text>
-                    <TouchableOpacity onPress={() => this.confirm(navigate)} style={styles.addButton}>
-                        <Text style={styles.addButtonText}> + </Text>
-                    </TouchableOpacity>
+                    <Text>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                    <Button onPress={() => this.confirm(navigate)} title={'Add Expense'} />
                 </KeyboardAvoidingView>
             </View>
         );
-    }
-
-    countSum() {
-        let sum = this.state.options.amount;
-        this.state.amounts.map((val: Amount, index: number) => {
-           sum -= val.amount;
-        });
-        this.setState({sum});
     }
 
     submitEditing() {
         console.log('hello');
     }
 
-    confirm(navigation: any) {
-        console.log('hello');
+    confirm(navigate: any) {
+        this.addExpenseToStorage()
+            .then(() => {
+                navigate( 'GroupFeed' );
+            });
+    }
+
+    async addExpenseToStorage() {
+        console.log(this.state.expense.balances);
+        try {
+            this.state.expenseArray.push({
+                'date': this.state.expense.date,
+                'amount': this.state.expense.amount,
+                'currency': this.state.expense.currency,
+                'description': this.state.expense.description,
+                'category': this.state.expense.category,
+                'balances': this.state.expense.balances
+            });
+
+            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     componentWillMount() {
@@ -94,15 +107,26 @@ class AmountSplit extends Component<IProps, IState> {
                     this.setState({
                         personArray: JSON.parse(value)
                     });
+                    console.log(this.state.personArray.length);
                 }
             });
 
-        let amounts = [] as Amount[];
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        expenseArray: JSON.parse(value)
+                    });
+                }
+            });
+
+        let amounts = [] as Balances;
         const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) : 0;
         this.state.personArray.map((val: Person, index: number) => {
-            amounts.push({ person: val, amount: avg });
+            amounts.push({ person: val, amount: avg, currency: this.props.navigation.state.params.currency });
         });
-        this.setState({amounts});
+        let expense = Object.assign({}, this.state.expense, {balances: amounts});
+        this.setState({expense});
     }
 }
 
@@ -136,5 +160,6 @@ const styles = StyleSheet.create({
         fontSize: 24
     }
 });
+
 
 export default AmountSplit;

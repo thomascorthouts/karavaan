@@ -6,7 +6,7 @@ import {currencies} from '../../config/Data';
 
 interface Options {
     splitMode: boolean;
-    currency: string;
+    currency: Currency;
     amount: number;
     description: string;
 }
@@ -33,12 +33,12 @@ class TransSplit extends Component<IProps, IState> {
         let date = new Date();
         this.state = {
             group: this.props.navigation.state.params.group,
-            options: this.props.navigation.state.params.opts,
+            options: this.props.navigation.state.params.opts as Options,
             expense: {
                 balances: [],
                 description: this.props.navigation.state.params.opts.description,
                 amount: this.props.navigation.state.params.opts.amount,
-                currency:  this.props.navigation.state.params.opts.currency,
+                currency:  this.props.navigation.state.params.opts.currency.tag,
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
