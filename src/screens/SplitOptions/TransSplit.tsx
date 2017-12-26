@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Button, AsyncStorage } from 'react-native';
-import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
-import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
-import {currencies} from '../../config/Data';
+import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
+import { InputWithCurrencySelector } from '../../components/TextInput/InputWithCurrencySelector';
+import { currencies } from '../../config/Data';
 
 interface Options {
     splitMode: boolean;
@@ -51,23 +51,23 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     render() {
-        const {navigate} = this.props.navigation;
+        const { navigate } = this.props.navigation;
         return (
             <View>
-                <InputWithCurrencySelector currentCurrency={ this.state.expense.currency } currencies={this.state.currencies}
-                                           value={ this.state.expense.amount.toString() }
-                                           onChangeText={(value: number) => {
-                                               const expense = Object.assign({}, this.state.expense, { amount: value });
-                                               this.setState({ expense });
-                                           }}
-                                           onValueChange={(currency: string) => {
-                                               const expense = Object.assign({}, this.state.expense, { currency: this.state.currencies[currency] });
-                                               this.setState({ expense });
-                                           }}
-                                            selectedValue= { this.state.expense.currency }/>
-                <InputWithLabel labelText={'Donor'} onChangeText={(donor: any) => this.setState({donor})}/>
-                <InputWithLabel labelText={'Receiver'} onChangeText={(receiver: any) => this.setState({receiver})}/>
-                <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)}/>
+                <InputWithCurrencySelector currentCurrency={this.state.expense.currency} currencies={this.state.currencies}
+                    value={this.state.expense.amount.toString()}
+                    onChangeText={(value: number) => {
+                        const expense = Object.assign({}, this.state.expense, { amount: value });
+                        this.setState({ expense });
+                    }}
+                    onValueChange={(currency: string) => {
+                        const expense = Object.assign({}, this.state.expense, { currency: this.state.currencies[currency] });
+                        this.setState({ expense });
+                    }}
+                    selectedValue={this.state.expense.currency} />
+                <InputWithLabel labelText={'Donor'} onChangeText={(donor: any) => this.setState({ donor })} />
+                <InputWithLabel labelText={'Receiver'} onChangeText={(receiver: any) => this.setState({ receiver })} />
+                <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)} />
             </View>
         );
     }
@@ -80,14 +80,15 @@ class TransSplit extends Component<IProps, IState> {
         return person.id === this.state.receiver;
     }
 
-    addTransaction (navigate: any) {
-        let balances = [{person: this.state.personArray.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency}, {person: this.state.personArray.find(this.isReceiver), amount: this.state.expense.amount * (-1), currency: this.state.expense.currency}];
+    addTransaction(navigate: any) {
+        let balances = [{ person: this.state.personArray.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency }, { person: this.state.personArray.find(this.isReceiver), amount: this.state.expense.amount * (-1), currency: this.state.expense.currency }];
         const expense = Object.assign({}, this.state.expense, { balances: balances });
-        this.setState({ expense });
-        this.addExpenseToStorage()
-            .then(() => {
-                navigate( 'GroupFeed' );
-            });
+        this.setState({ expense }, () => {
+            this.addExpenseToStorage()
+                .then(() => {
+                    navigate('GroupFeed');
+                });
+        });
     }
 
     async addExpenseToStorage() {
@@ -110,6 +111,15 @@ class TransSplit extends Component<IProps, IState> {
     async componentWillMount() {
         console.log(this.state.group);
         console.log(this.state.group.id);
+
+        // AsyncStorage.multiGet(['expenses-' + this.state.group.id, 'persons-' + this.state.group.id, 'currencies'], (err, stores) => {
+        //     if (stores !== undefined) {
+        //         stores.map((result, i, store) => {
+        //             console.log(result);
+        //         });
+        //     }
+        // });
+
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
                 if (value) {

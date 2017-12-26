@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
-import {CurrencyPicker} from '../../components/CurrencySelector';
-import {currencies} from '../../config/Data';
+import { CurrencyPicker } from '../../components/CurrencySelector';
+import { currencies } from '../../config/Data';
 import OptionPicker from '../../components/Pickers/OptionPicker';
 import CurrencyInputPicker from '../../components/Pickers/CurrencyInputPicker';
 
@@ -21,23 +21,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
             groupArray: this.props.navigation.state.params.groupArray,
             currencies: {} as Currencies
         };
-    }
-
-    async componentWillMount() {
-        this.generateID();
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                } else {
-                    this.setState({
-                        currencies: currencies
-                    });
-                }
-            });
-        await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
     }
 
     render() {
@@ -76,12 +59,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         );
     }
 
-    generateID() {
-        // ID is generated as a random string of length 22 with numbers and letters
-        let group = Object.assign({}, this.state.group, {id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)});
-        this.setState({group});
-    }
-
     save(goBack: any) {
         this.addGroupToStorage()
             .then(() => {
@@ -91,20 +68,37 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     async addGroupToStorage() {
-        this.generateID();
+        let id = this.state.group.name + '#' + new Date().toISOString();
         try {
             this.state.groupArray.push({
                 'name': this.state.group.name,
-                'id': this.state.group.id,
+                'id': id,
                 'defaultCurrencies': this.state.group.defaultCurrencies
             });
 
-            await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
-            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify([]));
-            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify([]));
+            await AsyncStorage.multiSet([['groups', JSON.stringify(this.state.groupArray)],
+                                        ['expenses-' + id, JSON.stringify([])],
+                                        ['persons-' + id, JSON.stringify([])]]);
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async componentWillMount() {
+        AsyncStorage.getItem('currencies')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        currencies: JSON.parse(value)
+                    });
+                } else {
+                    this.setState({
+                        currencies: currencies
+                    }, () => {
+                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
+                    });
+                }
+            });
     }
 }
 export default AddGroupScreen;
