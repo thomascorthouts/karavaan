@@ -3,6 +3,7 @@ import {View, Picker, Button, AsyncStorage} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
+import {CategoryPicker} from '../../components/Pickers/CategoryPicker';
 
 interface IState {
     description: string;
@@ -26,7 +27,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             currencies: currencies,
             amount: 0,
             splitMode: 'trans',
-            category: ''
+            category: 'food'
         };
 
     }
@@ -39,9 +40,9 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
                                                value={ this.state.amount.toString() }
                                                onChangeText={(amount: any) => { this.setState({amount: parseFloat(amount)});
-                                                   if (isNaN(parseFloat(amount))) this.setState({amount: 0});}}
+                                                   if (isNaN(parseFloat(amount))) this.setState({amount: 0}); }}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
-                    <InputWithLabel labelText={'category'} onChangeText={(category: any) => this.setState({category})}/>
+                    <CategoryPicker onValueChange={(category: any) => this.setState({category})} selectedValue={this.state.category}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
                         <Picker.Item label={'Transaction'} value={'trans'} key={'trans'}/>
                         <Picker.Item label={'Split evenly'} value={'even'} key={'even'}/>

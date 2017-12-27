@@ -25,7 +25,7 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
             <View>
                     <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description}) } />
                     <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount}) } />
-                    <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description})} />
+                    <InputWithLabel labelText={'people'} value={ this.state.description } onChangeText={(description: string) => this.setState({description})} />
             </View>
         );
     }

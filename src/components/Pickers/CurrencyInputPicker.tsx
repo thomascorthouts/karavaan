@@ -1,4 +1,4 @@
-import {Component, ReactNode} from 'react';
+import React, {Component, ReactNode} from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import OptionPicker from './OptionPicker';
 

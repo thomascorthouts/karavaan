@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import { friendList } from '../../config/Data';
+import PersonPicker from '../../components/Pickers/PersonPicker';
 
 interface Options {
     splitMode: boolean;
@@ -19,6 +20,7 @@ interface IState {
     personArray: PersonList;
     expenseArray: ExpenseList;
     currencies: Currencies;
+    chosen: PersonList;
 };
 
 class AmountSplit extends Component<IDefaultNavProps, IState> {
@@ -38,6 +40,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
             sum: 0,
+            chosen: [] as PersonList,
             personArray: friendList,
             expenseArray: [] as ExpenseList,
             currencies: {} as Currencies
@@ -57,7 +60,10 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 <Text>{this.state.options.description}</Text>
                 <ScrollView>
                     <Text> Who Payed? </Text>
-                    <Text> Here has to come the PersonPicker </Text>
+                    <PersonPicker persons={this.state.personArray} choose={this.choose.bind(this)}/>
+                </ScrollView>
+                <ScrollView>
+                    <Text> Here should come the input they have payed.</Text>
                 </ScrollView>
                 <Text>Receivers</Text>
                 <ScrollView style={styles.ScrollContainer}>
@@ -71,9 +77,17 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    submitEditing() {
-        console.log('hello');
+    choose(id: string) {
+        let chosen = this.state.chosen;
+        const p = this.state.personArray.find((val: Person) => {return (val.id === id); });
+        if (typeof p !== 'undefined') {
+            chosen.push(p);
+            this.setState({chosen});
+        }
+        console.log(this.state.chosen);
     }
+
+    submitEditing() { }
 
     confirm(navigate: any) {
         this.addExpenseToStorage()
@@ -83,6 +97,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     async addExpenseToStorage() {
+        console.log(this.state.chosen);
         console.log(this.state.expense.balances);
         try {
             this.state.expenseArray.push({
@@ -101,15 +116,8 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     componentWillMount() {
-        AsyncStorage.getItem('persons-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        personArray: JSON.parse(value)
-                    });
-                    console.log(this.state.personArray.length);
-                }
-            });
+
+       // Asyncstorage get Persons should be added when this functionality is integrated
 
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
@@ -160,6 +168,5 @@ const styles = StyleSheet.create({
         fontSize: 24
     }
 });
-
 
 export default AmountSplit;

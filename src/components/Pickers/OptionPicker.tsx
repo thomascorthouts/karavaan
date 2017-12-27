@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { View, ScrollView } from 'react-native';
 import { InputWithLabel } from '../TextInput/InputWithLabel';
 
