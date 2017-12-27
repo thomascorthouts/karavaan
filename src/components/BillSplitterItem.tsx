@@ -7,6 +7,7 @@ interface IProps {
     val: string;
     amount: number;
     submitEditing(): any;
+    onChangeText(amount: number): any;
 }
 
 export default class BillSplitterItem extends React.Component<IProps, {}> {
@@ -24,6 +25,10 @@ export default class BillSplitterItem extends React.Component<IProps, {}> {
                     <InputWithoutLabel
                         onSubmitEditing={this.props.submitEditing()}
                         value={this.props.amount.toString()}
+                        onChangeText={(text: any) => {
+                            this.setState({amount: parseFloat(text)});
+                            this.props.onChangeText(this.props.amount);
+                        }}
                     />
                 </View>
             </View>

@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import {View, Button, ScrollView, AsyncStorage} from 'react-native';
-import {currencies} from '../../config/Data';
+import React, { Component, ReactNode } from 'react';
+import {View, Button, ScrollView, AsyncStorage, Text} from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
+import {friendList} from '../../config/Data';
+import PersonPicker from '../../components/Pickers/PersonPicker';
 
 interface Options {
     splitMode: boolean;
@@ -18,9 +19,12 @@ interface IState {
     group: Group;
     options: Options;
     expense: Expense;
+    payers: Balances;
     dishes: Array<Dish>;
     expenseArray: ExpenseList;
     personArray: PersonList;
+    items: Array<ReactNode>;
+    payerNodes: Array<ReactNode>;
 };
 
 class BillSplit extends Component<IProps, IState> {
@@ -39,47 +43,105 @@ class BillSplit extends Component<IProps, IState> {
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
+            payers: [] as Balances,
+            payerNodes: [] as Array<ReactNode>,
             dishes: [] as Array<Dish>,
             expenseArray: [] as ExpenseList,
-            personArray: [] as PersonList
+            personArray: friendList as PersonList,
+            items: [] as Array<ReactNode>
         };
     }
 
     render() {
         const {navigate} = this.props.navigation;
-        let dishes = [] as Array<Dish>;
-        dishes.push({name: 'drinken', amount: 10, users: ['thomas_corthouts', 'mathias_spanhove']});
-        dishes.push({name: 'eten', amount: 20, users: ['thomas_corthouts', 'mathias_spanhove', 'serhat_erdogan', 'franci_haest']});
-        this.setState({dishes});
-        let items = dishes.map((val: Dish, index: number) => {
-            return (<BillSplitterItem key={val.name} keyval={val} val={val.name} amount={val.amount} submitEditing={() => this.submitEditing()}/>);
-        });
+
         return (
             <View>
-                <ScrollView >
-                    {items}
+                <Text>{this.state.expense.description}</Text>
+                <ScrollView>
+                    <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
+                    {this.state.payerNodes}
                 </ScrollView>
-                <Button title={'Add Item'} onPress={ () => this.addItem()}/>
+                <Button title={'Add Item'} onPress={ () => this.addItem(navigate)}/>
+                <ScrollView >
+                    {this.state.items}
+                </ScrollView>
                 <Button title={'Add Expense'} onPress={() => this.confirm(navigate)}/>
             </View>
         );
     }
 
-    addItem () {
-        // TODO
-        const test = 1;
+    addPayer(id: string) {
+        let chosen = this.state.payers;
+        let nodes = this.state.payerNodes;
+        const p = this.state.personArray.find((val: Person) => {return (val.id === id); });
+        if (typeof p !== 'undefined') {
+            chosen.push({ person: p, amount: 0 });
+            this.setState({payers: chosen});
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={(amount: any) => this.setPayerAmount.bind(this, amount, p.id)}/>);
+            this.setState({payerNodes: nodes});
+        }
+        console.log(this.state.payers);
+    }
+
+    setPayerAmount (amount: number, id: string) {
+        let payers = this.state.payers;
+        let bal = payers.find((val: Balance) => { return (val.person.id === id); });
+        if (typeof bal !== 'undefined') {
+            bal.amount += amount;
+            this.setState({payers});
+        }
+    }
+
+    addItem (navigate: any) {
+        navigate('AddItem', { persons: this.state.personArray, addItem: this.addItemToItems.bind(this)});
+    }
+
+    addItemToItems(item: Dish) {
+        let items = this.state.dishes;
+        items.push(item);
+        this.setState({dishes: items}, this.updateItems);
+    }
+
+    updateItems() {
+        let items = this.state.dishes.map((val: Dish, index: number) => {
+            return (<BillSplitterItem key={val.name} keyval={val} val={val.name} amount={val.amount} onChangeText={() => undefined} submitEditing={() => this.submitEditing()}/>);
+        });
+
+        this.setState({items});
     }
 
     submitEditing() {
         console.log('hello');
     }
 
-    confirm(navigate: any) {
-
-        this.addExpenseToStorage()
-            .then(() => {
-                navigate( 'GroupFeed' );
+    async createBalances() {
+        let balances = this.state.payers; // begin from payers as base
+        let avg: number;
+        let bal;
+        this.state.dishes.map((item: Dish, key: number) => {
+            avg = item.amount / item.users.length;
+            item.users.map((val: Person) => {
+                    bal = balances.find((balance: Balance) => {
+                        return (balance.person.id === val.id);
+                    });
+                    if (typeof bal === 'undefined') {
+                        bal = {person: val, amount: 0};
+                    }
+                    bal.amount -= avg;
             });
+        });
+
+        let expense = Object.assign({}, this.state.expense, {balances: balances});
+        this.setState({expense});
+    }
+
+    confirm(navigate: any) {
+        this.createBalances()
+            .then(() => this.addExpenseToStorage())
+            .then(() => {
+            navigate( 'GroupFeed' );
+        });
     }
 
     async addExpenseToStorage() {
@@ -101,15 +163,6 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     componentWillMount() {
-        AsyncStorage.getItem('persons-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        personArray: JSON.parse(value)
-                    });
-                    console.log(this.state.personArray.length);
-                }
-            });
 
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {

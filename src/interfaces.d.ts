@@ -56,15 +56,15 @@ interface Currencies {
 interface Dish {
     name: string;
     amount: number;
-    users: Array<string>;
+    users: PersonList;
 }
 
 // Balance
 
 interface Balance {
+    // Currency of specific balance can be found in the expense it is in
     person: Person;
     amount: number;
-    currency: Currency;
 }
 
 interface Balances extends Array<Balance> { }

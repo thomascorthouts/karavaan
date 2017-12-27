@@ -21,6 +21,7 @@ import TableByExpense from '../screens/Summaries/TableByExpense';
 
 import Converter from '../screens/Converter';
 import Settings from '../screens/Settings';
+import AddDish from '../components/AddDish';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -88,6 +89,13 @@ export const GroupStack = StackNavigator(
             },
         GroupAddBill: {
             screen: BillSplit,
+            navigationOptions: {
+                tabBarVisible: false,
+                header: null
+            }
+        },
+        AddItem: {
+            screen: AddDish,
             navigationOptions: {
                 tabBarVisible: false,
                 header: null
