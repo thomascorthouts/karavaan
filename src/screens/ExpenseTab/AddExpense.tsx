@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/CurrencySelector';
+import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
+import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IState {
     persons: PersonList;
@@ -24,7 +27,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         this.state = {
             expense: {
                 description: '',
-                category: '',
+                category: 'food',
                 currency: 'EUR',
                 amount: 0,
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
@@ -45,9 +48,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-                <View style={{ flex: 1 }}>
+                <View style={styles.flex}>
                     <Text style={styles.title}>New Expense</Text>
-                    <Text style={styles.errorStyle}> {this.state.error} </Text>
+                    <ErrorText errorText={this.state.error} />
                 </View>
 
                 <KeyboardAvoidingView behavior={'padding'}>
@@ -80,11 +83,12 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         autoCapitalize={'words'}
                     />
 
-                    <View style={{ flexDirection: 'row' }}>
+                    <View style={styles.rowContainer}>
                         <View style={styles.inputAmount}>
                             <InputWithoutLabel
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
+                                value={this.state.expense.amount.toString()}
                                 onChangeText={(value: number) => {
                                     const expense = Object.assign({}, this.state.expense, { amount: value });
                                     this.setState({ expense });
@@ -106,24 +110,15 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         </View>
                     </View>
 
-                    <InputWithoutLabel
-                        placeholder={'Category'}
-                        onChangeText={(text: string) => {
-                            const expense = Object.assign({}, this.state.expense, { category: text });
-                            this.setState({ expense });
-                        }}
-                        returnKeyType={'done'}
-                        autoCapitalize={'words'}
-                    />
+                    <CategoryPicker onValueChange={(category: any) => {
+                        const expense = Object.assign({}, this.state.expense, { category: category });
+                        this.setState({ expense });
+                    }}
+                    selectedValue={this.state.expense.category}/>
                 </KeyboardAvoidingView>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
-                    <Text style={styles.buttonText}>BACK</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(goBack)}>
-                    <Text style={styles.buttonText}>SAVE</Text>
-                </TouchableOpacity>
+                <GreenButton buttonText={'BACK'} onPress={() => goBack()}/>
+                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)}/>
             </View>
         );
     }
@@ -149,17 +144,41 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     validate(navigate: any) {
-        console.log(this.state.donor);
-        console.log(this.state.receiver);
-        console.log(this.state.expense.currency);
-        console.log(this.state.expense.amount);
-        console.log(this.state.expense.category);
+        let error = '';
+        if (this.state.donor === '') {
+            error += '\nDescription can not be empty';
+        }
+        if (this.state.donor === '') {
+            error += '\nDonor can not be empty';
+        }
+        if (this.state.receiver === '') {
+            error += '\nReceiver can not be empty';
+        }
+        if (this.state.expense.amount.toString() === '' || isNaN(this.state.expense.amount) || this.state.expense.amount < 0) {
+            error += '\nAmount can not be empty';
+        }
 
-        if (this.state.donor === '' || this.state.receiver === '' || this.state.expense.amount < 0) {
-            this.setState({ error: 'Please fill out all fields' });
-            console.log('error:' + this.state.error);
-        } else {
-            this.save(navigate);
+        this.setState({ error: error }, () => {
+            if (error === '') {
+                this.save(navigate);
+            }
+        });
+    }
+
+    async addExpenseToStorage() {
+        try {
+            this.state.expenseArray.push({
+                'date': this.state.expense.date,
+                'amount': this.state.expense.amount,
+                'currency': this.state.expense.currency,
+                'description': this.state.expense.description,
+                'category': this.state.expense.category,
+                'balances': this.state.expense.balances
+            });
+
+            await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -188,32 +207,21 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 }
             });
     }
-
-    async addExpenseToStorage() {
-        try {
-            this.state.expenseArray.push({
-                'date': this.state.expense.date,
-                'amount': this.state.expense.amount,
-                'currency': this.state.expense.currency,
-                'description': this.state.expense.description,
-                'category': this.state.expense.category,
-                'balances': this.state.expense.balances
-            });
-
-            await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
-        } catch (error) {
-            console.log(error);
-        }
-    }
 }
 
 export default AddExpense;
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
     container: {
         flex: 1,
         padding: 20,
         backgroundColor: '#4B9382'
+    },
+    rowContainer: {
+        flexDirection: 'row'
     },
     title: {
         fontSize: 40,
@@ -226,20 +234,5 @@ const styles = StyleSheet.create({
     },
     picker: {
         flex: 1
-    },
-    errorStyle: {
-        padding: 20,
-        color: 'red',
-        paddingHorizontal: 10,
-        marginBottom: 10
-    },
-    buttonContainer: {
-        backgroundColor: '#287E6F',
-        paddingVertical: 15,
-        marginBottom: 10
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#FFFFFF'
     }
 });

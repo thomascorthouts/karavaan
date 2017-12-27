@@ -1,6 +1,6 @@
-import React, {Component, ReactNode} from 'react';
-import {View, Text, TouchableOpacity }from 'react-native';
-import OptionPicker from './OptionPicker';
+import React, { Component, ReactNode } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { OptionPicker } from './OptionPicker';
 
 interface IProps {
     persons: PersonList;
@@ -25,11 +25,11 @@ class PersonPicker extends Component<IProps, IState> {
     }
 
     render() {
-        return(
+        return (
             <View>
                 <OptionPicker inputLabel={'Name:'} onChangeText={(text: any) => {
-                    this.setState({input: text}, () => this.updateOptions());
-                }} textInput={this.state.input} options={this.state.options}/>
+                    this.setState({ input: text }, () => this.updateOptions());
+                }} textInput={this.state.input} options={this.state.options} />
             </View>
         );
     }
@@ -44,7 +44,7 @@ class PersonPicker extends Component<IProps, IState> {
             }
         });
 
-        this.setState({options: options});
+        this.setState({ options: options });
     }
     componentWillMount() {
         this.updateOptions();

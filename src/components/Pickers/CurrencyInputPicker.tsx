@@ -1,6 +1,6 @@
-import React, {Component, ReactNode} from 'react';
+import React, { Component, ReactNode } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import OptionPicker from './OptionPicker';
+import { OptionPicker } from './OptionPicker';
 
 interface IProps {
     currencyList: Currencies;
@@ -12,7 +12,7 @@ interface IState {
     options: ReactNode[];
 }
 
-class CurrencyInputPicker extends Component<IProps, IState> {
+export class CurrencyInputPicker extends Component<IProps, IState> {
 
     // TODO communication with parent element
     constructor(props: IProps, state: IState) {
@@ -29,7 +29,7 @@ class CurrencyInputPicker extends Component<IProps, IState> {
         this.update();
         return (
             <View>
-                <OptionPicker inputLabel={'Possible currencies:'} onChangeText={(input: any) => this.setState({currentInput: input})} textInput={this.state.currentInput} options={this.state.options}/>
+                <OptionPicker inputLabel={'Possible currencies:'} onChangeText={(input: any) => this.setState({ currentInput: input })} textInput={this.state.currentInput} options={this.state.options} />
             </View>
         );
     }
@@ -39,20 +39,18 @@ class CurrencyInputPicker extends Component<IProps, IState> {
         let current = {} as Currency;
         for (let currency in this.props.currencyList) {
             current = this.props.currencyList[currency];
-            if ( current.name.includes(this.state.currentInput)){
-                currenciesItems.push(<TouchableOpacity  onPress={() => this.choose(current.tag)}> {current.name} </TouchableOpacity>);
+            if (current.name.includes(this.state.currentInput)) {
+                currenciesItems.push(<TouchableOpacity onPress={() => this.choose(current.tag)}> {current.name} </TouchableOpacity>);
             }
         }
 
-        this.setState({options: currenciesItems});
+        this.setState({ options: currenciesItems });
     }
 
     choose(tag: string) {
         let chosen = this.state.chosenCurrencies;
         chosen.push(tag);
-        this.setState({chosenCurrencies: chosen});
+        this.setState({ chosenCurrencies: chosen });
     }
 
 }
-
-export default CurrencyInputPicker;

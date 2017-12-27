@@ -2,13 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
 import { CurrencyPicker } from '../../components/CurrencySelector';
 import { currencies } from '../../config/Data';
-import OptionPicker from '../../components/Pickers/OptionPicker';
-import CurrencyInputPicker from '../../components/Pickers/CurrencyInputPicker';
+import { OptionPicker } from '../../components/Pickers/OptionPicker';
+import { CurrencyInputPicker } from '../../components/Pickers/CurrencyInputPicker';
+import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
+import { ErrorText } from '../../components/Text/ErrorText';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IState {
     group: Group;
     groupArray: GroupList;
     currencies: Currencies;
+    error: string;
 }
 
 class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
@@ -17,6 +21,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
         super(props, state);
 
         this.state = {
+            error: '',
             group: {} as Group,
             groupArray: this.props.navigation.state.params.groupArray,
             currencies: {} as Currencies
@@ -28,33 +33,24 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
+                <View style={styles.flex}>
+                    <Text style={styles.title}>New Group</Text>
+                    <ErrorText errorText={this.state.error}/>
+                </View>
+
                 <KeyboardAvoidingView behavior='padding'>
-                    <View style={styles.formcontainer}>
-                        <StatusBar barStyle={'light-content'} />
-
-                        <Text style={styles.title}>New Group</Text>
-
-                        <TextInput
-                            style={styles.input}
-                            underlineColorAndroid={'transparent'}
-                            placeholder={'Group name'}
-                            onChangeText={(text) => {
-                                const group = Object.assign({}, this.state.group, { name: text });
-                                this.setState({ group });
-                            }}
-                            returnKeyType={'next'}
-                        />
-
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => goBack()}>
-                            <Text style={styles.buttonText}>BACK</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.save(goBack)}>
-                            <Text style={styles.buttonText}>SAVE</Text>
-                        </TouchableOpacity>
-
-                    </View>
+                    <InputWithoutLabel
+                        placeholder={'Group name'}
+                        onChangeText={(text: string) => {
+                            const group = Object.assign({}, this.state.group, { name: text });
+                            this.setState({ group });
+                        }}
+                        returnKeyType={'done'}
+                    />
                 </KeyboardAvoidingView>
+
+                <GreenButton buttonText={'BACK'} onPress={() => goBack()}/>
+                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)}/>
             </View>
         );
     }
@@ -67,6 +63,19 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
             });
     }
 
+    validate(navigate: any) {
+        let error = '';
+        if (this.state.group.name === undefined || this.state.group.name === '') {
+            error += 'Group name can not be empty';
+        }
+
+        this.setState({ error: error }, () => {
+            if (error === '') {
+                this.save(navigate);
+            }
+        });
+    }
+
     async addGroupToStorage() {
         let id = this.state.group.name + '#' + new Date().toISOString();
         try {
@@ -77,8 +86,8 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
             });
 
             await AsyncStorage.multiSet([['groups', JSON.stringify(this.state.groupArray)],
-                                        ['expenses-' + id, JSON.stringify([])],
-                                        ['persons-' + id, JSON.stringify([])]]);
+            ['expenses-' + id, JSON.stringify([])],
+            ['persons-' + id, JSON.stringify([])]]);
         } catch (error) {
             console.log(error);
         }
@@ -104,10 +113,13 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 export default AddGroupScreen;
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
     container: {
         flex: 1,
-        backgroundColor: '#4B9382',
-        alignSelf: 'stretch'
+        padding: 20,
+        backgroundColor: '#4B9382'
     },
     title: {
         fontSize: 40,
@@ -115,36 +127,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center'
     },
-    formcontainer: {
-        padding: 20
-    },
-    input: {
-        height: 41,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        marginBottom: 10,
-        color: '#FFF',
-        paddingHorizontal: 10
-    },
     picker: {
-        width: '100%'
-    },
-    inputAmount: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        height: 41,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        marginBottom: 10,
-        color: '#FFF',
-        paddingHorizontal: 10
-    },
-    buttonContainer: {
-        backgroundColor: '#287E6F',
-        paddingVertical: 15,
-        marginBottom: 10
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#FFFFFF'
+        flex: 1
     }
 });

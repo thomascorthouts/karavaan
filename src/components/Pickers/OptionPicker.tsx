@@ -9,7 +9,7 @@ interface IProps {
     options: Array<ReactNode>;
 }
 
-class OptionPicker extends Component<IProps, {}> {
+export class OptionPicker extends Component<IProps, {}> {
 
     constructor(props: IProps) {
         super(props);
@@ -28,5 +28,3 @@ class OptionPicker extends Component<IProps, {}> {
         );
     }
 }
-
-export default OptionPicker;

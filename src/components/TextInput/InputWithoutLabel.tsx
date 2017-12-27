@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { textInputStyles } from './styles';
 
-export class InputWithoutLabel extends React.Component<IProps, {}> {
-    constructor(props: IProps) {
+export class InputWithoutLabel extends React.Component<ITextInputProps, {}> {
+    constructor(props: ITextInputProps) {
         super(props);
     }
 
