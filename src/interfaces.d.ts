@@ -54,9 +54,9 @@ interface Currencies {
 // Bill Splitting
 
 interface Dish {
-    name?: string;
+    name: string;
     amount: number;
-    users: PersonList;
+    users: Array<string>;
 }
 
 // Balance
@@ -69,6 +69,5 @@ interface Balance {
 
 interface Balances extends Array<Balance> { }
 
-
 // ignore errors for javascript only packages
-declare module "react-native-table-component-pro"
+declare module 'react-native-table-component-pro'

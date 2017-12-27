@@ -123,7 +123,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         let amounts = [] as Balances;
         const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) : 0;
         this.state.personArray.map((val: Person, index: number) => {
-            amounts.push({ person: val, amount: avg, currency: this.props.navigation.state.params.currency });
+            amounts.push({ person: val, amount: avg, currency: this.props.navigation.state.params.opts.currency });
         });
         let expense = Object.assign({}, this.state.expense, {balances: amounts});
         this.setState({expense});

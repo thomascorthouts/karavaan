@@ -30,8 +30,8 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     componentWillMount() {
         let text = [] as ReactNode[];
         this.state.expense.balances.map((balance: Balance, index: number) => {
-            if (balance.amount > 0) text.push(<Text>{balance.person.firstname} {balance.person.lastname} payed {balance.currency.symbol}{balance.amount} </Text>);
-            else text.push(<Text>{balance.person.firstname} {balance.person.lastname} has to pay {balance.currency.symbol}{balance.amount} </Text>);
+            if (balance.amount > 0) text.push(<Text>{balance.person.firstname} {balance.person.lastname} payed {balance.currency.symbol}{balance.amount}</Text>);
+            else text.push(<Text>{balance.person.firstname} {balance.person.lastname} has to pay {balance.currency.symbol}{balance.amount}</Text>);
         });
         this.setState({ balances: text });
     }
