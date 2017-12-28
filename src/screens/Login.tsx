@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, 
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { textInputStyles } from '../components/TextInput/styles';
 import { reset } from '../NavigationActions';
+import { GreenButton } from '../components/Buttons/GreenButton';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -39,9 +40,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             onSubmitEditing={() => this.login(dispatch)}
                         />
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(dispatch)}>
-                            <Text style={styles.buttonText}>LOGIN</Text>
-                        </TouchableOpacity>
+                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)}/>
                     </View>
                 </KeyboardAvoidingView>
             </View>
@@ -74,13 +73,5 @@ const styles = StyleSheet.create({
     formContainer: {
         padding: 20,
         flex: 0
-    },
-    buttonContainer: {
-        backgroundColor: '#287E6F',
-        paddingVertical: 15
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#FFFFFF'
     }
 });

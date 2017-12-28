@@ -10,6 +10,10 @@ const buttonStyles = StyleSheet.create({
     whiteButtonText: {
         textAlign: 'center',
         color: '#FFFFFF'
+    },
+    redButtonText: {
+        textAlign: 'center',
+        color: '#FF0000'
     }
 });
 
