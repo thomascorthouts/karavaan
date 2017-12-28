@@ -26,8 +26,8 @@ class Groups extends Component<IProps, IState> {
 
         let groupArray = this.state.groupArray || [];
 
-        let groups = groupArray.map((val: any, key: any) => {
-            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewExpenses(key, navigate)} />;
+        let groups = groupArray.map((val: Group, key: any) => {
+            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewExpenses(val, navigate)} />;
         });
 
         return (
@@ -52,9 +52,8 @@ class Groups extends Component<IProps, IState> {
         navigate('AddGroup', { groupArray: this.state.groupArray, updateFeedState: this.updateState });
     }
 
-    async viewExpenses(key: number, navigate: any) {
-        let group = this.state.groupArray[key];
-        let expenseArray = await AsyncStorage.getItem(group.expenseArrayId)
+    async viewExpenses(val: Group, navigate: any) {
+        let expenseArray = await AsyncStorage.getItem('expenses-' + val.id)
             .then((value) => {
                 if (value) {
                     return JSON.parse(value);
@@ -65,7 +64,7 @@ class Groups extends Component<IProps, IState> {
         navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: group.expenseArrayId, group: group, groupArray: this.state.groupArray});
     }
 
-    componentDidMount() {
+    componentWillMount() {
         AsyncStorage.getItem('groups')
             .then((value) => {
                 if (value) {
