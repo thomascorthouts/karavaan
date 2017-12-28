@@ -6,7 +6,6 @@ interface IState {
     error: string;
     groupArray: GroupList;
 }
-//AddGroupToStorage moet nog aangepast worden
 
 class GroupDetail extends Component<IDefaultNavProps, IState> {
 
@@ -40,13 +39,11 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
                 <KeyboardAvoidingView behavior='padding'>
                     <View style={styles.formcontainer}>
                         <StatusBar barStyle={'light-content'} />
-
-                        <Text style={styles.title}>New Group</Text>
-
                         <TextInput
                             style={styles.input}
                             underlineColorAndroid={'transparent'}
                             placeholder={'Group name'}
+                            value={this.state.group.name}
                             onChangeText={(text) => {
                                 const group = Object.assign({}, this.state.group, { name: text });
                                 this.setState({ group });
@@ -67,6 +64,7 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
 
                         <Text> Members </Text>
                         {members}
+                        <Text></Text>
                         <TextInput 
                             style={styles.input}
                             underlineColorAndroid={'transparent'}
@@ -79,8 +77,8 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
                             }
                         />
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => navigate()}>
-                            <Text style={styles.buttonText}>BACK</Text>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.delete(navigate)}>
+                            <Text style={styles.buttonText}>DELETE</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(navigate)}>
@@ -95,8 +93,13 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
         );}
 
         save(navigate: any) {
-            let nr = this.state.groupArray.length;
-            this.addGroupToStorage()
+            for (let i = 0; i < this.state.groupArray.length; i++){
+                if (this.state.groupArray[i].groupId === this.state.group.groupId){
+                   this.state.groupArray[i] = this.state.group;
+                }
+            }
+            
+            this.updateGroupToStorage()
                 .then(() => {
                     navigate('GroupFeed', {groupArray: this.state.groupArray});
                 });
@@ -109,33 +112,45 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
                 this.save(navigate);
             }
         }
+
+        delete(navigate: any){
+            for (let i = 0; i < this.state.groupArray.length; i++){
+                if (this.state.groupArray[i].groupId === this.state.group.groupId){
+                   this.state.groupArray.splice(i, 1);
+                }
+            }
+            this.updateGroupToStorage()
+                .then(() => {
+                    navigate('GroupFeed', {groupArray: this.state.groupArray});
+                })
+        }
     
         updatePerson(person: string, key: any){
-            this.state.group.personArray[key] = person;
+            if (person !== ''){
+                this.state.group.personArray[key] = person;
+            } else {
+                this.state.group.personArray.splice(key, 1);
+            }
             const group = this.state.group;
             this.setState({ group: group});
         }
     
         addPerson(name: string) {
-            this.state.group.personArray.push(name);
-            const group = this.state.group;
-            this.setState({group: group});
+            if (name !== ''){
+                this.state.group.personArray.push(name);
+                const group = this.state.group;
+                this.setState({group: group});
+            }
         }
     
-        async addGroupToStorage() {
+        async updateGroupToStorage() {
             try {
-                let nr = this.state.groupArray.length;
-                for (let i = 0; i < nr; i++){
-                    if (this.state.groupArray[i].groupId === this.state.group.groupId){
-                       this.state.groupArray[i] = this.state.group;
-                    }
-                }
                 await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
             } catch (error) {
                 console.log(error);
             }
         }
-                    }
+    }
 
 export default GroupDetail;
 

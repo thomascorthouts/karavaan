@@ -76,6 +76,7 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
                         <Text> Members </Text>
                         {members}
+                        <Text></Text>
                         <TextInput 
                             style={styles.input}
                             underlineColorAndroid={'transparent'}
@@ -122,15 +123,21 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     updatePerson(person: string, key: any){
-        this.state.group.personArray[key] = person;
+        if (person !== ''){
+            this.state.group.personArray[key] = person;
+        } else {
+            this.state.group.personArray.splice(key, 1);
+        }
         const group = this.state.group;
         this.setState({ group: group});
     }
 
     addPerson(name: string) {
-        this.state.group.personArray.push(name);
-        const group = this.state.group;
-        this.setState({group: group});
+        if (name !== ''){
+            this.state.group.personArray.push(name);
+            const group = this.state.group;
+            this.setState({group: group});
+        }
     }
 
     async addGroupToStorage() {
