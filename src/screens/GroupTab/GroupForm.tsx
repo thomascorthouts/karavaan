@@ -8,6 +8,7 @@ import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel'
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { reset } from '../../NavigationActions';
+import { DeleteButton } from '../../components/Buttons/DeleteButton';
 
 interface IState {
     group: Group;
@@ -56,15 +57,25 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         let personArray = this.state.personArray;
 
         personArray.map((person: Person, key: any) => {
-            console.log(person);
             members.push(
-                <InputWithoutLabel
-                    key={person.id}
-                    returnKeyType={'done'}
-                    autoCapitalize={'words'}
-                    value={person.firstname + ' ' + person.lastname}
-                    editable={false}
-                />
+                <View key={person.id} style={styles.rowContainer}>
+                    <View style={styles.currentMembers}>
+                        <InputWithoutLabel
+                            returnKeyType={'done'}
+                            autoCapitalize={'words'}
+                            value={person.firstname + ' ' + person.lastname}
+                            editable={false}
+                        />
+                    </View>
+                    <View style={styles.flex}>
+                        <DeleteButton
+                            buttonText={'X'}
+                            buttonStyle={styles.deleteButton}
+                            onPress={() =>
+                                this.confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
+                            }/>
+                    </View>
+                </View>
             );
         });
 
@@ -108,17 +119,17 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
                 <GreenButton buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
                     if (this.state.update) {
-                        this.delete(dispatch);
+                        this.confirmDelete('this group', () => this.deleteGroup(dispatch));
                     } else {
                         goBack();
                     }
                 }} />
-                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                <GreenButton buttonText={'SAVE'} onPress={() => this.validateGroup(goBack)} />
             </View>
         );
     }
 
-    save(goBack: any) {
+    saveGroup(goBack: any) {
         let id = (this.state.update) ? this.state.group.id : this.state.group.name + '#' + new Date().toISOString();
         if (this.state.update) {
             for (let i = 0; i < this.state.groupArray.length; i++) {
@@ -143,7 +154,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             });
     }
 
-    delete(dispatch: any) {
+    deleteGroup(dispatch: any) {
         for (let i = 0; i < this.state.groupArray.length; i++) {
             if (this.state.groupArray[i].id === this.state.group.id) {
                 this.state.groupArray.splice(i, 1);
@@ -156,7 +167,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             });
     }
 
-    validate(navigate: any) {
+    validateGroup(navigate: any) {
         let error = '';
         if (this.state.group.name === undefined || this.state.group.name === '') {
             error += 'Group name can not be empty';
@@ -167,7 +178,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         }
 
         if (error === '') {
-            this.save(navigate);
+            this.saveGroup(navigate);
         } else {
             this.showError(error);
         }
@@ -185,18 +196,11 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         return person;
     }
 
-    updatePerson(text: string, key: any) {
-        console.log(text);
-        console.log(key);
+    deletePerson(key: any) {
         let personArray = [...this.state.personArray];
-        if (text !== '') {
-            personArray[key] = this.createPerson(text);
-        } else {
-            personArray.splice(key, 1);
-        }
-        this.setState({ personArray }, () =>
-            console.log(this.state.personArray)
-        );
+        personArray.splice(key, 1);
+
+        this.setState({ personArray });
     }
 
     addPerson(text: string) {
@@ -245,6 +249,17 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         return true;
     }
 
+    confirmDelete(type: string, callback: any) {
+        Alert.alert('Warning', 'Do you really want to delete ' + type,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: () => callback() }
+            ],
+            { onDismiss: () => undefined }
+        );
+        return true;
+    }
+
     componentWillMount() {
         AsyncStorage.getItem('currencies')
             .then((value) => {
@@ -285,13 +300,21 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#4B9382'
     },
+    rowContainer: {
+        flex: 1,
+        flexDirection: 'row'
+    },
     title: {
         fontSize: 40,
         color: '#287E6F',
         fontWeight: 'bold',
         textAlign: 'center'
     },
-    picker: {
-        flex: 1
+    currentMembers: {
+        flex: 3
+    },
+    deleteButton: {
+        height: 40,
+        paddingVertical: 10
     }
 });

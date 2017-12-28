@@ -1,8 +1,13 @@
 interface IButtonProps {
-
+    onPress: any;
+    buttonText: string;
+    buttonStyle?: any;
 }
 
 interface IPropsGreenButton extends IButtonProps {
-    onPress: any;
-    buttonText: string;
+
+}
+
+interface IPropsDeleteButton extends IButtonProps {
+
 }

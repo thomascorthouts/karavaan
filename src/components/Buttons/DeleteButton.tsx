@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { buttonStyles } from './styles';
 
-export class GreenButton extends React.Component<IPropsGreenButton, {}> {
-    constructor(props: IPropsGreenButton) {
+export class DeleteButton extends React.Component<IPropsDeleteButton, {}> {
+    constructor(props: IPropsDeleteButton) {
         super(props);
     }
 
@@ -14,7 +14,7 @@ export class GreenButton extends React.Component<IPropsGreenButton, {}> {
             <TouchableOpacity style={combinedStyle}
                 {...this.props}
             >
-                <Text style={buttonStyles.whiteButtonText}>{this.props.buttonText}</Text>
+                <Text style={buttonStyles.redButtonText}>{this.props.buttonText}</Text>
             </TouchableOpacity>
         );
     }
