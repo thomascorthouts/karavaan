@@ -18,7 +18,7 @@ interface ExpenseList extends Array<Expense> { }
 // Groups
 
 interface Group {
-    id: string; // Random hash (in generateID in AddGroup)
+    id: string;
     name: string;
     // PersonList will be persons- + groupID in asyncstorage
     // ExpenseArray will be expenses- + groupID in asyncstorage

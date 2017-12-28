@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
-import { ScrollView, Text, TouchableOpacity, StyleSheet, AsyncStorage } from 'react-native';
+import React, {Component, ReactNode} from 'react';
+import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
 
 interface IState {
     group: Group;
+    error: string;
+    groupArray: GroupList;
 }
 
 class GroupDetail extends Component<IDefaultNavProps, IState> {
@@ -13,42 +15,180 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
-
         this.state = {
-            group: this.props.navigation.state.params.group
+            group: this.props.navigation.state.params.group,
+            error: '',
+            groupArray: this.props.navigation.state.params.groupArray,
         };
     }
-
+    
     render() {
         const { navigate } = this.props.navigation;
+        let members: ReactNode[] = new Array();
+        const personArray = this.state.group.personArray;
+        const num = personArray.map((person: string, key: any) => {
+             members.push(<TextInput style={styles.input} returnKeyType={'next'} autoCapitalize={'words'} 
+             value={person} onChangeText={(text) =>  
+                 {
+                 this.updatePerson(text, key);}}/>)
+        });
+
 
         return (
-            <ScrollView>
-                <Text> {this.state.group.name} </Text>
+            <View style={styles.container}>
+                <KeyboardAvoidingView behavior='padding'>
+                    <View style={styles.formcontainer}>
+                        <StatusBar barStyle={'light-content'} />
+                        <TextInput
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            placeholder={'Group name'}
+                            value={this.state.group.name}
+                            onChangeText={(text) => {
+                                const group = Object.assign({}, this.state.group, { name: text });
+                                this.setState({ group });
+                            }}
+                            returnKeyType={'next'}
+                        />
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.viewExpenses(navigate)}>
-                    <Text style={styles.buttonText}>View Expense</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        );
-    }
+                        <TextInput
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            value={this.state.group.date}
+                            onChangeText={(text) => {
+                                const group = Object.assign({}, this.state.group, { date: text });
+                                this.setState({ group });
+                            }}
+                            returnKeyType={'next'}
+                        />
 
-    async viewExpenses(navigate: any) {
-        let expenseArray = await AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    return JSON.parse(value);
-                } else {
-                    return [];
+                        <Text> Members </Text>
+                        {members}
+                        <Text></Text>
+                        <TextInput 
+                            style={styles.input}
+                            underlineColorAndroid={'transparent'}
+                            placeholder={'new member'}
+                            returnKeyType={'next'} 
+                            autoCapitalize={'words'} 
+                            onSubmitEditing={(text) => {
+                                    this.addPerson(text.nativeEvent.text);
+                                }
+                            }
+                        />
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.delete(navigate)}>
+                            <Text style={styles.buttonText}>DELETE</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.validate(navigate)}>
+                            <Text style={styles.buttonText}>SAVE</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.errorText}>{this.state.error}</Text>
+
+                    </View>
+                </KeyboardAvoidingView>
+            </View>
+
+        );}
+
+        save(navigate: any) {
+            for (let i = 0; i < this.state.groupArray.length; i++){
+                if (this.state.groupArray[i].groupId === this.state.group.groupId){
+                   this.state.groupArray[i] = this.state.group;
                 }
-            });
-        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: 'expenses-' + this.state.group.id });
+            }
+            
+            this.updateGroupToStorage()
+                .then(() => {
+                    navigate('GroupFeed', {groupArray: this.state.groupArray});
+                });
+        }
+    
+        validate(navigate: any){
+            if (this.state.group.date === '' || this.state.group.name === '' || this.state.group.personArray.length === 0){
+                this.setState( {error: 'No field can be empty'})
+            } else {
+                this.save(navigate);
+            }
+        }
+
+        delete(navigate: any){
+            for (let i = 0; i < this.state.groupArray.length; i++){
+                if (this.state.groupArray[i].groupId === this.state.group.groupId){
+                   this.state.groupArray.splice(i, 1);
+                }
+            }
+            this.updateGroupToStorage()
+                .then(() => {
+                    navigate('GroupFeed', {groupArray: this.state.groupArray});
+                })
+        }
+    
+        updatePerson(person: string, key: any){
+            if (person !== ''){
+                this.state.group.personArray[key] = person;
+            } else {
+                this.state.group.personArray.splice(key, 1);
+            }
+            const group = this.state.group;
+            this.setState({ group: group});
+        }
+    
+        addPerson(name: string) {
+            if (name !== ''){
+                this.state.group.personArray.push(name);
+                const group = this.state.group;
+                this.setState({group: group});
+            }
+        }
+    
+        async updateGroupToStorage() {
+            try {
+                await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
-}
 
 export default GroupDetail;
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#4B9382',
+        alignSelf: 'stretch'
+    },
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    formcontainer: {
+        padding: 20
+    },
+    input: {
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
+    picker: {
+        width: '100%'
+    },
+    inputAmount: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
     buttonContainer: {
         backgroundColor: '#287E6F',
         paddingVertical: 15,
@@ -57,5 +197,8 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: '#FFFFFF'
+    },
+    errorText: {
+        color: 'red'
     }
 });
