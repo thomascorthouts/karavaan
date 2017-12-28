@@ -6,7 +6,7 @@ https://ucll-mobile.wikispaces.com/Features
 
 ## When starting working on new issue
 
-When all your changes are merged to master, always in master folder on pc: 
+When all your changed are merged to master, always in master folder on pc: 
 ```
 git pull
 git checkout <name>

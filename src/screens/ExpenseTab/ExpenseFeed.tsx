@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, StatusBar, AsyncStorage, Button } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { users } from '../../config/Data';
 
 interface IState {
     [index: number]: Expense;
     expenseArray: ExpenseList;
     expenseArrayId: string;
-    group: Group;
 }
 
 class ExpenseFeed extends Component<IDefaultNavProps, IState> {
@@ -21,7 +21,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
-            };
+            }
         } else {
             return {};
         }
@@ -32,7 +32,6 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
         this.state = {
             expenseArray: [] as ExpenseList,
-            group: this.props.navigation.state.params ? this.props.navigation.state.params.group : {},
             expenseArrayId: this.props.navigation.state.params ? this.props.navigation.state.params.expenseArrayId : 'expenses'
         };
     }
@@ -67,7 +66,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
     addExpense(navigate: any) {
         let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
-        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
     }
 
     viewDetails(key: number, navigate: any) {
@@ -76,7 +75,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         navigate(screen, {expense: expense});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {
@@ -91,7 +90,6 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
             });
     }
 }
-
 
 export default ExpenseFeed;
 

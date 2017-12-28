@@ -1,4 +1,4 @@
-interface ITextInputProps {
+interface IProps {
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
     autoCorrect?: boolean;
     autoFocus?: boolean;
@@ -23,30 +23,16 @@ interface ITextInputProps {
     placeholder?: string;
     placeholderTextColor?: any;
     inputref?: any;
-    returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
+    returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';    
     secureTextEntry?: boolean;
     selectTextOnFocus?: boolean;
-    selection?: { start: number, end: number };
+    selection?: {start: number, end: number};
     selectionColor?: any;
     inputStyle?: any;
     value?: string;
 }
 
-interface IPropsWithLabel extends ITextInputProps {
+interface IPropsWithLabel extends IProps {
     labelStyle?: any;
     labelText: string;
-}
-
-interface IPropsWithCurrencyPicker extends ITextInputProps {
-    currentCurrency: string;
-    currencies: Currencies;
-    onValueChange: any;
-    selectedValue: string;
-}
-
-interface IPropsCurrencyPicker extends ITextInputProps {
-    currentCurrency: string;
-    currencies: Currencies;
-    onValueChange: any;
-    selectedValue: string;
 }

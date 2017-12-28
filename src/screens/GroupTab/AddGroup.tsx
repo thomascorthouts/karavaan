@@ -1,17 +1,9 @@
 import React, {ReactNode} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, AppRegistry, FlexStyle, TextInput, TouchableOpacity, StatusBar, Button, ListView, Picker, Alert, AsyncStorage } from 'react-native';
-import { CurrencyPicker } from '../../components/CurrencySelector';
-import { currencies } from '../../config/Data';
-import { OptionPicker } from '../../components/Pickers/OptionPicker';
-import { CurrencyInputPicker } from '../../components/Pickers/CurrencyInputPicker';
-import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
-import { ErrorText } from '../../components/Text/ErrorText';
-import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IState {
     group: Group;
     groupArray: GroupList;
-    currencies: Currencies;
     error: string;
 }
 
@@ -24,11 +16,18 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
+        let dat = new Date();
+
         this.state = {
-            group: {} as Group,
             groupArray: this.props.navigation.state.params.groupArray,
-            currencies: {} as Currencies,
-            error: '',
+            group: {
+                groupId: '',
+                name: '',
+                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
+                personArray: [] as PersonList,
+                expenseArrayId: '',
+            },
+            error: ''
         };
     }
 
@@ -47,7 +46,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-// <<<<<<< franci
                 <KeyboardAvoidingView behavior='padding'>
                     <View style={styles.formcontainer}>
                         <StatusBar barStyle={'light-content'} />
@@ -101,26 +99,9 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
                             <Text style={styles.buttonText}>SAVE</Text>
                         </TouchableOpacity>
                         <Text style={styles.errorText}>{this.state.error}</Text>
-// =======
-                <View style={styles.flex}>
-                    <Text style={styles.title}>New Group</Text>
-                    <ErrorText errorText={this.state.error}/>
-                </View>
-// >>>>>>> mathias
 
-                <KeyboardAvoidingView behavior='padding'>
-                    <InputWithoutLabel
-                        placeholder={'Group name'}
-                        onChangeText={(text: string) => {
-                            const group = Object.assign({}, this.state.group, { name: text });
-                            this.setState({ group });
-                        }}
-                        returnKeyType={'done'}
-                    />
+                    </View>
                 </KeyboardAvoidingView>
-
-                <GreenButton buttonText={'BACK'} onPress={() => goBack()}/>
-                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)}/>
             </View>
         );
     }
@@ -133,21 +114,6 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
             });
     }
 
-    // Mathias
-    validate(navigate: any) {
-        let error = '';
-        if (this.state.group.name === undefined || this.state.group.name === '') {
-            error += 'Group name can not be empty';
-        }
-
-        this.setState({ error: error }, () => {
-            if (error === '') {
-                this.save(navigate);
-            }
-        });
-    }
-  
-    // Franci
     validate(navigate: any){
         if (this.state.group.date === '' || this.state.group.name === '' || this.state.group.personArray.length === 0){
             this.setState( {error: 'Please fill out all fields'})
@@ -175,49 +141,27 @@ class AddGroupScreen extends React.Component<IDefaultNavProps, IState> {
     }
 
     async addGroupToStorage() {
-        let id = this.state.group.name + '#' + new Date().toISOString();
         try {
             this.state.groupArray.push({
                 'groupId': 'G' + this.state.group.name + '#' + new Date().toISOString(),
                 'name': this.state.group.name,
-                'id': id,
-                'defaultCurrencies': this.state.group.defaultCurrencies
+                'date': this.state.group.date,
+                'personArray': this.state.group.personArray,
+                'expenseArrayId': this.state.group.name + '#' + new Date().toISOString()
             });
-            await AsyncStorage.multiSet([['groups', JSON.stringify(this.state.groupArray)],
-            ['expenses-' + id, JSON.stringify([])],
-            ['persons-' + id, JSON.stringify([])]]);
+            await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
         } catch (error) {
             console.log(error);
         }
-    }
-
-    async componentWillMount() {
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                } else {
-                    this.setState({
-                        currencies: currencies
-                    }, () => {
-                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-                    });
-                }
-            });
     }
 }
 export default AddGroupScreen;
 
 const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#4B9382'
+        backgroundColor: '#4B9382',
+        alignSelf: 'stretch'
     },
     title: {
         fontSize: 40,
@@ -225,7 +169,39 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center'
     },
+    formcontainer: {
+        padding: 20
+    },
+    input: {
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
     picker: {
-        flex: 1
+        width: '100%'
+    },
+    inputAmount: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: 41,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginBottom: 10,
+        color: '#FFF',
+        paddingHorizontal: 10
+    },
+    buttonContainer: {
+        backgroundColor: '#287E6F',
+        paddingVertical: 15,
+        marginBottom: 10
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: '#FFFFFF'
+    },
+    errorText: {
+        color: 'red'
     }
 });

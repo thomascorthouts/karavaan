@@ -17,11 +17,11 @@ export class ExpenseItem extends React.Component<IProps, {}> {
             <View key={this.props.keyval} >
                 <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
                     <View>
-                        <Text style={styles.detailText}>TODO</Text>
-                        <Text style={styles.detailTextSmall}>{this.props.val.description} - {this.props.val.category}</Text>
+                        <Text style={styles.detailText}>{this.props.val.firstname} {this.props.val.lastname}</Text>
+                        <Text style={styles.detailTextSmall}>{this.props.val.date}</Text>
                     </View>
                     <View style={styles.expense}>
-                        <Text>{this.props.val.amount} {this.props.val.currency}</Text>
+                        <Text>{this.props.val.amount} {this.props.val.currency.split(' ')[1]}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

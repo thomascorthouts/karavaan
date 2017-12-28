@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { AppRegistry, BackHandler, Alert, KeyboardAvoidingView, View } from 'react-native';
+import { AppRegistry, BackHandler, Alert } from 'react-native';
 import Root from './build/src/config/Router';
 
 export default class App extends Component {
   render() {
-    return (
-      <Root />
-    );
+    return <Root />;
   }
 
   // componentDidMount() {

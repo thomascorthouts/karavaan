@@ -5,10 +5,9 @@ interface IDefaultNavProps {
 // Expenses
 
 interface Expense {
-    category: string;
     date: string;
-    description: string;
-    balances: Balances;
+    firstname: string;
+    lastname: string;
     amount: number;
     currency: string;
 }
@@ -18,56 +17,13 @@ interface ExpenseList extends Array<Expense> { }
 // Groups
 
 interface Group {
-    id: string;
+    groupId: any;
     name: string;
-    // PersonList will be persons- + groupID in asyncstorage
-    // ExpenseArray will be expenses- + groupID in asyncstorage
-    defaultCurrencies: Array<string>; // Array of the currency tags
+    personArray: PersonList;
+    expenseArrayId: string;
+    date: string;
 }
 
 interface GroupList extends Array<Group> { }
 
-// Person
-
-interface Person {
-    id: string; // At the moment this is a string of firstname_lastname
-    firstname: string;
-    lastname: string;
-    balance: number; // Always in ..?
-}
-
-interface PersonList extends Array<Person> { }
-
-// Currency
-
-interface Currency {
-    name: string;
-    tag: string;
-    symbol: string;
-    rate: number;
-}
-
-interface Currencies {
-    [key: string]: Currency;
-}
-
-// Bill Splitting
-
-interface Dish {
-    name: string;
-    amount: number;
-    users: PersonList;
-}
-
-// Balance
-
-interface Balance {
-    // Currency of specific balance can be found in the expense it is in
-    person: Person;
-    amount: number;
-}
-
-interface Balances extends Array<Balance> { }
-
-// ignore errors for javascript only packages
-declare module 'react-native-table-component-pro'
+interface PersonList extends Array<string> { }
