@@ -3,6 +3,7 @@ import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, 
 import BillSplitterItem from '../../components/BillSplitterItem';
 import { friendList } from '../../config/Data';
 import PersonPicker from '../../components/Pickers/PersonPicker';
+import {ErrorText} from '../../components/Text/ErrorText';
 
 interface Options {
     splitMode: boolean;
@@ -23,9 +24,11 @@ interface IState {
     chosen: PersonList;
     payers: Balances;
     payerNodes: Array<ReactNode>;
-};
+    error: string;
+}
 
 class AmountSplit extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
@@ -45,29 +48,48 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             payerNodes: [] as Array<ReactNode>,
             sum: 0,
             chosen: [] as PersonList,
-            personArray: friendList,
+            personArray: [] as PersonList,
             expenseArray: [] as ExpenseList,
-            currencies: {} as Currencies
+            currencies: {} as Currencies,
+            error: ''
         };
     }
 
-    update(text: string, id: string) {
-        let balances = this.state.expense.balances;
-        let balance = balances.find((val: Balance) => {
-            return (val.person.id === id);
-        });
-        if (typeof balance !== 'undefined') {
-            balance.amount = parseFloat(text);
-            let expense = Object.assign({}, this.state.expense, {balances: balances});
-            this.setState({expense});
-        }
+    componentWillMount() {
+        AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        personArray: JSON.parse(value)
+                    });
+                }
+            })
+            .then(() => {
+                let amounts = [] as Balances;
+                const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) * (-1) : 0;
+                this.state.personArray.map((val: Person) => {
+                    amounts.push({ person: val, amount: avg});
+                });
+                let expense = Object.assign({}, this.state.expense, {balances: amounts});
+                this.setState({expense});
+            });
+
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        expenseArray: JSON.parse(value)
+                    });
+                }
+            });
     }
+
     render() {
         const { navigate } = this.props.navigation;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
-            return <BillSplitterItem key={key} keyval={key} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount}
-                                     onChangeText={(text: number) => this.update.bind(this, text, val.person.id)}
+            return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
+                                     onChangeText={this.update.bind(this)}
                                      submitEditing={() => this.submitEditing()}/>;
         });
 
@@ -75,6 +97,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <Text>{this.state.options.description}</Text>
+                <ErrorText errorText={this.state.error}/>
                 <ScrollView>
                     <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
                     {this.state.payerNodes}
@@ -91,6 +114,18 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         );
     }
 
+    update(text: string, id: string) {
+        let balances = this.state.expense.balances;
+        let balance = balances.find((val: Balance) => {
+            return (val.person.id === id);
+        });
+        if (typeof balance !== 'undefined') {
+            balance.amount = parseFloat(text) * (-1); // 'Received' money gives a negative balance
+            let expense = Object.assign({}, this.state.expense, {balances: balances});
+            this.setState({expense});
+        }
+    }
+
     addPayer(id: string) {
         let chosen = this.state.payers;
         let nodes = this.state.payerNodes;
@@ -98,28 +133,59 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
             this.setState({payers: chosen});
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={(amount: any) => this.setPayerAmount.bind(this, amount, p.id)}/>);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => this.submitEditing()} onChangeText={this.setPayerAmount.bind(this)}/>);
             this.setState({payerNodes: nodes});
         }
-        console.log(this.state.payers);
     }
 
     setPayerAmount (amount: number, id: string) {
+        console.log(amount + ' ' + id);
         let payers = this.state.payers;
         let bal = payers.find((val: Balance) => { return (val.person.id === id); });
         if (typeof bal !== 'undefined') {
-            bal.amount += amount;
+            bal.amount = amount;
             this.setState({payers});
         }
     }
 
-    submitEditing() { }
+    submitEditing() {
+        // En wa als ik nu een lege functie wil?
+    }
 
     confirm(navigate: any) {
-        this.addExpenseToStorage()
+        this.fixBalances()
+            .then( () => this.addExpenseToStorage())
             .then(() => {
                 navigate( 'GroupFeed' );
+            })
+            .catch((error: string) => this.setState({ error }));
+    }
+
+    async fixBalances() {
+        // This check function has to be fixed..
+        let payer;
+        let sum = 0;
+        console.log(this.state.expense);
+        let expense = Object.assign( {}, this.state.expense);
+        this.state.payers.map((payerBalance: Balance) => {
+            payer = expense.balances.find((bal: Balance) => {
+                return bal.person.id === payerBalance.person.id;
             });
+            if (typeof payer !== 'undefined') {
+                payer.amount += payerBalance.amount;
+            } else {
+                let balanceToPush = Object.assign({}, payerBalance );
+                expense.balances.push(balanceToPush);
+            }});
+
+        expense.balances.map((val: Balance) => {
+            sum += val.amount;
+        });
+        console.log(sum);
+        if ( sum === 0) {
+            this.setState({ expense });
+            this.setState({ error: '' });
+        } else throw 'The total balance is not 0.';
     }
 
     async addExpenseToStorage() {
@@ -139,28 +205,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         } catch (error) {
             console.log(error);
         }
-    }
-
-    componentWillMount() {
-
-       // Asyncstorage get Persons should be added when this functionality is integrated
-
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        expenseArray: JSON.parse(value)
-                    });
-                }
-            });
-
-        let amounts = [] as Balances;
-        const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) : 0;
-        this.state.personArray.map((val: Person, index: number) => {
-            amounts.push({ person: val, amount: avg});
-        });
-        let expense = Object.assign({}, this.state.expense, {balances: amounts});
-        this.setState({expense});
     }
 }
 

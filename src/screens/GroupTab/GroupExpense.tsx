@@ -56,7 +56,6 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 
     nextScreen = (navigate: any) => {
-        console.log(this.state.group);
         const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currencies[this.state.currency], amount: this.state.amount, category: this.state.category }};
         if (this.state.splitMode === 'bill') {
            navigate('GroupAddBill', props);

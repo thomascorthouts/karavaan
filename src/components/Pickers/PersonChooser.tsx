@@ -12,7 +12,7 @@ interface IState {
     options: ReactNode[];
 }
 
-class PersonPicker extends Component<IProps, IState> {
+class PersonChooser extends Component<IProps, IState> {
 
     constructor(props: IProps, state: IState) {
         super(props, state);
@@ -26,10 +26,10 @@ class PersonPicker extends Component<IProps, IState> {
         return (
             <View>
                 <OptionPicker inputLabel={'Name:'} onChangeText={(text: any) => {
-                    this.setState({ input: text }, () => this.updateOptions());
-                }} textInput={this.state.input} options={this.state.options} />
-            </View>
-        );
+            this.setState({ input: text }, () => this.updateOptions());
+        }} textInput={this.state.input} options={this.state.options} />
+        </View>
+    );
     }
 
     updateOptions() {
@@ -38,7 +38,7 @@ class PersonPicker extends Component<IProps, IState> {
         this.props.persons.map((person: Person, index: number) => {
             name = person.firstname + ' ' + person.lastname;
             if (name.includes(this.state.input)) {
-                options.push(<TouchableOpacity onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
+                options.push(<TouchableOpacity onPress={() => this.choose(person)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
             }
         });
 
@@ -48,9 +48,11 @@ class PersonPicker extends Component<IProps, IState> {
         this.updateOptions();
     }
 
-    choose(id: string) {
-        this.props.choose(id);
+    choose(person: Person) {
+        this.setState( { input: person.firstname + ' ' + person.lastname });
+        this.setState({ options: [] });
+        this.props.choose(person.id);
     }
 }
 
-export default PersonPicker;
+export default PersonChooser;

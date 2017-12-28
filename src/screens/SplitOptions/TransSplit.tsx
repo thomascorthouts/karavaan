@@ -3,6 +3,8 @@ import { View, Button, AsyncStorage } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { InputWithCurrencySelector } from '../../components/TextInput/InputWithCurrencySelector';
 import { currencies } from '../../config/Data';
+import PersonPicker from '../../components/Pickers/PersonPicker';
+import PersonChooser from '../../components/Pickers/PersonChooser';
 
 interface Options {
     splitMode: boolean;
@@ -20,8 +22,8 @@ interface IState {
     options: Options;
     expense: Expense;
     currencies: Currencies;
-    donor: string;
-    receiver: string;
+    donor: Person;
+    receiver: Person;
     expenseArray: ExpenseList;
     personArray: PersonList;
 };
@@ -43,8 +45,8 @@ class TransSplit extends Component<IProps, IState> {
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
             currencies: currencies,
-            donor: '',
-            receiver: '',
+            donor: {} as Person,
+            receiver: {} as Person,
             expenseArray: [],
             personArray: [] as PersonList
         };
@@ -65,23 +67,31 @@ class TransSplit extends Component<IProps, IState> {
                         this.setState({ expense });
                     }}
                     selectedValue={this.state.expense.currency} />
-                <InputWithLabel labelText={'Donor'} onChangeText={(donor: any) => this.setState({ donor })} />
-                <InputWithLabel labelText={'Receiver'} onChangeText={(receiver: any) => this.setState({ receiver })} />
+                <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)}/>
+                <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)}/>
                 <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)} />
             </View>
         );
     }
 
-    isDonor(person: Person) {
-        return person.id === this.state.donor;
+    chooseDonor(id: string) {
+        this.choose(id, true);
     }
 
-    isReceiver(person: Person) {
-        return person.id === this.state.receiver;
+    chooseReceiver(id: string) {
+        this.choose(id, false);
+    }
+
+    choose(id: string, isDonor: boolean) {
+        let p = this.state.personArray.find((val: Person) => { return (val.id === id); });
+        if (typeof p !== 'undefined') {
+            if (isDonor) this.setState({ donor: p });
+            else this.setState( { receiver: p });
+        }
     }
 
     addTransaction(navigate: any) {
-        let balances = [{ person: this.state.personArray.find(this.isDonor), amount: this.state.expense.amount, currency: this.state.expense.currency }, { person: this.state.personArray.find(this.isReceiver), amount: this.state.expense.amount * (-1), currency: this.state.expense.currency }];
+        let balances = [{ person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency }, { person: this.state.receiver, amount: this.state.expense.amount * (-1), currency: this.state.expense.currency }];
         const expense = Object.assign({}, this.state.expense, { balances: balances });
         this.setState({ expense }, () => {
             this.addExpenseToStorage()

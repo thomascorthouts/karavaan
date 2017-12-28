@@ -28,6 +28,7 @@ interface IState {
 };
 
 class BillSplit extends Component<IProps, IState> {
+
     constructor(props: IProps, state: IState) {
         super(props, state);
 
@@ -47,9 +48,31 @@ class BillSplit extends Component<IProps, IState> {
             payerNodes: [] as Array<ReactNode>,
             dishes: [] as Array<Dish>,
             expenseArray: [] as ExpenseList,
-            personArray: friendList as PersonList,
+            personArray: [] as PersonList,
             items: [] as Array<ReactNode>
         };
+    }
+
+    componentWillMount() {
+
+        AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        personArray: JSON.parse(value)
+                    });
+                }
+            });
+
+        console.log(this.state.personArray);
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        expenseArray: JSON.parse(value)
+                    });
+                }
+            });
     }
 
     render() {
@@ -160,18 +183,6 @@ class BillSplit extends Component<IProps, IState> {
         } catch (error) {
             console.log(error);
         }
-    }
-
-    componentWillMount() {
-
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        expenseArray: JSON.parse(value)
-                    });
-                }
-            });
     }
 }
 
