@@ -6,7 +6,6 @@ interface IState {
     error: string;
     groupArray: GroupList;
 }
-//Geeft foutmelding want nog groupArray meekrijgen
 //AddGroupToStorage moet nog aangepast worden
 
 class GroupDetail extends Component<IDefaultNavProps, IState> {
@@ -97,7 +96,6 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
 
         save(navigate: any) {
             let nr = this.state.groupArray.length;
-            console.log(nr);
             this.addGroupToStorage()
                 .then(() => {
                     navigate('GroupFeed', {groupArray: this.state.groupArray});
@@ -126,7 +124,6 @@ class GroupDetail extends Component<IDefaultNavProps, IState> {
     
         async addGroupToStorage() {
             try {
-                console.log('in addGroup');
                 let nr = this.state.groupArray.length;
                 for (let i = 0; i < nr; i++){
                     if (this.state.groupArray[i].groupId === this.state.group.groupId){

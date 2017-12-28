@@ -17,7 +17,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
-            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group})}></Button>;
+            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group, groupArray: state.params.groupArray})}></Button>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
