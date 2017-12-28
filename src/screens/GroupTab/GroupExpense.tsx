@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Picker, Button, AsyncStorage} from 'react-native';
+import {View, Picker, Button, AsyncStorage, StatusBar} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
@@ -36,6 +36,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             const {navigate} = this.props.navigation;
             return (
                 <View>
+                    <StatusBar hidden={true}/>
                     <InputWithLabel labelText={'description'} onChangeText={(description: any) => this.setState({description})}/>
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
                                                value={ this.state.amount.toString() }

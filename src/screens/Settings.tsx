@@ -5,7 +5,7 @@ class Settings extends Component {
     render() {
         return (
             <View>
-                <StatusBar translucent={false} barStyle='light-content' />
+                <StatusBar hidden={true}/>
                 <Text>TODO</Text>
             </View>
         );

@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View, StatusBar } from 'react-native';
 import {currencies} from '../../config/Data';
 
 interface IState {
@@ -20,6 +20,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     render() {
         return (
             <ScrollView>
+                <StatusBar hidden={true}/>
                 <View> {this.state.balances} </View>
                 <Text> {this.state.expense.amount} </Text>
                 <Text> {this.state.expense.currency} </Text>

@@ -8,7 +8,9 @@ export class InputWithoutLabel extends React.Component<ITextInputProps, {}> {
     }
 
     render() {
-        const combinedStyle = StyleSheet.flatten([textInputStyles.input, this.props.inputStyle]);
+        const combinedStyle = StyleSheet.flatten(
+            [this.props.editable === false ? textInputStyles.disabled : textInputStyles.input, this.props.inputStyle]
+        );
 
         return (
             <View>

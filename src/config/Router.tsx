@@ -9,8 +9,7 @@ import AddExpense from '../screens/ExpenseTab/AddExpense';
 import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
-import AddGroup from '../screens/GroupTab/AddGroup';
-import GroupDetail from '../screens/GroupTab/GroupDetail';
+import GroupForm from '../screens/GroupTab/GroupForm';
 import GroupExpense from '../screens/GroupTab/GroupExpense';
 
 import TransSplit from '../screens/SplitOptions/TransSplit';
@@ -34,7 +33,9 @@ export const ExpenseStack = StackNavigator(
         AddExpense: {
             screen: AddExpense,
             navigationOptions: {
-                tabBarVisible: false
+                tabBarVisible: false,
+                swipeEnabled: false,
+                animationEnabled: false
             }
         }
     }, {
@@ -51,17 +52,11 @@ export const GroupStack = StackNavigator(
                 header: null
             }
         },
-        AddGroup: {
-            screen: AddGroup,
+        GroupForm: {
+            screen: GroupForm,
             navigationOptions: {
-                tabBarVisible: false,
-                header: null
-            }
-        },
-        GroupDetail: {
-            screen: GroupDetail,
-            navigationOptions: {
-                headerStyle: { 'backgroundColor': '#4B9382' }
+                swipeEnabled: false,
+                animationEnabled: false
             }
         },
         GroupExpenseFeed: {
@@ -77,6 +72,7 @@ export const GroupStack = StackNavigator(
             screen: GroupExpense,
             navigationOptions: {
                 tabBarVisible: false,
+                swipeEnabled: false,
                 header: null
             }
         },
@@ -84,13 +80,15 @@ export const GroupStack = StackNavigator(
             screen: TransSplit,
             navigationOptions: {
                 tabBarVisible: false,
+                swipeEnabled: false,
                 header: null
             }
-            },
+        },
         GroupAddBill: {
             screen: BillSplit,
             navigationOptions: {
                 tabBarVisible: false,
+                swipeEnabled: false,
                 header: null
             }
         },
@@ -98,6 +96,7 @@ export const GroupStack = StackNavigator(
             screen: AddDish,
             navigationOptions: {
                 tabBarVisible: false,
+                swipeEnabled: false,
                 header: null
             }
         },
@@ -105,6 +104,7 @@ export const GroupStack = StackNavigator(
             screen: AmountSplit,
             navigationOptions: {
                 tabBarVisible: false,
+                swipeEnabled: false,
                 header: null
             }
         }

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { textInputStyles } from '../components/TextInput/styles';
-import { goHome } from '../NavigationActions';
+import { reset } from '../NavigationActions';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -14,6 +14,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true}/>
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
@@ -48,7 +49,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     }
 
     login(dispatch: any) {
-        dispatch(goHome);
+        dispatch(reset('Home'));
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage, StatusBar } from 'react-native';
 import { GroupItem } from '../../components/GroupFeedItem';
 
 interface IProps {
@@ -26,12 +26,13 @@ class Groups extends Component<IProps, IState> {
 
         let groupArray = this.state.groupArray || [];
 
-        let groups = groupArray.map((val: Group, key: any) => {
-            return <GroupItem key={key} keyval={key} val={val} viewDetails={() => this.viewExpenses(val, navigate)} />;
+        let groups = groupArray.map((group: Group, key: any) => {
+            return <GroupItem key={key} keyval={key} val={group} viewDetails={() => this.viewExpenses(group, navigate)} />;
         });
 
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true}/>
                 <ScrollView style={styles.ScrollContainer}>
                     {groups}
                 </ScrollView>
@@ -49,11 +50,11 @@ class Groups extends Component<IProps, IState> {
     }
 
     addGroup(navigate: any) {
-        navigate('AddGroup', { groupArray: this.state.groupArray, updateFeedState: this.updateState });
+        navigate('GroupForm', { groupArray: this.state.groupArray, updateFeedState: this.updateState, update: false});
     }
 
-    async viewExpenses(val: Group, navigate: any) {
-        let expenseArray = await AsyncStorage.getItem('expenses-' + val.id)
+    async viewExpenses(group: Group, navigate: any) {
+        let expenseArray = await AsyncStorage.getItem('expenses-' + group.id)
             .then((value) => {
                 if (value) {
                     return JSON.parse(value);
@@ -61,7 +62,7 @@ class Groups extends Component<IProps, IState> {
                     return [];
                 }
             });
-        navigate('GroupExpenseFeed', { expenseArray: expenseArray, expenseArrayId: group.expenseArrayId, group: group, groupArray: this.state.groupArray});
+        navigate('GroupExpenseFeed', { group: group, expenseArray: expenseArray, groupArray: this.state.groupArray});
     }
 
     componentWillMount() {

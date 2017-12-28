@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/CurrencySelector';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
@@ -48,6 +48,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true}/>
                 <View style={styles.flex}>
                     <Text style={styles.title}>New Expense</Text>
                     <ErrorText errorText={this.state.error} />

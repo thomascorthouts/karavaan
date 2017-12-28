@@ -9,6 +9,13 @@ const textInputStyles = StyleSheet.create({
         color: '#000',
         paddingHorizontal: 10
     },
+    disabled: {
+        height: 40,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        marginBottom: 10,
+        color: '#555',
+        paddingHorizontal: 10
+    },
     label: {
 
     }

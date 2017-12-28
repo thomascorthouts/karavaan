@@ -17,7 +17,9 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
-            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group, groupArray: state.params.groupArray})}></Button>;
+            const headerRight = <Button title={'Edit'} onPress={() =>
+                navigate('GroupForm', {group: state.params.group, groupArray: state.params.groupArray, update: true})
+            }></Button>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -30,10 +32,11 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
         this.state = {
             expenseArray: [] as ExpenseList,
-            group: this.props.navigation.state.params ? this.props.navigation.state.params.group : {},
-            expenseArrayId: this.props.navigation.state.params ? this.props.navigation.state.params.expenseArrayId : 'expenses'
+            group: navParams ? navParams.group : {},
+            expenseArrayId: navParams ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 
@@ -48,7 +51,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-                <StatusBar translucent={false} barStyle='light-content' />
+                <StatusBar hidden={true}/>
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
                 </ScrollView>
@@ -91,7 +94,6 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
             });
     }
 }
-
 
 export default ExpenseFeed;
 
