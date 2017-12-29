@@ -4,6 +4,7 @@ import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCur
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
 import {CategoryPicker} from '../../components/Pickers/CategoryPicker';
+import {parseMoney} from '../../util';
 
 interface IState {
     description: string;
@@ -13,6 +14,7 @@ interface IState {
     amount: number;
     splitMode: string;
     category: string;
+    amountString: string;
 }
 
 class GroupExpense extends Component<IDefaultNavProps, IState> {
@@ -27,7 +29,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             currencies: currencies,
             amount: 0,
             splitMode: 'trans',
-            category: 'Entertainment'
+            category: 'Entertainment',
+            amountString: ''
         };
 
     }
@@ -39,9 +42,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <StatusBar hidden={true}/>
                     <InputWithLabel labelText={'description'} onChangeText={(description: any) => this.setState({description})}/>
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
-                                               value={ this.state.amount.toString() }
-                                               onChangeText={(amount: any) => { this.setState({amount: parseFloat(amount)});
-                                                   if (isNaN(parseFloat(amount))) this.setState({amount: 0}); }}
+                                               value={ this.state.amountString }
+                                               onChangeText={(amount: string) => this.updateAmount(amount) }
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
                     <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
@@ -53,6 +55,14 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <Button title={'NEXT'} onPress={() => this.nextScreen(navigate)}/>
                 </View>
             );
+    }
+
+    updateAmount (value: string) {
+
+        let amount = parseMoney(value);
+        this.setState({ amountString: amount });
+        this.setState({ amount: parseFloat(amount) });
+
     }
 
     updateCategory(cat: string) {

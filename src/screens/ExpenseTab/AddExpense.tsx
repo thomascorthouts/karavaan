@@ -6,7 +6,7 @@ import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-
+import { parseMoney } from '../../util';
 interface IState {
     persons: PersonList;
     expense: Expense;
@@ -14,6 +14,7 @@ interface IState {
     currencies: Currencies;
     expenseArray: ExpenseList;
     expenseArrayId: string;
+    amountString: string;
     donor: string;
     receiver: string;
 }
@@ -33,6 +34,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 balances: []
             },
+            amountString: '0',
             persons: [],
             currencies: currencies,
             expenseArray: this.props.navigation.state.params.expenseArray,
@@ -89,11 +91,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                             <InputWithoutLabel
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
-                                value={this.state.expense.amount.toString()}
-                                onChangeText={(value: number) => {
-                                    const expense = Object.assign({}, this.state.expense, { amount: value });
-                                    this.setState({ expense });
-                                }}
+                                value={this.state.amountString}
+                                onChangeText={(value: string) => this.updateAmount(value) }
                                 inputref={(input: any) => { (this as any).amount = input; }}
                                 returnKeyType={'done'}
                             />
@@ -119,6 +118,15 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)}/>
             </View>
         );
+    }
+
+    updateAmount (value: string) {
+
+        let amount = parseMoney(value);
+        this.setState({amountString: amount});
+        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(amount) });
+        this.setState({ expense });
+
     }
 
     setCategory(cat: string) {
