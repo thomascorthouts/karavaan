@@ -4,12 +4,14 @@ import { InputWithCurrencySelector } from '../../components/TextInput/InputWithC
 import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
 import {ErrorText} from '../../components/Text/ErrorText';
+import {parseMoney} from '../../util';
 
 interface Options {
     splitMode: boolean;
     currency: Currency;
     amount: number;
     description: string;
+    currencies: Currencies;
 }
 
 interface IProps {
@@ -26,6 +28,7 @@ interface IState {
     expenseArray: ExpenseList;
     personArray: PersonList;
     error: string;
+    amountString: string;
 }
 
 class TransSplit extends Component<IProps, IState> {
@@ -44,12 +47,13 @@ class TransSplit extends Component<IProps, IState> {
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
-            currencies: currencies,
+            currencies: this.props.navigation.state.params.opts.currencies,
             donor: {} as Person,
             receiver: {} as Person,
             expenseArray: [],
             personArray: [] as PersonList,
-            error: ''
+            error: '',
+            amountString: this.props.navigation.state.params.opts.amount.toString()
         };
     }
 
@@ -59,11 +63,8 @@ class TransSplit extends Component<IProps, IState> {
             <View>
                 <ErrorText errorText={this.state.error}/>
                 <InputWithCurrencySelector currentCurrency={this.state.expense.currency} currencies={this.state.currencies}
-                    value={this.state.expense.amount.toString()}
-                    onChangeText={(value: string) => {
-                        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
-                        this.setState({ expense });
-                    }}
+                    value={this.state.amountString}
+                    onChangeText={(value: string) => this.updateAmount(value)}
                     onValueChange={(currency: string) => {
                         const expense = Object.assign({}, this.state.expense, { currency: this.state.currencies[currency] });
                         this.setState({ expense });
@@ -74,6 +75,15 @@ class TransSplit extends Component<IProps, IState> {
                 <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)} />
             </View>
         );
+    }
+
+    updateAmount (value: string) {
+
+        let amount = parseMoney(value);
+        this.setState({ amountString: amount });
+        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
+        this.setState({ expense });
+
     }
 
     chooseDonor(id: string) {
@@ -160,19 +170,6 @@ class TransSplit extends Component<IProps, IState> {
                 if (value) {
                     this.setState({
                         personArray: JSON.parse(value)
-                    });
-                }
-            });
-
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                } else {
-                    this.setState({
-                        currencies: currencies
                     });
                 }
             });

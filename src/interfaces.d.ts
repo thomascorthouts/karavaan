@@ -54,6 +54,7 @@ interface Currencies {
 // Bill Splitting
 
 interface Dish {
+    id: string;
     name: string;
     amount: number;
     users: PersonList;

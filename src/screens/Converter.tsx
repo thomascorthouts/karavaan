@@ -67,17 +67,17 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     async componentWillMount() {
-
+            let currs = this.state.currencies;
             fetch('https://api.fixer.io/latest')
                 .then((resp) => resp.json())
                 .then((data) => {
                     if (data.rates) {
                         let key;
                         for (key in data.rates) {
-                            this.state.currencies[key].rate = data.rates[key];
+                            currs[key].rate = data.rates[key];
                         }
                         this.setState({
-                            currencies: this.state.currencies, isLoading: false
+                            currencies: currs, isLoading: false
                         });
                     } else {
                         throw 'Mattias';

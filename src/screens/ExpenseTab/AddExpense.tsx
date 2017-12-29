@@ -6,6 +6,7 @@ import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { parseMoney } from '../../util';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import * as StringSimilarity from '../../similarity';
 
@@ -14,6 +15,7 @@ interface IState {
     expense: Expense;
     currencies: Currencies;
     expenseArray: ExpenseList;
+    amountString: string;
     donor: Person;
     donorSuggestion: string;
     receiver: Person;
@@ -35,6 +37,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 balances: []
             },
+            amountString: '0',
             persons: [],
             currencies: currencies,
             expenseArray: this.props.navigation.state.params.expenseArray,
@@ -110,11 +113,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                             <InputWithoutLabel
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
-                                value={this.state.expense.amount.toString()}
-                                onChangeText={(value: number) => {
-                                    const expense = Object.assign({}, this.state.expense, { amount: value });
-                                    this.setState({ expense });
-                                }}
+                                value={this.state.amountString}
+                                onChangeText={(value: string) => this.updateAmount(value) }
                                 inputref={(input: any) => { (this as any).amount = input; }}
                                 returnKeyType={'done'}
                             />
@@ -144,6 +144,15 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
+
+    updateAmount (value: string) {
+
+        let amount = parseMoney(value);
+        this.setState({amountString: amount});
+        const expense = Object.assign({}, this.state.expense, {amount: parseFloat(amount)});
+        this.setState({expense});
+    }
+
     findSuggestion(text: string, type: string) {
         let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.persons.map(a => a.firstname + ' ' + a.lastname));
         if (type === 'donor') {
@@ -163,6 +172,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         let newReceiver = this.state.receiverSuggestion;
         (this as any).receiver.setNativeProps({text: newReceiver});
         this.setState({receiverSuggestion: '', receiver: this.createPerson(newReceiver)});
+
     }
 
     setCategory(cat: string) {
