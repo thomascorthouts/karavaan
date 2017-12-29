@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
+import {parseMoney} from '../util';
 
 interface IProps {
     keyval: any;
@@ -11,7 +12,7 @@ interface IProps {
 }
 
 interface IState {
-    amount: number;
+    amount: string;
 }
 
 export default class BillSplitterItem extends React.Component<IProps, IState> {
@@ -19,7 +20,7 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
         super(props, state);
 
         this.state = {
-            amount: this.props.amount
+            amount: this.props.amount.toString()
         };
     }
 
@@ -34,7 +35,7 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
                         onSubmitEditing={this.props.submitEditing()}
                         value={this.state.amount.toString()}
                         onChangeText={(text: any) => {
-                            this.update( parseFloat(text), this.props.keyval);
+                            this.update( text, this.props.keyval);
                         }}
                     />
                 </View>
@@ -42,10 +43,11 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
         );
     }
 
-    update ( amount: number, id: string) {
-        if (isNaN(amount)) amount = 0;
-        this.setState({amount});
-        this.props.onChangeText(amount, id);
+    update (value: string, id: string) {
+
+        let amount = parseMoney(value);
+        this.setState({ amount });
+        this.props.onChangeText(parseFloat(amount) , id);
     }
 }
 

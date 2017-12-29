@@ -1,56 +1,54 @@
 import React, { Component, ReactNode } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { OptionPicker } from './OptionPicker';
 
 interface IProps {
     currencyList: Currencies;
+    chooseCurrency(tag: string): any;
 }
 
 interface IState {
-    chosenCurrencies: Array<string>;
     currentInput: string;
     options: ReactNode[];
 }
 
 export class CurrencyInputPicker extends Component<IProps, IState> {
 
-    // TODO communication with parent element
     constructor(props: IProps, state: IState) {
         super(props, state);
 
         this.state = {
-            chosenCurrencies: [] as Array<string>,
             currentInput: '',
             options: [] as ReactNode[]
         };
     }
 
     render() {
-        this.update();
         return (
             <View>
-                <OptionPicker inputLabel={'Possible currencies:'} onChangeText={(input: any) => this.setState({ currentInput: input })} textInput={this.state.currentInput} options={this.state.options} />
+                <OptionPicker inputLabel={'Possible currencies:'} onChangeText={(input: any) => this.update(input)}
+                              textInput={this.state.currentInput} options={this.state.options} />
             </View>
         );
     }
 
-    update() {
+    update(input: string) {
+        this.setState({ currentInput: input });
         let currenciesItems = [] as ReactNode[];
         let current = {} as Currency;
-        for (let currency in this.props.currencyList) {
-            current = this.props.currencyList[currency];
+        for (let key in this.props.currencyList) {
+            current = this.props.currencyList[key];
             if (current.name.includes(this.state.currentInput)) {
-                currenciesItems.push(<TouchableOpacity onPress={() => this.choose(current.tag)}> {current.name} </TouchableOpacity>);
+                currenciesItems.push(<TouchableOpacity key={current.tag} onPress={this.choose.bind(this, current.tag)}><Text>{current.name}</Text></TouchableOpacity>);
             }
         }
-
         this.setState({ options: currenciesItems });
     }
 
     choose(tag: string) {
-        let chosen = this.state.chosenCurrencies;
-        chosen.push(tag);
-        this.setState({ chosenCurrencies: chosen });
+        console.log(tag);
+        this.setState({currentInput: ''});
+        this.props.chooseCurrency(tag);
     }
 
 }

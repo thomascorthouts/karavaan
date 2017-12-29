@@ -59,7 +59,7 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
         if (this.state.amount === 0 ) this.setState({ error: 'There is no amount chosen.' });
         else if (this.state.users.length === 0 ) this.setState({ error: 'There are no users selected.' });
         else {
-            let item = Object.assign({}, this.state.item, {name: this.state.description, amount: this.state.amount, users: this.state.users});
+            let item = Object.assign({}, this.state.item, {id: this.state.description + '#' + new Date().toISOString(), name: this.state.description, amount: this.state.amount, users: this.state.users});
             this.props.navigation.state.params.addItem(item);
             goBack();
         }

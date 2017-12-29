@@ -17,7 +17,8 @@ export class ExpenseItem extends React.Component<IProps, {}> {
             <View key={this.props.keyval} >
                 <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
                     <View>
-                        <Text style={styles.detailText}>TODO</Text>
+                        <Text style={styles.detailText}>{this.props.val.balances[1].person.firstname} {this.props.val.balances[1].person.lastname}</Text>
+                        <Text style={styles.detailText}>⇨ {this.props.val.balances[0].person.firstname} {this.props.val.balances[0].person.lastname}</Text>
                         <Text style={styles.detailTextSmall}>{this.props.val.description} - {this.props.val.category}</Text>
                     </View>
                     <View style={styles.expense}>
@@ -41,13 +42,15 @@ const styles = StyleSheet.create({
     detailText: {
         paddingLeft: 20,
         borderLeftWidth: 10,
-        borderLeftColor: '#4B9382'
+        borderLeftColor: '#4B9382',
+        flexWrap: 'wrap'
     },
     detailTextSmall: {
         paddingLeft: 20,
         borderLeftWidth: 10,
         borderLeftColor: '#4B9382',
-        fontSize: 12
+        fontSize: 12,
+        flexWrap: 'wrap'
     },
     expense: {
         position: 'absolute',

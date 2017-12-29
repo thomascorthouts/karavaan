@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView } from 'react-native';
+import {View, ScrollView, Dimensions} from 'react-native';
 import { InputWithLabel } from '../TextInput/InputWithLabel';
 
 interface IProps {
@@ -18,10 +18,15 @@ export class OptionPicker extends Component<IProps, {}> {
 
     render() {
 
+        let height = Dimensions.get('window').height;
+
         return (
             <View>
-                <InputWithLabel labelText={this.props.inputLabel} value={this.props.textInput} onChangeText={this.props.onChangeText}/>
-                <ScrollView>
+                <InputWithLabel labelText={this.props.inputLabel} value={this.props.textInput}
+                                onChangeText={this.props.onChangeText}/>
+                <ScrollView style={{
+                    height: height * 0.2
+                }}>
                     {this.props.options}
                 </ScrollView>
             </View>
