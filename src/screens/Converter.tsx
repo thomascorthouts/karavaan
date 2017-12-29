@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, StatusBar } from 'react-native';
 import { InputWithCurrencySelector } from '../components/TextInput/InputWithCurrencySelector';
 import { currencies } from '../config/Data';
 
@@ -30,9 +30,8 @@ class Converter extends Component<IDefaultNavProps, IState> {
             return <ActivityIndicator />;
         } else {
             return (
-                <View style={{
-                    justifyContent: 'center'}}>
-
+                <View style={{justifyContent: 'center'}}>
+                    <StatusBar hidden={true}/>
                     <InputWithCurrencySelector
                         selectedValue={this.state.currency1}
                         currentCurrency={this.state.currency1} currencies={this.state.currencies}
@@ -65,23 +64,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
         const rateTo = currencies[to].rate;
 
         return rateTo / rateFrom;
-    }
-
-    changeBaseCurrency (navigate: any) {
-        try {
-            navigate('selectCurrency', {current: this.state.currency1});
-        } catch (err) {
-            console.log(err);
-        }
-
-    }
-    changeToCurrency (navigate: any) {
-        try {
-            navigate('selectCurrency', {current: this.state.currency2});
-        } catch (err) {
-            console.log(err);
-        }
-
     }
 
     async componentWillMount() {

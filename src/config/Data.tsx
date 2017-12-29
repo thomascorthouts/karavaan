@@ -1,4 +1,4 @@
-export const currencies = {
+export const currencies: Currencies = {
     'AUD': { name: 'Australian Dollar', tag: 'AUD', rate: 1.5512, symbol: '$'},
     'BGN': { name: 'Bulgarian Lev', tag: 'BGN', rate: 1.9558, symbol: 'лв'},
     'BRL': { name: 'Brazilian Real', tag: 'BRL', rate: 3.8192, symbol: 'R$'},
@@ -34,3 +34,11 @@ export const currencies = {
 };
 
 export const friends: Array<string> = new Array('Thomas Corthouts', 'Mathias Spanhove', 'Franci Haest', 'Serhat Erdogan');
+
+export const friendList: PersonList = [
+    {id: 'thomas_corthouts', firstname: 'Thomas', lastname: 'Corthouts', balance: 0},
+    {id: 'mathias_spanhove', firstname: 'Mathias', lastname: 'Spanhove', balance: 0},
+    {id: 'serhat_erdogan', firstname: 'Serhat', lastname: 'Erdogan', balance: 0},
+    {id: 'franci_haest', firstname: 'Franci', lastname: 'Haest', balance: 0}
+    ];
+export const categories: Array<string> = new Array('Food', 'Transport', 'Other');

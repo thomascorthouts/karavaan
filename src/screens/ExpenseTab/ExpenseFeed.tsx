@@ -8,6 +8,7 @@ interface IState {
     [index: number]: Expense;
     expenseArray: ExpenseList;
     expenseArrayId: string;
+    group: Group;
 }
 
 class ExpenseFeed extends Component<IDefaultNavProps, IState> {
@@ -16,7 +17,9 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
-            const headerRight = <Button title={'Edit'} onPress={() => navigate('GroupDetail', {group: state.params.group})}></Button>;
+            const headerRight = <Button title={'Edit'} onPress={() =>
+                navigate('GroupForm', {group: state.params.group, groupArray: state.params.groupArray, update: true})
+            }></Button>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -29,9 +32,11 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
         this.state = {
             expenseArray: [] as ExpenseList,
-            expenseArrayId: this.props.navigation.state.params ? this.props.navigation.state.params.expenseArrayId : 'expenses'
+            group: navParams ? navParams.group : {},
+            expenseArrayId: navParams ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 
@@ -46,7 +51,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
         return (
             <View style={styles.container}>
-                <StatusBar translucent={false} barStyle='light-content' />
+                <StatusBar hidden={true}/>
                 <ScrollView style={styles.ScrollContainer}>
                     {expenses}
                 </ScrollView>
@@ -65,7 +70,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
 
     addExpense(navigate: any) {
         let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
-        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
+        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
     }
 
     viewDetails(key: number, navigate: any) {
@@ -74,7 +79,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         navigate(screen, {expense: expense});
     }
 
-    componentDidMount() {
+    componentWillMount() {
         AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {

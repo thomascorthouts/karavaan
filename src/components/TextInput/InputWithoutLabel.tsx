@@ -2,13 +2,15 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { textInputStyles } from './styles';
 
-export class InputWithoutLabel extends React.Component<IProps, {}> {
-    constructor(props: IProps) {
+export class InputWithoutLabel extends React.Component<ITextInputProps, {}> {
+    constructor(props: ITextInputProps) {
         super(props);
     }
 
     render() {
-        const combinedStyle = StyleSheet.flatten([textInputStyles.input, this.props.inputStyle]);
+        const combinedStyle = StyleSheet.flatten(
+            [this.props.editable === false ? textInputStyles.disabled : textInputStyles.input, this.props.inputStyle]
+        );
 
         return (
             <View>

@@ -1,11 +1,21 @@
-import { Component } from 'react';
-import { View } from 'react-native';
+import React, { Component } from 'react';
+import { View, Button } from 'react-native';
 import {InputWithLabel} from './TextInput/InputWithLabel';
+import PersonPicker from './Pickers/PersonPicker';
+import {ErrorText} from './Text/ErrorText';
+
+interface Options {
+    navigation: any;
+    persons: PersonList;
+}
 
 interface IState {
+    options: Options;
     description: string;
-    amount: string;
-    users: Array<string>;
+    amount: number;
+    users: PersonList;
+    item: Dish;
+    error: string;
 }
 
 export default class AddDish extends Component<IDefaultNavProps, IState> {
@@ -14,19 +24,45 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
         super(props, state);
 
         this.state = {
-            description: '',
-            amount: '0',
-            users: []
+            options: this.props.navigation.state.params as Options,
+            description: ' ',
+            amount: 0,
+            users: [],
+            item: {} as Dish,
+            error: ''
         };
     }
 
     render() {
+        const { goBack } = this.props.navigation;
         return(
             <View>
+                    <ErrorText errorText={this.state.error}/>
                     <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description}) } />
-                    <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount}) } />
-                    <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description})} />
+                    <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount: parseFloat(amount)}) } />
+                    <PersonPicker persons={this.state.options.persons} choose={this.choose.bind(this)}/>
+                    <Button title={'Add Item'} onPress={() => this.save(goBack)}/>
             </View>
         );
     }
+
+    choose(id: string) {
+        let chosen = this.state.users;
+        const p = this.state.options.persons.find((val: Person) => {return (val.id === id); });
+        if (typeof p !== 'undefined') {
+            chosen.push(p);
+            this.setState({users: chosen});
+        }
+    }
+
+    save(goBack: any) {
+        if (this.state.amount === 0 ) this.setState({ error: 'There is no amount chosen.' });
+        else if (this.state.users.length === 0 ) this.setState({ error: 'There are no users selected.' });
+        else {
+            let item = Object.assign({}, this.state.item, {name: this.state.description, amount: this.state.amount, users: this.state.users});
+            this.props.navigation.state.params.addItem(item);
+            goBack();
+        }
+    }
+
 }

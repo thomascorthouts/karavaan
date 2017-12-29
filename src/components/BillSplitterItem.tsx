@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
 
 interface IProps {
@@ -7,11 +7,20 @@ interface IProps {
     val: string;
     amount: number;
     submitEditing(): any;
+    onChangeText(amount: number, id: string): any;
 }
 
-export default class BillSplitterItem extends React.Component<IProps, {}> {
-    constructor(props: IProps) {
-        super(props);
+interface IState {
+    amount: number;
+}
+
+export default class BillSplitterItem extends React.Component<IProps, IState> {
+    constructor(props: IProps, state: IState) {
+        super(props, state);
+
+        this.state = {
+            amount: this.props.amount
+        };
     }
 
     render() {
@@ -23,11 +32,20 @@ export default class BillSplitterItem extends React.Component<IProps, {}> {
                 <View style={styles.expense}>
                     <InputWithoutLabel
                         onSubmitEditing={this.props.submitEditing()}
-                        value={this.props.amount.toString()}
+                        value={this.state.amount.toString()}
+                        onChangeText={(text: any) => {
+                            this.update( parseFloat(text), this.props.keyval);
+                        }}
                     />
                 </View>
             </View>
         );
+    }
+
+    update ( amount: number, id: string) {
+        if (isNaN(amount)) amount = 0;
+        this.setState({amount});
+        this.props.onChangeText(amount, id);
     }
 }
 

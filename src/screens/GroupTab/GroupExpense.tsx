@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { View, Picker, Button} from 'react-native';
+import {View, Picker, Button, AsyncStorage, StatusBar} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
 import {currencies} from '../../config/Data';
+import {CategoryPicker} from '../../components/Pickers/CategoryPicker';
 
 interface IState {
     description: string;
     group: Group;
     currency: string;
     currencies: Currencies;
-    amount: string;
+    amount: number;
     splitMode: string;
+    category: string;
 }
 
 class GroupExpense extends Component<IDefaultNavProps, IState> {
@@ -23,19 +25,25 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             group: this.props.navigation.state.params.group,
             currency: 'EUR',
             currencies: currencies,
-            amount: '0',
-            splitMode: 'trans'
+            amount: 0,
+            splitMode: 'trans',
+            category: 'Entertainment'
         };
+
     }
 
     render() {
             const {navigate} = this.props.navigation;
             return (
                 <View>
+                    <StatusBar hidden={true}/>
                     <InputWithLabel labelText={'description'} onChangeText={(description: any) => this.setState({description})}/>
                     <InputWithCurrencySelector currentCurrency={ this.state.currency } currencies={this.state.currencies}
-                                               value={ this.state.amount } onChangeText={(amount: any) => this.setState({amount})}
+                                               value={ this.state.amount.toString() }
+                                               onChangeText={(amount: any) => { this.setState({amount: parseFloat(amount)});
+                                                   if (isNaN(parseFloat(amount))) this.setState({amount: 0}); }}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
+                    <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
                         <Picker.Item label={'Transaction'} value={'trans'} key={'trans'}/>
                         <Picker.Item label={'Split evenly'} value={'even'} key={'even'}/>
@@ -47,8 +55,12 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             );
     }
 
+    updateCategory(cat: string) {
+        this.setState({category: cat});
+    }
+
     nextScreen = (navigate: any) => {
-        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currency, amount: this.state.amount}};
+        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currencies[this.state.currency], amount: this.state.amount, category: this.state.category }};
         if (this.state.splitMode === 'bill') {
            navigate('GroupAddBill', props);
         } else if (this.state.splitMode === 'trans') {

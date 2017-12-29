@@ -1,8 +1,8 @@
 import React, { ReactNode, Component } from 'react';
 import { View, Picker } from 'react-native';
 
-export class CurrencyPicker extends Component<ICurrencyPicker, {}> {
-    constructor(props: ICurrencyPicker) {
+export class CurrencyPicker extends Component<IPropsCurrencyPicker, {}> {
+    constructor(props: IPropsCurrencyPicker) {
         super(props);
     }
     render() {

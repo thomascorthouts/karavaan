@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { textInputStyles } from '../components/TextInput/styles';
-import { goHome } from '../NavigationActions';
+import { reset } from '../NavigationActions';
+import { GreenButton } from '../components/Buttons/GreenButton';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     constructor(props: IDefaultNavProps) {
@@ -14,6 +15,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true}/>
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
@@ -38,9 +40,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             onSubmitEditing={() => this.login(dispatch)}
                         />
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.login(dispatch)}>
-                            <Text style={styles.buttonText}>LOGIN</Text>
-                        </TouchableOpacity>
+                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)}/>
                     </View>
                 </KeyboardAvoidingView>
             </View>
@@ -48,7 +48,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
     }
 
     login(dispatch: any) {
-        dispatch(goHome);
+        dispatch(reset('Home'));
     }
 }
 
@@ -73,13 +73,5 @@ const styles = StyleSheet.create({
     formContainer: {
         padding: 20,
         flex: 0
-    },
-    buttonContainer: {
-        backgroundColor: '#287E6F',
-        paddingVertical: 15
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#FFFFFF'
     }
 });
