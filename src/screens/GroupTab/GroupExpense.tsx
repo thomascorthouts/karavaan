@@ -36,11 +36,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 
     async componentWillMount() {
-
-        let curr = {} as Currencies;
-        this.state.group.defaultCurrencies.map((val: string) => {
-            curr[val] = this.state.currencies[val];
-        });
+        let curr = Object.assign({}, this.state.group.defaultCurrencies);
 
         fetch('https://api.fixer.io/latest')
             .then((resp) => resp.json())

@@ -22,7 +22,7 @@ interface Group {
     name: string;
     // PersonList will be persons- + groupID in asyncstorage
     // ExpenseArray will be expenses- + groupID in asyncstorage
-    defaultCurrencies: Array<string>; // Array of the currency tags
+    defaultCurrencies: Currencies; // Array of the currency tags
 }
 
 interface GroupList extends Array<Group> { }

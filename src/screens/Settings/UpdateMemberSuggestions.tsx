@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import { View, Text, StatusBar, StyleSheet, AsyncStorage, Alert, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
-import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
-import { DeleteButton } from '../components/Buttons/DeleteButton';
+import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
+import { DeleteButton } from '../../components/Buttons/DeleteButton';
 
 interface IState {
     personArray: PersonList;

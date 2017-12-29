@@ -27,7 +27,7 @@ export const findBestMatch = (current, list) => {
             bestMatch = item;
         }
     }
-    console.log(bestMatch, current);
+
     return (bestScore < 1) ? bestMatch : '';
 }
 

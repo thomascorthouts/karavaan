@@ -81,7 +81,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         placeholder={'Firstname Lastname'}
                         suggestion={this.state.donorSuggestion}
                         suggestionPress={() => this.selectDonorSuggestion()}
-                        onBlur={() => this.setState({donorSuggestion: ''})}
+                        onBlur={() => this.setState({ donorSuggestion: '' })}
                         onChangeText={(donor: string) => {
                             this.findSuggestion(donor, 'donor');
                             this.setDonor(donor);
@@ -97,7 +97,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         placeholder={'Firstname Lastname'}
                         suggestion={this.state.receiverSuggestion}
                         suggestionPress={() => this.selectReceiverSuggestion()}
-                        onBlur={() => this.setState({receiverSuggestion: ''})}
+                        onBlur={() => this.setState({ receiverSuggestion: '' })}
                         onChangeText={(receiver: string) => {
                             this.findSuggestion(receiver, 'receiver');
                             this.setReceiver(receiver);
@@ -114,7 +114,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
                                 value={this.state.amountString}
-                                onChangeText={(value: string) => this.updateAmount(value) }
+                                onChangeText={(value: string) => this.updateAmount(value)}
                                 inputref={(input: any) => { (this as any).amount = input; }}
                                 returnKeyType={'done'}
                             />
@@ -137,41 +137,46 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         selectedValue={this.state.expense.category}
                     />
                 </KeyboardAvoidingView>
-
-                <GreenButton buttonText={'BACK'} onPress={() => goBack()} />
-                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{marginHorizontal: 2}} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{marginHorizontal: 2}} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                    </View>
+                </View>
             </View>
         );
     }
 
 
-    updateAmount (value: string) {
+    updateAmount(value: string) {
 
         let amount = parseMoney(value);
-        this.setState({amountString: amount});
-        const expense = Object.assign({}, this.state.expense, {amount: parseFloat(amount)});
-        this.setState({expense});
+        this.setState({ amountString: amount });
+        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(amount) });
+        this.setState({ expense });
     }
 
     findSuggestion(text: string, type: string) {
         let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.persons.map(a => a.firstname + ' ' + a.lastname));
         if (type === 'donor') {
-            this.setState({donorSuggestion: bestSuggestion});
+            this.setState({ donorSuggestion: bestSuggestion });
         } else {
-            this.setState({receiverSuggestion: bestSuggestion});
+            this.setState({ receiverSuggestion: bestSuggestion });
         }
     }
 
     selectDonorSuggestion() {
         let newDonor = this.state.donorSuggestion;
-        (this as any).donor.setNativeProps({text: newDonor});
-        this.setState({donorSuggestion: '', donor: this.createPerson(newDonor)});
+        (this as any).donor.setNativeProps({ text: newDonor });
+        this.setState({ donorSuggestion: '', donor: this.createPerson(newDonor) });
     }
 
     selectReceiverSuggestion() {
         let newReceiver = this.state.receiverSuggestion;
-        (this as any).receiver.setNativeProps({text: newReceiver});
-        this.setState({receiverSuggestion: '', receiver: this.createPerson(newReceiver)});
+        (this as any).receiver.setNativeProps({ text: newReceiver });
+        this.setState({ receiverSuggestion: '', receiver: this.createPerson(newReceiver) });
 
     }
 
@@ -181,11 +186,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     setDonor(text: string) {
-        this.setState({donor: this.createPerson(text)});
+        this.setState({ donor: this.createPerson(text) });
     }
 
     setReceiver(text: string) {
-        this.setState({receiver: this.createPerson(text)});
+        this.setState({ receiver: this.createPerson(text) });
     }
 
     save(goBack: any) {
@@ -264,7 +269,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 ['persons', JSON.stringify(this.state.persons)]
             ]);
         } catch (error) {
-            console.log(error);
+            this.showError(error);
         }
     }
 
@@ -282,7 +287,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         AsyncStorage.getItem('persons')
             .then((value) => {
                 if (value) {
-                    console.log(value);
                     this.setState({
                         persons: JSON.parse(value)
                     });
