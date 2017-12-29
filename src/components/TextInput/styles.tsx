@@ -16,6 +16,18 @@ const textInputStyles = StyleSheet.create({
         color: '#555',
         paddingHorizontal: 10
     },
+    suggestionButton: {
+        height: 20,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginTop: -10,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderColor: '#444',
+        borderWidth: 1
+    },
+    suggestionText: {
+        color: '#CCC',
+    },
     label: {
 
     }
