@@ -19,7 +19,7 @@ import BillSplit from '../screens/SplitOptions/BillSplit';
 import TableByExpense from '../screens/Summaries/TableByExpense';
 
 import Converter from '../screens/Converter';
-import Settings from '../screens/Settings';
+import Settings from '../screens/Settings/UpdateMemberSuggestions';
 import AddDish from '../components/AddDish';
 
 export const ExpenseStack = StackNavigator(

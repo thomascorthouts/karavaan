@@ -17,7 +17,7 @@ export const findBestMatch = (current, list) => {
         return;
     }
 
-    let bestScore = 0.05;
+    let bestScore = 0.3;
     let bestMatch;
     
     for (item of list) {
