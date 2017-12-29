@@ -27,7 +27,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         this.state = {
             expense: {
                 description: '',
-                category: 'food',
+                category: 'Entertainment',
                 currency: 'EUR',
                 amount: 0,
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
@@ -111,10 +111,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         </View>
                     </View>
 
-                    <CategoryPicker onValueChange={(category: any) => {
-                        const expense = Object.assign({}, this.state.expense, { category: category });
-                        this.setState({ expense });
-                    }}
+                    <CategoryPicker onValueChange={this.setCategory.bind(this)}
                     selectedValue={this.state.expense.category}/>
                 </KeyboardAvoidingView>
 
@@ -124,6 +121,10 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
+    setCategory(cat: string) {
+        const expense = Object.assign({}, this.state.expense, { category: cat });
+        this.setState({ expense });
+    }
     isDonor(person: Person) {
         return person.id === this.state.donor;
     }

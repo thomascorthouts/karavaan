@@ -27,7 +27,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             currencies: currencies,
             amount: 0,
             splitMode: 'trans',
-            category: 'food'
+            category: 'Entertainment'
         };
 
     }
@@ -43,7 +43,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                                                onChangeText={(amount: any) => { this.setState({amount: parseFloat(amount)});
                                                    if (isNaN(parseFloat(amount))) this.setState({amount: 0}); }}
                                                onValueChange={(currency: any) => { this.setState({currency}); }} selectedValue= { this.state.currency }/>
-                    <CategoryPicker onValueChange={(category: any) => this.setState({category})} selectedValue={this.state.category}/>
+                    <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category}/>
                     <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({splitMode})}>
                         <Picker.Item label={'Transaction'} value={'trans'} key={'trans'}/>
                         <Picker.Item label={'Split evenly'} value={'even'} key={'even'}/>
@@ -53,6 +53,10 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <Button title={'NEXT'} onPress={() => this.nextScreen(navigate)}/>
                 </View>
             );
+    }
+
+    updateCategory(cat: string) {
+        this.setState({category: cat});
     }
 
     nextScreen = (navigate: any) => {

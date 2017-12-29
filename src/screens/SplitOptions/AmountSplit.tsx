@@ -1,9 +1,8 @@
 import React, {Component, ReactNode} from 'react';
 import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
-import { friendList } from '../../config/Data';
 import PersonPicker from '../../components/Pickers/PersonPicker';
-import {ErrorText} from '../../components/Text/ErrorText';
+import { ErrorText } from '../../components/Text/ErrorText';
 
 interface Options {
     splitMode: boolean;
@@ -139,7 +138,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     setPayerAmount (amount: number, id: string) {
-        console.log(amount + ' ' + id);
         let payers = this.state.payers;
         let bal = payers.find((val: Balance) => { return (val.person.id === id); });
         if (typeof bal !== 'undefined') {
@@ -155,42 +153,41 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     confirm(navigate: any) {
         this.fixBalances()
             .then( () => this.addExpenseToStorage())
-            .then(() => {
-                navigate( 'GroupFeed' );
-            })
+            .then(() => navigate( 'GroupFeed' ))
             .catch((error: string) => this.setState({ error }));
     }
 
     async fixBalances() {
-        // This check function has to be fixed..
         let payer;
         let sum = 0;
         console.log(this.state.expense);
         let expense = Object.assign( {}, this.state.expense);
-        this.state.payers.map((payerBalance: Balance) => {
-            payer = expense.balances.find((bal: Balance) => {
-                return bal.person.id === payerBalance.person.id;
-            });
-            if (typeof payer !== 'undefined') {
-                payer.amount += payerBalance.amount;
-            } else {
-                let balanceToPush = Object.assign({}, payerBalance );
-                expense.balances.push(balanceToPush);
-            }});
-
         expense.balances.map((val: Balance) => {
             sum += val.amount;
         });
+        this.state.payers.map((val: Balance) => sum += val.amount);
+
         console.log(sum);
         if ( sum === 0) {
+            this.state.payers.map((payerBalance: Balance) => {
+                payer = expense.balances.find((bal: Balance) => {
+                    return bal.person.id === payerBalance.person.id;
+                });
+                if (typeof payer !== 'undefined') {
+                    payer.amount += payerBalance.amount;
+                } else {
+                    let balanceToPush = Object.assign({}, payerBalance );
+                    expense.balances.push(balanceToPush);
+                }});
+            this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
             this.setState({ expense });
             this.setState({ error: '' });
+
         } else throw 'The total balance is not 0.';
     }
 
     async addExpenseToStorage() {
-        console.log(this.state.chosen);
-        console.log(this.state.expense.balances);
+        console.log(this.state.expense);
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
@@ -202,6 +199,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             });
 
             await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
+            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
         } catch (error) {
             console.log(error);
         }

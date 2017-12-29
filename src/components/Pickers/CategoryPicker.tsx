@@ -2,21 +2,32 @@ import React, { Component } from 'react';
 import { View, Picker } from 'react-native';
 
 interface IProps {
-    onValueChange: any;
-    selectedValue: any;
+    selectedValue: string;
+    onValueChange(cat: string): any;
 }
 
-export class CategoryPicker extends Component<IProps, {}> {
+interface IState {
+    category: string;
+}
 
-    constructor(props: IProps) {
-        super(props);
+export class CategoryPicker extends Component<IProps, IState> {
+
+    constructor(props: IProps, state: IState) {
+        super(props, state);
+
+        this.state = {
+            category: this.props.selectedValue
+        };
     }
 
     render() {
 
         return (
             <View>
-                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.selectedValue}>
+                <Picker onValueChange={(category: string) => {
+                    this.setState({category});
+                    this.onValueChange();
+                }} selectedValue={this.state.category}>
                     <Picker.Item label={'Entertainment'} value={'Entertainment'} key={'entertainment'} />
                     <Picker.Item label={'Food & Drinks'} value={'Food & Drinks'} key={'food'} />
                     <Picker.Item label={'Home'} value={'Home'} key={'home'} />
@@ -26,5 +37,9 @@ export class CategoryPicker extends Component<IProps, {}> {
                 </Picker>
             </View>
         );
+    }
+
+    onValueChange() {
+        this.props.onValueChange(this.state.category);
     }
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Button } from 'react-native';
 import {InputWithLabel} from './TextInput/InputWithLabel';
 import PersonPicker from './Pickers/PersonPicker';
+import {ErrorText} from './Text/ErrorText';
 
 interface Options {
     navigation: any;
@@ -14,6 +15,7 @@ interface IState {
     amount: number;
     users: PersonList;
     item: Dish;
+    error: string;
 }
 
 export default class AddDish extends Component<IDefaultNavProps, IState> {
@@ -23,10 +25,11 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
 
         this.state = {
             options: this.props.navigation.state.params as Options,
-            description: '',
+            description: ' ',
             amount: 0,
             users: [],
-            item: {} as Dish
+            item: {} as Dish,
+            error: ''
         };
     }
 
@@ -34,6 +37,7 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
         const { goBack } = this.props.navigation;
         return(
             <View>
+                    <ErrorText errorText={this.state.error}/>
                     <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description}) } />
                     <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount: parseFloat(amount)}) } />
                     <PersonPicker persons={this.state.options.persons} choose={this.choose.bind(this)}/>
@@ -52,9 +56,13 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
     }
 
     save(goBack: any) {
-        let item = Object.assign({}, this.state.item, {name: this.state.description, amount: this.state.amount, users: this.state.users});
-        this.props.navigation.state.params.addItem(item);
-        goBack();
+        if (this.state.amount === 0 ) this.setState({ error: 'There is no amount chosen.' });
+        else if (this.state.users.length === 0 ) this.setState({ error: 'There are no users selected.' });
+        else {
+            let item = Object.assign({}, this.state.item, {name: this.state.description, amount: this.state.amount, users: this.state.users});
+            this.props.navigation.state.params.addItem(item);
+            goBack();
+        }
     }
 
 }

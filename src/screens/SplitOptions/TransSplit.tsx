@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, Button, AsyncStorage } from 'react-native';
-import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { InputWithCurrencySelector } from '../../components/TextInput/InputWithCurrencySelector';
 import { currencies } from '../../config/Data';
-import PersonPicker from '../../components/Pickers/PersonPicker';
 import PersonChooser from '../../components/Pickers/PersonChooser';
+import {ErrorText} from '../../components/Text/ErrorText';
 
 interface Options {
     splitMode: boolean;
@@ -15,7 +14,7 @@ interface Options {
 
 interface IProps {
     navigation: any;
-};
+}
 
 interface IState {
     group: Group;
@@ -26,7 +25,8 @@ interface IState {
     receiver: Person;
     expenseArray: ExpenseList;
     personArray: PersonList;
-};
+    error: string;
+}
 
 class TransSplit extends Component<IProps, IState> {
     constructor(props: IProps, state: IState) {
@@ -48,7 +48,8 @@ class TransSplit extends Component<IProps, IState> {
             donor: {} as Person,
             receiver: {} as Person,
             expenseArray: [],
-            personArray: [] as PersonList
+            personArray: [] as PersonList,
+            error: ''
         };
     }
 
@@ -56,10 +57,11 @@ class TransSplit extends Component<IProps, IState> {
         const { navigate } = this.props.navigation;
         return (
             <View>
+                <ErrorText errorText={this.state.error}/>
                 <InputWithCurrencySelector currentCurrency={this.state.expense.currency} currencies={this.state.currencies}
                     value={this.state.expense.amount.toString()}
-                    onChangeText={(value: number) => {
-                        const expense = Object.assign({}, this.state.expense, { amount: value });
+                    onChangeText={(value: string) => {
+                        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
                         this.setState({ expense });
                     }}
                     onValueChange={(currency: string) => {
@@ -91,17 +93,32 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     addTransaction(navigate: any) {
-        let balances = [{ person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency }, { person: this.state.receiver, amount: this.state.expense.amount * (-1), currency: this.state.expense.currency }];
-        const expense = Object.assign({}, this.state.expense, { balances: balances });
-        this.setState({ expense }, () => {
-            this.addExpenseToStorage()
-                .then(() => {
-                    navigate('GroupFeed');
-                });
-        });
+        if (!this.state.donor.id || !this.state.receiver.id || this.state.expense.amount === 0) {
+                this.setState({error: 'Not all fields are filled in correctly'});
+        } else {
+            let donor = this.state.donor;
+            donor.balance += this.state.expense.amount;
+            let receiver = this.state.receiver;
+            receiver.balance -= this.state.expense.amount;
+
+            let balances = [{
+                person: donor,
+                amount: this.state.expense.amount,
+                currency: this.state.expense.currency
+            }, {person: receiver, amount: this.state.expense.amount * (-1), currency: this.state.expense.currency}];
+            const expense = Object.assign({}, this.state.expense, {balances: balances});
+            this.setState({expense}, () => {
+                this.addExpenseToStorage()
+                    .then(() => {
+                        navigate('GroupFeed');
+                    });
+            });
+        }
     }
 
     async addExpenseToStorage() {
+        console.log(this.state.expense);
+        console.log(this.state.personArray);
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
@@ -113,14 +130,13 @@ class TransSplit extends Component<IProps, IState> {
             });
 
             await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
+            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
         } catch (error) {
             console.log(error);
         }
     }
 
     async componentWillMount() {
-        console.log(this.state.group);
-        console.log(this.state.group.id);
 
         // AsyncStorage.multiGet(['expenses-' + this.state.group.id, 'persons-' + this.state.group.id, 'currencies'], (err, stores) => {
         //     if (stores !== undefined) {

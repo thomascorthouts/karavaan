@@ -1,8 +1,8 @@
 import React, { Component, ReactNode } from 'react';
 import {View, Button, ScrollView, AsyncStorage, Text} from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
-import {friendList} from '../../config/Data';
 import PersonPicker from '../../components/Pickers/PersonPicker';
+import {ErrorText} from '../../components/Text/ErrorText';
 
 interface Options {
     splitMode: boolean;
@@ -13,7 +13,7 @@ interface Options {
 
 interface IProps {
     navigation: any;
-};
+}
 
 interface IState {
     group: Group;
@@ -25,7 +25,8 @@ interface IState {
     personArray: PersonList;
     items: Array<ReactNode>;
     payerNodes: Array<ReactNode>;
-};
+    error: string;
+}
 
 class BillSplit extends Component<IProps, IState> {
 
@@ -49,7 +50,8 @@ class BillSplit extends Component<IProps, IState> {
             dishes: [] as Array<Dish>,
             expenseArray: [] as ExpenseList,
             personArray: [] as PersonList,
-            items: [] as Array<ReactNode>
+            items: [] as Array<ReactNode>,
+            error: ''
         };
     }
 
@@ -81,6 +83,7 @@ class BillSplit extends Component<IProps, IState> {
         return (
             <View>
                 <Text>{this.state.expense.description}</Text>
+                <ErrorText errorText={this.state.error}/>
                 <ScrollView>
                     <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
                     {this.state.payerNodes}
@@ -101,7 +104,7 @@ class BillSplit extends Component<IProps, IState> {
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
             this.setState({payers: chosen});
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={(amount: any) => this.setPayerAmount.bind(this, amount, p.id)}/>);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)}/>);
             this.setState({payerNodes: nodes});
         }
         console.log(this.state.payers);
@@ -111,7 +114,7 @@ class BillSplit extends Component<IProps, IState> {
         let payers = this.state.payers;
         let bal = payers.find((val: Balance) => { return (val.person.id === id); });
         if (typeof bal !== 'undefined') {
-            bal.amount += amount;
+            bal.amount = amount;
             this.setState({payers});
         }
     }
@@ -127,44 +130,63 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     updateItems() {
-        let items = this.state.dishes.map((val: Dish, index: number) => {
-            return (<BillSplitterItem key={val.name} keyval={val} val={val.name} amount={val.amount} onChangeText={() => undefined} submitEditing={() => this.submitEditing()}/>);
+        let items = this.state.dishes.map((val: Dish) => {
+            return (<BillSplitterItem key={val.name} keyval={val.name} val={val.name} amount={val.amount} onChangeText={() => this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()}/>);
         });
 
         this.setState({items});
     }
 
+    setItemAmount(amount: number, name: string) {
+        // TODO Dit gaat er vanuit dat twee items niet dezelfde naam kunnen hebben, we hebben wel geen algoritme da da checkt
+        let dishes = this.state.dishes;
+        let dish = dishes.find((val: Dish) => {return (val.name === name); });
+        if (typeof dish !== 'undefined') {
+            dish.amount = amount;
+            this.setState({ dishes });
+        }
+    }
+
     submitEditing() {
-        console.log('hello');
+        // Hiep hoi lege functie
+    }
+
+    confirm(navigate: any) {
+        this.createBalances()
+            .then(() => this.addExpenseToStorage())
+            .then(() => navigate( 'GroupFeed' ))
+            .catch((error: string) => this.setState({ error }));
     }
 
     async createBalances() {
         let balances = this.state.payers; // begin from payers as base
         let avg: number;
         let bal;
-        this.state.dishes.map((item: Dish, key: number) => {
-            avg = item.amount / item.users.length;
-            item.users.map((val: Person) => {
+        let sum = 0;
+        this.state.payers.map((val: Balance) => sum += val.amount);
+        this.state.dishes.map((item: Dish) => sum -= item.amount);
+
+        if (sum === 0) {
+            this.state.dishes.map((item: Dish) => {
+                avg = item.amount / item.users.length;
+                item.users.map((val: Person) => {
                     bal = balances.find((balance: Balance) => {
                         return (balance.person.id === val.id);
                     });
                     if (typeof bal === 'undefined') {
                         bal = {person: val, amount: 0};
+                        balances.push(bal);
                     }
                     bal.amount -= avg;
+                });
             });
-        });
 
-        let expense = Object.assign({}, this.state.expense, {balances: balances});
-        this.setState({expense});
-    }
+            this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
 
-    confirm(navigate: any) {
-        this.createBalances()
-            .then(() => this.addExpenseToStorage())
-            .then(() => {
-            navigate( 'GroupFeed' );
-        });
+            let expense = Object.assign({}, this.state.expense, {balances: balances});
+            this.setState({expense});
+            this.setState({ error: '' });
+        } else throw 'The total balance is not 0.';
     }
 
     async addExpenseToStorage() {
@@ -180,6 +202,7 @@ class BillSplit extends Component<IProps, IState> {
             });
 
             await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
+            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
         } catch (error) {
             console.log(error);
         }
