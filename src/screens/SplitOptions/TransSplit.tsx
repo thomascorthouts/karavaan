@@ -11,6 +11,7 @@ interface Options {
     currency: Currency;
     amount: number;
     description: string;
+    currencies: Currencies;
 }
 
 interface IProps {
@@ -46,7 +47,7 @@ class TransSplit extends Component<IProps, IState> {
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
-            currencies: currencies,
+            currencies: this.props.navigation.state.params.opts.currencies,
             donor: {} as Person,
             receiver: {} as Person,
             expenseArray: [],
@@ -169,19 +170,6 @@ class TransSplit extends Component<IProps, IState> {
                 if (value) {
                     this.setState({
                         personArray: JSON.parse(value)
-                    });
-                }
-            });
-
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                } else {
-                    this.setState({
-                        currencies: currencies
                     });
                 }
             });

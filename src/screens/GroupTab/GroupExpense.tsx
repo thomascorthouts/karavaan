@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import {View, Picker, Button, AsyncStorage, StatusBar} from 'react-native';
 import {InputWithCurrencySelector} from '../../components/TextInput/InputWithCurrencySelector';
 import {InputWithLabel} from '../../components/TextInput/InputWithLabel';
-import {currencies} from '../../config/Data';
 import {CategoryPicker} from '../../components/Pickers/CategoryPicker';
 import {parseMoney} from '../../util';
+import {currencies} from '../../config/Data';
 
 interface IState {
     description: string;
@@ -33,6 +33,50 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             amountString: ''
         };
 
+    }
+
+    async componentWillMount() {
+
+        let curr = {} as Currencies;
+        this.state.group.defaultCurrencies.map((val: string) => {
+            curr[val] = this.state.currencies[val];
+        });
+
+        fetch('https://api.fixer.io/latest')
+            .then((resp) => resp.json())
+            .then((data) => {
+                if (data.rates) {
+                    let key;
+                    for (key in curr) {
+                        curr[key].rate = data.rates[key];
+                    }
+                    this.setState({
+                        currencies: curr
+                    });
+                } else {
+                    throw 'Mattias';
+                }
+            })
+            .catch(() => {
+                AsyncStorage.getItem('currencies')
+                    .then((value) => {
+                        if (value) {
+
+                            let currenciesStor = JSON.parse(value);
+                            let key;
+                            for (key in curr) {
+                                curr[key].rate = currenciesStor[key].rate;
+                            }
+                            this.setState({
+                                currencies: curr
+                            });
+                        } else {
+                            this.setState({
+                                currencies: curr
+                            });
+                        }
+                    });
+            });
     }
 
     render() {
@@ -70,7 +114,9 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 
     nextScreen = (navigate: any) => {
-        const props = {group:  this.state.group , opts: { description: this.state.description, splitMode: (this.state.splitMode === 'even'), currency: this.state.currencies[this.state.currency], amount: this.state.amount, category: this.state.category }};
+        // We should add currencies by opts
+
+        const props = {group:  this.state.group , opts: { description: this.state.description, currencies: this.state.currencies, splitMode: (this.state.splitMode === 'even'), currency: this.state.currencies[this.state.currency], amount: this.state.amount, category: this.state.category }};
         if (this.state.splitMode === 'bill') {
            navigate('GroupAddBill', props);
         } else if (this.state.splitMode === 'trans') {

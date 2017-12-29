@@ -49,7 +49,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             chosen: [] as PersonList,
             personArray: [] as PersonList,
             expenseArray: [] as ExpenseList,
-            currencies: {} as Currencies,
+            currencies: this.props.navigation.state.params.opts.currencies,
             error: ''
         };
     }

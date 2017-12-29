@@ -45,7 +45,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         let navParams = this.props.navigation.state.params;
         this.state = {
             group: navParams.group ? navParams.group : {
-                name: ''
+                name: '',
+                defaultCurrencies: [] as Array<string>
             } as Group,
             personArray: [] as PersonList,
             allPersonsArray: [] as PersonList,
@@ -107,7 +108,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         returnKeyType={'next'}
                     />
                     <Text> Current Members ({members.length}) </Text>
-                    <ScrollView style={{ height: height * 0.3 }}>
+                    <ScrollView style={{ height: height * 0.2 }}>
                         {members}
                     </ScrollView>
                     <Text> Add Members: </Text>
@@ -126,6 +127,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             this.addPerson(text.nativeEvent.text);
                         }}
                     />
+                    <CurrencyInputPicker chooseCurrency={this.addDefaultCurrency.bind(this)} currencyList={this.state.currencies}/>
+                    <Text>{this.state.group.defaultCurrencies}</Text>
                 </KeyboardAvoidingView>
 
                 <GreenButton buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
@@ -138,6 +141,12 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                 <GreenButton buttonText={'SAVE'} onPress={() => this.validateGroup(goBack)} />
             </View>
         );
+    }
+
+    addDefaultCurrency(tag: string) {
+        let group = this.state.group;
+        group.defaultCurrencies.push(tag);
+        this.setState({group});
     }
 
     findSuggestion(text: string) {
