@@ -14,7 +14,6 @@ interface IState {
 
 export class CurrencyInputPicker extends Component<IProps, IState> {
 
-    // TODO communication with parent element
     constructor(props: IProps, state: IState) {
         super(props, state);
 

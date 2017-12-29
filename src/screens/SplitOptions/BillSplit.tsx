@@ -131,19 +131,20 @@ class BillSplit extends Component<IProps, IState> {
 
     updateItems() {
         let items = this.state.dishes.map((val: Dish) => {
-            return (<BillSplitterItem key={val.name} keyval={val.name} val={val.name} amount={val.amount} onChangeText={() => this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()}/>);
+            return (<BillSplitterItem key={val.name} keyval={val.id} val={val.name} amount={val.amount} onChangeText={this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()}/>);
         });
 
         this.setState({items});
     }
 
-    setItemAmount(amount: number, name: string) {
-        // TODO Dit gaat er vanuit dat twee items niet dezelfde naam kunnen hebben, we hebben wel geen algoritme da da checkt
+    setItemAmount(amount: number, id: string) {
+        console.log(amount);
+        console.log(id);
         let dishes = this.state.dishes;
-        let dish = dishes.find((val: Dish) => {return (val.name === name); });
+        let dish = dishes.find((val: Dish) => {return (val.id === id); });
         if (typeof dish !== 'undefined') {
             dish.amount = amount;
-            this.setState({ dishes });
+            this.setState({dishes}, this.updateItems);
         }
     }
 

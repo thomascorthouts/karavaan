@@ -25,8 +25,7 @@ export class CategoryPicker extends Component<IProps, IState> {
         return (
             <View>
                 <Picker onValueChange={(category: string) => {
-                    this.setState({category});
-                    this.onValueChange();
+                    this.onValueChange(category);
                 }} selectedValue={this.state.category}>
                     <Picker.Item label={'Entertainment'} value={'Entertainment'} key={'entertainment'} />
                     <Picker.Item label={'Food & Drinks'} value={'Food & Drinks'} key={'food'} />
@@ -39,7 +38,8 @@ export class CategoryPicker extends Component<IProps, IState> {
         );
     }
 
-    onValueChange() {
-        this.props.onValueChange(this.state.category);
+    onValueChange(category: string) {
+        this.setState({category});
+        this.props.onValueChange(category);
     }
 }
