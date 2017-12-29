@@ -14,7 +14,7 @@ export class CurrencyPicker extends Component<IPropsCurrencyPicker, {}> {
         }
         return (
             <View>
-                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.selectedValue}>
+                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.selectedValue} style={{height: 40}}>
                     {currenciesItems}
                 </Picker>
             </View>

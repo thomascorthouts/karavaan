@@ -149,6 +149,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
     selectSuggestion() {
         (this as any).newMember.setNativeProps({text: this.state.memberSuggestion});
+        this.setState({memberSuggestion: ''});
     }
 
     saveGroup(goBack: any) {
@@ -207,8 +208,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     createPerson(text: string) {
-        let firstname = text.split(' ')[0];
-        let lastname = text.split(' ').slice(1).join(' ') || '';
+        let firstname = text.split(' ')[0].trim();
+        let lastname = text.split(' ').slice(1).join(' ').trim() || '';
         let person = {
             firstname: firstname,
             lastname: lastname,
@@ -267,7 +268,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     showError(error: string) {
-        Alert.alert('Warning', error,
+        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
             [
                 { text: 'OK', onPress: () => { return false; } }
             ],
