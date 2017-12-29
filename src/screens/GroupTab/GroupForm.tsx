@@ -9,12 +9,15 @@ import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { reset } from '../../NavigationActions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
+import * as StringSimilarity from '../../similarity';
 
 interface IState {
     group: Group;
     groupArray: GroupList;
-    personArray: PersonList;
+    personArray: PersonList; // persons in this group
+    allPersonsArray: PersonList; // All persons ever added to a group
     currencies: Currencies;
+    memberSuggestion: string;
     update: boolean;
 }
 
@@ -45,6 +48,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                 name: ''
             } as Group,
             personArray: [] as PersonList,
+            allPersonsArray: [] as PersonList,
+            memberSuggestion: '',
             groupArray: navParams.groupArray,
             currencies: {} as Currencies,
             update: navParams.update
@@ -111,6 +116,12 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         placeholder={'Firstname Lastname'}
                         returnKeyType={'done'}
                         autoCapitalize={'words'}
+                        suggestion={this.state.memberSuggestion}
+                        suggestionPress={() => this.selectSuggestion()}
+                        onBlur={() => this.setState({memberSuggestion: ''})}
+                        onChangeText={(text: string) => {
+                            this.findSuggestion(text);
+                        }}
                         onSubmitEditing={(text: any) => {
                             this.addPerson(text.nativeEvent.text);
                         }}
@@ -127,6 +138,17 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                 <GreenButton buttonText={'SAVE'} onPress={() => this.validateGroup(goBack)} />
             </View>
         );
+    }
+
+    findSuggestion(text: string) {
+        let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.allPersonsArray.map(a => a.firstname + ' ' + a.lastname));
+        if (!this.state.personArray.find(function (obj: Person) { return obj.firstname + ' ' + obj.lastname === bestSuggestion; })) {
+            this.setState({memberSuggestion: bestSuggestion});
+        }
+    }
+
+    selectSuggestion() {
+        (this as any).newMember.setNativeProps({text: this.state.memberSuggestion});
     }
 
     saveGroup(goBack: any) {
@@ -214,6 +236,12 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             } else {
                 this.showError('Person already inside group');
             }
+
+            let allPersonsArray = [...this.state.allPersonsArray];
+            if (!allPersonsArray.find(function (obj: Person) { return obj.id === person.id; })) {
+                allPersonsArray.push(person);
+                this.setState({ allPersonsArray });
+            }
         }
     }
 
@@ -221,6 +249,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         try {
             await AsyncStorage.multiSet([
                 ['groups', JSON.stringify(this.state.groupArray)],
+                ['persons', JSON.stringify(this.state.allPersonsArray)],
                 ['persons-' + id, JSON.stringify(this.state.personArray)]
             ]);
         } catch (error) {
@@ -230,10 +259,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
     async deleteStorage(id: string) {
         try {
-            await AsyncStorage.multiSet([
-                ['groups', JSON.stringify(this.state.groupArray)],
-                ['persons-' + id, JSON.stringify(this.state.personArray)]
-            ]);
+            await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
+            await AsyncStorage.removeItem('persons-' + id);
         } catch (error) {
             this.showError(error);
         }
@@ -272,6 +299,15 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         currencies: currencies
                     }, () => {
                         AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
+                    });
+                }
+            });
+
+        AsyncStorage.getItem('persons')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        allPersonsArray: JSON.parse(value)
                     });
                 }
             });

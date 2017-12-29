@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { textInputStyles } from './styles';
 
 export class InputWithoutLabel extends React.Component<ITextInputProps, {}> {
@@ -20,6 +20,10 @@ export class InputWithoutLabel extends React.Component<ITextInputProps, {}> {
                     ref={this.props.inputref}
                     {...this.props}
                 />
+                {(this.props.suggestion !== undefined && this.props.suggestion !== '') &&
+                    <TouchableOpacity style={textInputStyles.suggestionButton} onPress={this.props.suggestionPress}>
+                        <Text style={textInputStyles.suggestionText}>{this.props.suggestion}</Text>
+                    </TouchableOpacity>}
             </View>
         );
     }

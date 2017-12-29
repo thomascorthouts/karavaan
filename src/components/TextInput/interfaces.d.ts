@@ -30,6 +30,8 @@ interface ITextInputProps {
     selectionColor?: any;
     inputStyle?: any;
     value?: string;
+    suggestion?: string;
+    suggestionPress?: any;
 }
 
 interface IPropsWithLabel extends ITextInputProps {
