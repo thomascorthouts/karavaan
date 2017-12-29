@@ -17,7 +17,7 @@ export const findBestMatch = (current, list) => {
         return;
     }
 
-    let bestScore = 0.3;
+    let bestScore = 0.05;
     let bestMatch;
     
     for (item of list) {
@@ -27,7 +27,8 @@ export const findBestMatch = (current, list) => {
             bestMatch = item;
         }
     }
-    return bestMatch;
+    console.log(bestMatch, current);
+    return (bestScore < 1) ? bestMatch : '';
 }
 
 function editDistance(s1, s2) {
