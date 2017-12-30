@@ -22,7 +22,7 @@ export class ExpenseItem extends React.Component<IProps, {}> {
                         <Text style={styles.detailTextSmall}>{this.props.val.description} - {this.props.val.category}</Text>
                     </View>
                     <View style={styles.expense}>
-                        <Text>{this.props.val.amount} {this.props.val.currency}</Text>
+                        <Text>{this.props.val.currency.symbol}{this.props.val.amount}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

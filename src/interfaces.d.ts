@@ -22,7 +22,8 @@ interface Group {
     name: string;
     // PersonList will be persons- + groupID in asyncstorage
     // ExpenseArray will be expenses- + groupID in asyncstorage
-    defaultCurrencies: Currencies; // Array of the currency tags
+    defaultCurrency: Currency;
+    currencies: Currencies; // Array of the currency tags
 }
 
 interface GroupList extends Array<Group> { }
@@ -72,3 +73,4 @@ interface Balances extends Array<Balance> { }
 
 // ignore errors for javascript only packages
 declare module 'react-native-table-component-pro'
+declare module 'react-native-datepicker'

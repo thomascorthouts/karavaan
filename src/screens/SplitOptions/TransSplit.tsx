@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Button, AsyncStorage } from 'react-native';
-import { InputWithCurrencySelector } from '../../components/TextInput/InputWithCurrencySelector';
+import { View, Button, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
 import {ErrorText} from '../../components/Text/ErrorText';
 import {parseMoney} from '../../util';
+import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 
 interface Options {
     splitMode: boolean;
@@ -43,7 +44,7 @@ class TransSplit extends Component<IProps, IState> {
                 balances: [],
                 description: this.props.navigation.state.params.opts.description,
                 amount: this.props.navigation.state.params.opts.amount,
-                currency:  this.props.navigation.state.params.opts.currency.tag,
+                currency: this.props.navigation.state.params.opts.currency,
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
@@ -59,17 +60,33 @@ class TransSplit extends Component<IProps, IState> {
 
     render() {
         const { navigate } = this.props.navigation;
+
+        console.log(this.state.expense.currency);
         return (
             <View>
                 <ErrorText errorText={this.state.error}/>
-                <InputWithCurrencySelector currentCurrency={this.state.expense.currency} currencies={this.state.currencies}
-                    value={this.state.amountString}
-                    onChangeText={(value: string) => this.updateAmount(value)}
-                    onValueChange={(currency: string) => {
-                        const expense = Object.assign({}, this.state.expense, { currency: this.state.currencies[currency] });
-                        this.setState({ expense });
-                    }}
-                    selectedValue={this.state.expense.currency} />
+
+                <View style={styles.rowContainer}>
+                    <View style={styles.inputAmount}>
+                        <InputWithoutLabel
+                            onChangeText={(value: string) => this.updateAmount(value)}
+                            value={this.state.amountString}
+                            returnKeyType={'done'}
+                            keyboardType={'numeric'}
+                        />
+                    </View>
+                    <View style={styles.flex}>
+                        <CurrencyPicker
+                            currencies={this.state.group.currencies}
+                            onValueChange={(currency: Currency) => {
+                                const expense = Object.assign({}, this.state.expense, { currency: currency });
+                                this.setState({ expense });
+                            }}
+                            selectedValue={this.state.expense.currency}
+                        />
+                    </View>
+                </View>
+
                 <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)}/>
                 <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)}/>
                 <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)} />
@@ -78,12 +95,10 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     updateAmount (value: string) {
-
         let amount = parseMoney(value);
         this.setState({ amountString: amount });
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
         this.setState({ expense });
-
     }
 
     chooseDonor(id: string) {
@@ -115,7 +130,12 @@ class TransSplit extends Component<IProps, IState> {
                 person: donor,
                 amount: this.state.expense.amount,
                 currency: this.state.expense.currency
-            }, {person: receiver, amount: this.state.expense.amount * (-1), currency: this.state.expense.currency}];
+            }, {
+                person: receiver,
+                amount: this.state.expense.amount * (-1),
+                currency: this.state.expense.currency
+            }];
+
             const expense = Object.assign({}, this.state.expense, {balances: balances});
             this.setState({expense}, () => {
                 this.addExpenseToStorage()
@@ -147,15 +167,6 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     async componentWillMount() {
-
-        // AsyncStorage.multiGet(['expenses-' + this.state.group.id, 'persons-' + this.state.group.id, 'currencies'], (err, stores) => {
-        //     if (stores !== undefined) {
-        //         stores.map((result, i, store) => {
-        //             console.log(result);
-        //         });
-        //     }
-        // });
-
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
                 if (value) {
@@ -178,3 +189,26 @@ class TransSplit extends Component<IProps, IState> {
 }
 
 export default TransSplit;
+
+const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#4B9382'
+    },
+    rowContainer: {
+        flexDirection: 'row'
+    },
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    inputAmount: {
+        flex: 3.6
+    }
+});

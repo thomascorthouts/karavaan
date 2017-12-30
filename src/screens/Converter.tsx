@@ -5,6 +5,7 @@ import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../components/Buttons/GreenButton';
 import { InputWithLabel } from '../components/TextInput/InputWithLabel';
+import DatePicker from 'react-native-datepicker';
 
 interface IState {
     currencies: Currencies;
@@ -22,9 +23,13 @@ class Converter extends Component<IDefaultNavProps, IState> {
         let date = new Date();
         this.state = {
             currencies: currencies,
-            value: '20',
-            currency1: currencies.EUR,
-            currency2: currencies.EUR,
+            value: '0',
+            currency1: {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            } as Currency,
+            currency2: {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            } as Currency,
             date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDay()).slice(-2),
             isLoading: true
         };
@@ -34,6 +39,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
         const { goBack } = this.props.navigation;
 
         let height = Dimensions.get('window').height;
+        let width = Dimensions.get('window').width;
 
         if (this.state.isLoading) {
             return <ActivityIndicator />;
@@ -76,21 +82,34 @@ class Converter extends Component<IDefaultNavProps, IState> {
                             <View style={styles.flex}>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
-                                    onValueChange={(currency2: Currency) => {
-                                        console.log(currency2);
-                                        this.setState({ currency2 }, () => console.log(this.state.currency2));
-                                    }}
+                                    onValueChange={(currency2: Currency) => this.setState({ currency2 })}
                                     selectedValue={this.state.currency2}
                                 />
                             </View>
                         </View>
 
-                        <InputWithLabel
-                            labelText={'Date (yyyy-mm-dd)'}
-                            value={this.state.date}
-                            placeholder={'yyyy-mm-dd'}
-                            onChangeText={(date: string) => this.setState({ date })}
-                            onSubmitEditing={() => this.validate()}
+                        <DatePicker
+                            style={{ width: width - 40 }}
+                            date={this.state.date}
+                            mode='date'
+                            placeholder='Select Date'
+                            format='YYYY-MM-DD'
+                            minDate='2000-01-01'
+                            maxDate={this.state.date}
+                            confirmBtnText='Confirm'
+                            cancelBtnText='Cancel'
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                },
+                                dateInput: {
+                                    marginLeft: 36
+                                }
+                            }}
+                            onDateChange={(date: string) => this.setState({ date })}
                         />
                     </KeyboardAvoidingView>
 
@@ -109,7 +128,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
     validate = () => {
         if ((!isNaN(Date.parse(this.state.date))) && this.state.date.split('-').length === 3) {
-            this.setState({isLoading: true}, () => this.getExchangeRate(this.state.date.trim()));
+            this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
         }
     }
 
@@ -126,15 +145,13 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     async getExchangeRate(date: string) {
-        let currs = Object.assign({}, currencies);
+        let currs = JSON.parse(JSON.stringify(currencies));
         fetch('https://api.fixer.io/' + date)
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 if (data.rates) {
                     let key;
                     for (key in data.rates) {
-                        console.log(key);
                         currs[key].rate = data.rates[key];
                     }
                     this.setState({
@@ -175,6 +192,16 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
     async componentWillMount() {
         this.getExchangeRate('latest');
+
+        AsyncStorage.getItem('defaultCurrency')
+            .then((value) => {
+                if (value) {
+                    let parsed = JSON.parse(value);
+                    this.setState({
+                        currency1: parsed, currency2: parsed
+                    });
+                }
+            });
     }
 }
 

@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
-import { View, Text, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
+import { currencies } from '../../config/Data';
 
-class Settings extends React.Component<IDefaultNavProps, {}> {
+interface IState {
+    currencies: Currencies;
+    defaultCurrency: Currency;
+}
 
-    constructor(props: IDefaultNavProps) {
-        super(props);
+class Settings extends React.Component<IDefaultNavProps, IState> {
+
+    constructor(props: IDefaultNavProps, state: IState) {
+        super(props, state);
 
         this.state = {
-            personArray: [] as PersonList
+            currencies: currencies,
+            defaultCurrency: {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            } as Currency
         };
     }
 
@@ -21,11 +31,46 @@ class Settings extends React.Component<IDefaultNavProps, {}> {
                 <View style={styles.flex}>
                     <Text style={styles.title}>Settings</Text>
                 </View>
+                <View style={styles.flex}>
+                    <Text>Default Currency:</Text>
+
+                    <CurrencyPicker
+                        currencies={this.state.currencies}
+                        onValueChange={(currency: Currency) => this.saveDefaultCurrency(currency)}
+                        selectedValue={this.state.defaultCurrency}
+                    />
+                </View>
+
                 <GreenButton buttonText={'Update Member Suggestions'} onPress={() => {
                     navigate('UpdateMemberSuggestions');
-                }}/>
+                }} />
             </View>
         );
+    }
+
+    saveDefaultCurrency(currency: Currency) {
+        AsyncStorage.setItem('defaultCurrency', JSON.stringify(currency));
+        this.setState({ defaultCurrency: currency });
+    }
+
+    componentWillMount() {
+        AsyncStorage.getItem('currencies')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        currencies: JSON.parse(value)
+                    });
+                }
+            });
+
+        AsyncStorage.getItem('defaultCurrency')
+            .then((value) => {
+                if (value) {
+                    this.setState({
+                        defaultCurrency: JSON.parse(value)
+                    });
+                }
+            });
     }
 }
 

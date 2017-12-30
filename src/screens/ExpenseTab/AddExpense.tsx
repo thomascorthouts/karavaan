@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert, Dimensions } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
@@ -8,6 +8,7 @@ import { currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { parseMoney } from '../../util';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
+import DatePicker from 'react-native-datepicker';
 import * as StringSimilarity from '../../similarity';
 
 interface IState {
@@ -27,16 +28,16 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let dat = new Date();
+        let date = new Date();
         this.state = {
             expense: {
                 description: '',
                 category: 'Entertainment',
                 currency: {
-                    tag: 'EUR'
+                    name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
                 } as Currency,
                 amount: 0,
-                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
+                date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDay()).slice(-2),
                 balances: []
             },
             amountString: '0',
@@ -59,6 +60,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     render() {
         const { goBack } = this.props.navigation;
 
+        let width = Dimensions.get('window').width;
+
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
@@ -76,6 +79,33 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         onSubmitEditing={() => (this as any).donor.focus()}
                         returnKeyType={'next'}
                         autoCapitalize={'words'}
+                    />
+
+                    <DatePicker
+                        style={{ width: width - 40 }}
+                        date={this.state.expense.date}
+                        mode='date'
+                        placeholder='Select Date'
+                        format='YYYY-MM-DD'
+                        minDate='2000-01-01'
+                        maxDate={this.state.expense.date}
+                        confirmBtnText='Confirm'
+                        cancelBtnText='Cancel'
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                marginLeft: 36
+                            }
+                        }}
+                        onDateChange={(date: string) => {
+                            const expense = Object.assign({}, this.state.expense, { date: date });
+                            this.setState({ expense });
+                        }}
                     />
 
                     <InputWithLabel
@@ -140,10 +170,10 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 </KeyboardAvoidingView>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginRight: 2}} buttonText={'BACK'} onPress={() => goBack()} />
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginLeft: 2}} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
                     </View>
                 </View>
             </View>
@@ -298,12 +328,14 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     this.setState({
                         currencies: JSON.parse(value)
                     });
-                } else {
-                    this.setState({
-                        currencies: currencies
-                    }, () => {
-                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-                    });
+                }
+            });
+
+        AsyncStorage.getItem('defaultCurrency')
+            .then((value) => {
+                if (value) {
+                    let expense = Object.assign({}, this.state.expense, { currency: JSON.parse(value) });
+                    this.setState({ expense });
                 }
             });
     }

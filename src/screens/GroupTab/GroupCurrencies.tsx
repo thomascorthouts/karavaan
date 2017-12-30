@@ -8,6 +8,7 @@ import { currencies } from '../../config/Data';
 interface IState {
     currencies: Currencies;
     selected: Currencies;
+    default: Currency;
 }
 
 class GroupCurrencies extends Component<IDefaultNavProps, IState> {
@@ -24,7 +25,8 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         let navParams = this.props.navigation.state.params;
         this.state = {
             currencies: navParams.currencies,
-            selected: navParams.selected
+            selected: navParams.selected,
+            default: navParams.default
         };
     }
 
@@ -34,10 +36,14 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         let currencies: ReactNode[] = new Array();
         for (let key in this.state.currencies) {
             let currency = this.state.currencies[key];
-            if (this.state.selected.hasOwnProperty(key)) {
-                currencies.push(<Text key={key} style={styles.selectedItem} onPress={() => this.toggleSelected(key)}>{currency.name}</Text>);
+            if (currency.tag !== this.state.default.tag) {
+                if (this.state.selected.hasOwnProperty(key)) {
+                    currencies.push(<Text key={key} style={styles.selectedItem} onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
+                } else {
+                    currencies.push(<Text key={key} style={styles.item} onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
+                }
             } else {
-                currencies.push(<Text key={key} style={styles.item} onPress={() => this.toggleSelected(key)}>{currency.name}</Text>);
+                currencies.push(<Text key={key} style={styles.selectedItem}>{currency.tag} - {currency.name}</Text>);
             }
         }
 
@@ -68,6 +74,12 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
             selected[key] = this.state.currencies[key];
             this.setState({ selected });
         }
+    }
+
+    componentDidMount() {
+        let selected = Object.assign({}, this.state.selected);
+        selected[this.state.default.tag] = this.state.currencies[this.state.default.tag];
+        this.setState({ selected }, () => console.log(this.state.selected));
     }
 }
 

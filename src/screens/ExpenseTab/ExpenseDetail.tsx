@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import { ScrollView, Text, View, StatusBar } from 'react-native';
 import { currencies } from '../../config/Data';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IState {
     expense: Expense;
@@ -21,10 +22,9 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         return (
             <ScrollView>
                 <StatusBar hidden={true} />
+                <Text>Date: {this.state.expense.date}</Text>
                 <View>{this.state.balances.length > 0 ? this.state.balances : <Text>Calculating</Text>}</View>
-                <Text>{this.state.expense.amount}</Text>
-                <Text>{this.state.expense.currency}</Text>
-                <Text>{this.state.expense.date}</Text>
+                <Text>Currency used: {this.state.expense.currency.name}</Text>
             </ScrollView>
         );
     }
