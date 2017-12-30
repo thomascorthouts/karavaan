@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
-import { CurrencyPicker } from '../../components/CurrencySelector';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
@@ -32,7 +32,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             expense: {
                 description: '',
                 category: 'Entertainment',
-                currency: 'EUR',
+                currency: {
+                    tag: 'EUR'
+                } as Currency,
                 amount: 0,
                 date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
                 balances: []
@@ -121,7 +123,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         </View>
                         <View style={styles.flex}>
                             <CurrencyPicker
-                                currentCurrency={this.state.expense.currency}
                                 currencies={this.state.currencies}
                                 onValueChange={(currency: any) => {
                                     const expense = Object.assign({}, this.state.expense, { currency: currency });
@@ -139,19 +140,17 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 </KeyboardAvoidingView>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginHorizontal: 2}} buttonText={'BACK'} onPress={() => goBack()} />
+                        <GreenButton buttonStyle={{marginRight: 2}} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginHorizontal: 2}} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                        <GreenButton buttonStyle={{marginLeft: 2}} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
                     </View>
                 </View>
             </View>
         );
     }
 
-
     updateAmount(value: string) {
-
         let amount = parseMoney(value);
         this.setState({ amountString: amount });
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(amount) });
@@ -331,6 +330,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     inputAmount: {
-        flex: 2
+        flex: 3.6
     }
 });

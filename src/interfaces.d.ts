@@ -10,7 +10,7 @@ interface Expense {
     description: string;
     balances: Balances;
     amount: number;
-    currency: string;
+    currency: Currency;
 }
 
 interface ExpenseList extends Array<Expense> { }

@@ -7,7 +7,14 @@ interface IState {
     personArray: PersonList;
 }
 
-class Settings extends React.Component<IDefaultNavProps, IState> {
+class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
+
+    static navigationOptions = ({ navigation }: { navigation: any }) => {
+        return {
+            headerTitle: 'Return to settings',
+            headerStyle: { 'backgroundColor': '#4B9382' }
+        };
+    };
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -64,7 +71,7 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
                         }}
                     />
                     <Text> Current Suggestions ({members.length}) </Text>
-                    <ScrollView style={{ height: height * 0.6 }}>
+                    <ScrollView style={{ height: height * 0.5 }}>
                         {members}
                     </ScrollView>
                 </KeyboardAvoidingView>
@@ -148,7 +155,7 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
     }
 }
 
-export default Settings;
+export default UpdateMemberSuggestions;
 
 const styles = StyleSheet.create({
     flex: {
@@ -157,10 +164,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        paddingTop: 0,
         backgroundColor: '#4B9382'
     },
     rowContainer: {
-        flex: 1,
         flexDirection: 'row'
     },
     title: {

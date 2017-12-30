@@ -26,10 +26,20 @@ const textInputStyles = StyleSheet.create({
         borderWidth: 1
     },
     suggestionText: {
-        color: '#CCC',
+        color: '#CCC'
     },
     label: {
 
+    },
+    flex: {
+        flex: 1
+    },
+    rowContainer: {
+        flex: 1,
+        flexDirection: 'row'
+    },
+    inputAmount: {
+        flex: 2
     }
 });
 

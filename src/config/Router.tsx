@@ -19,8 +19,10 @@ import BillSplit from '../screens/SplitOptions/BillSplit';
 
 import TableByExpense from '../screens/Summaries/TableByExpense';
 
+import Settings from '../screens/Settings/Settings';
+import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions';
+
 import Converter from '../screens/Converter';
-import Settings from '../screens/Settings/UpdateMemberSuggestions';
 import AddDish from '../components/AddDish';
 
 export const ExpenseStack = StackNavigator(
@@ -146,6 +148,22 @@ export const Expenses = TabNavigator(
     }
 );
 
+export const SettingsStack = StackNavigator(
+    {
+        Settings: {
+            screen: Settings,
+            navigationOptions: {
+                header: null
+            }
+        },
+        UpdateMemberSuggestions: {
+            screen: UpdateMemberSuggestions
+        }
+    }, {
+        mode: 'modal'
+    }
+);
+
 export const Drawer = DrawerNavigator(
     {
         Item1: {
@@ -167,7 +185,7 @@ export const Drawer = DrawerNavigator(
             }
         },
         Item4: {
-            screen: Settings,
+            screen: SettingsStack,
             navigationOptions: {
                 title: 'Settings'
             }

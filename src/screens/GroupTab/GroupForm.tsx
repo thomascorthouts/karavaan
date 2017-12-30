@@ -1,9 +1,8 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, TextInput, Picker, AsyncStorage, Dimensions, StatusBar, Alert } from 'react-native';
-import { CurrencyPicker } from '../../components/CurrencySelector';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { currencies } from '../../config/Data';
 import { OptionPicker } from '../../components/Pickers/OptionPicker';
-import { CurrencyInputPicker } from '../../components/Pickers/CurrencyInputPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
@@ -139,7 +138,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginHorizontal: 2}} buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
+                        <GreenButton buttonStyle={{marginRight: 2}} buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
                             if (this.state.update) {
                                 this.confirmDelete('this group', () => this.deleteGroup(dispatch));
                             } else {
@@ -148,7 +147,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         }} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{marginHorizontal: 2}}  buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
+                        <GreenButton buttonStyle={{marginLeft: 2}}  buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
                     </View>
                 </View>
             </View>
@@ -358,7 +357,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#4B9382'
     },
     rowContainer: {
-        flex: 1,
         flexDirection: 'row'
     },
     title: {
