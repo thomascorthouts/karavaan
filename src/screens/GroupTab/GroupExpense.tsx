@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Picker, Button, AsyncStorage, StatusBar, StyleSheet } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
-import { parseMoney } from '../../util';
+import { parseMoney } from '../../utils/parsemoney';
 import { currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';

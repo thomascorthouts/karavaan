@@ -45,7 +45,9 @@ interface Currency {
     name: string;
     tag: string;
     symbol: string;
-    rate: number;
+    rate?: number;
+    base?: string;
+    date?: string;
 }
 
 interface Currencies {

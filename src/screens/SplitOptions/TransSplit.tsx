@@ -3,7 +3,7 @@ import { View, Button, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
 import {ErrorText} from '../../components/Text/ErrorText';
-import {parseMoney} from '../../util';
+import {parseMoney} from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 

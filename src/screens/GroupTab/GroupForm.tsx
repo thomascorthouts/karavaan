@@ -6,9 +6,9 @@ import { OptionPicker } from '../../components/Pickers/OptionPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import { reset } from '../../NavigationActions';
+import { reset } from '../../utils/navigationactions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
-import * as StringSimilarity from '../../similarity';
+import * as StringSimilarity from '../../utils/similarity';
 
 interface IState {
     group: Group;
@@ -54,7 +54,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             allPersonsArray: [] as PersonList,
             memberSuggestion: '',
             groupArray: navParams.groupArray,
-            currencies: {} as Currencies,
+            currencies: currencies,
             update: navParams.update
         };
     }
@@ -323,15 +323,6 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     componentWillMount() {
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                }
-            });
-
         AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
