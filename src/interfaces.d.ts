@@ -11,6 +11,7 @@ interface Expense {
     balances: Balances;
     amount: number;
     currency: Currency;
+    splitOption?: string;
 }
 
 interface ExpenseList extends Array<Expense> { }
@@ -23,7 +24,7 @@ interface Group {
     // PersonList will be persons- + groupID in asyncstorage
     // ExpenseArray will be expenses- + groupID in asyncstorage
     defaultCurrency: Currency;
-    currencies: Currencies; // Array of the currency tags
+    currencies: Currencies; // Array of the currencies
 }
 
 interface GroupList extends Array<Group> { }

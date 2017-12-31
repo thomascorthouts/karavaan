@@ -8,3 +8,7 @@ export const parseMoney = (value: string) => {
     v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + 3 : undefined);
     return v;
 };
+
+export const balancesToTransactions = (balances: Balances) => {
+    // Still Empty
+};

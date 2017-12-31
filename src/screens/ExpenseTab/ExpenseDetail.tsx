@@ -33,9 +33,9 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         let text = [] as ReactNode[];
         this.state.expense.balances.map((balance: Balance, index: number) => {
             if (balance.amount > 0) {
-                text.push(<Text key={index}>{balance.person.firstname} {balance.person.lastname} payed {currencies[this.state.expense.currency.tag].symbol}{balance.amount}</Text>);
+                text.push(<Text key={index}>{balance.person.firstname} {balance.person.lastname} should get back {currencies[this.state.expense.currency.tag].symbol}{balance.amount}</Text>);
             } else {
-                text.push(<Text key={index}>{balance.person.firstname} {balance.person.lastname} has to pay {currencies[this.state.expense.currency.tag].symbol}{balance.amount * -1}</Text>);
+                text.push(<Text key={index}>{balance.person.firstname} {balance.person.lastname} lent {currencies[this.state.expense.currency.tag].symbol}{balance.amount * -1}</Text>);
             }
         });
         this.setState({ balances: text });

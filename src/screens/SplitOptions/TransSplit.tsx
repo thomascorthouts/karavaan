@@ -156,7 +156,8 @@ class TransSplit extends Component<IProps, IState> {
                 'currency': this.state.expense.currency,
                 'description': this.state.expense.description,
                 'category': this.state.expense.category,
-                'balances': this.state.expense.balances
+                'balances': this.state.expense.balances,
+                'splitOption': 'Transaction'
             });
 
             await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));

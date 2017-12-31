@@ -79,8 +79,9 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
     }
 
     updateView() {
+        let { navigate } = this.props.navigation;
         let feed = this.state.expenses[this.state.category].map((val: Expense, key: any) => {
-            return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, this.props.navigation)} />;
+            return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />;
         });
 
         this.setState({ feed });
@@ -99,7 +100,6 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
             .then((value) => {
                 if (value) {
                     expenseArray = JSON.parse(value);
-                    console.log(expenseArray);
                     this.setState({expenseArray});
                     let expenseMap: ExpenseMap = {
                         'All': expenseArray,

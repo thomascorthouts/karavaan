@@ -25,6 +25,7 @@ import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions
 import Converter from '../screens/Converter';
 import AddDish from '../components/AddDish';
 import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
+import BalancesSummary from '../screens/Summaries/BalancesSummary';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -45,6 +46,30 @@ export const ExpenseStack = StackNavigator(
     }, {
         mode: 'modal',
         headerMode: 'none'
+    }
+);
+
+export const GroupSummaries = TabNavigator(
+    {
+        CategorySummary: {
+            screen: ExpensesPerCategory,
+            navigationOptions: {
+                tabBarLabel: 'By category'
+            }
+        },
+        BalanceSummary: {
+            screen: BalancesSummary,
+            navigationOptions: {
+                tabBarLabel: 'Balances'
+            }
+        }
+    }, {
+        tabBarOptions: {
+            activeTintColor: '#D3D3D3',
+            style: {
+                backgroundColor: '#287E6F'
+            }
+        }
     }
 );
 
@@ -72,7 +97,10 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupExpenseFeed: {
-            screen: ExpensesPerCategory
+            screen: GroupSummaries,
+            navigationOptions: {
+                tabBarVisible: false
+            }
         },
         GroupExpenseDetail: {
             screen: ExpenseDetail,
