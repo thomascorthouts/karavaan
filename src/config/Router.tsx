@@ -24,6 +24,7 @@ import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions
 
 import Converter from '../screens/Converter';
 import AddDish from '../components/AddDish';
+import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -71,7 +72,7 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupExpenseFeed: {
-            screen: ExpenseFeed
+            screen: ExpensesPerCategory
         },
         GroupExpenseDetail: {
             screen: ExpenseDetail,

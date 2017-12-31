@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { View, Picker } from 'react-native';
 
 interface IProps {
     selectedValue: string;
+    otherOptions?: ReactNode[];
     onValueChange(cat: string): any;
 }
 
@@ -33,6 +34,7 @@ export class CategoryPicker extends Component<IProps, IState> {
                     <Picker.Item label={'Life'} value={'Life'} key={'life'} />
                     <Picker.Item label={'Transport'} value={'Transport'} key={'trans'} />
                     <Picker.Item label={'Other'} value={'Other'} key={'other'} />
+                    {this.props.otherOptions}
                 </Picker>
             </View>
         );
