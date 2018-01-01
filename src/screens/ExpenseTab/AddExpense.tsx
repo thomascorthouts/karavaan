@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert, Dimensions } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
-import { CurrencyPicker } from '../../components/CurrencySelector';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { parseMoney } from '../../util';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
+import DatePicker from 'react-native-datepicker';
 import * as StringSimilarity from '../../similarity';
 
 interface IState {
@@ -27,14 +28,16 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let dat = new Date();
+        let date = new Date();
         this.state = {
             expense: {
                 description: '',
                 category: 'Entertainment',
-                currency: 'EUR',
+                currency: {
+                    name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+                } as Currency,
                 amount: 0,
-                date: dat.getDate() + '/' + (dat.getMonth() + 1) + '/' + dat.getFullYear(),
+                date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDay()).slice(-2),
                 balances: []
             },
             amountString: '0',
@@ -57,6 +60,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     render() {
         const { goBack } = this.props.navigation;
 
+        let width = Dimensions.get('window').width;
+
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
@@ -76,12 +81,39 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         autoCapitalize={'words'}
                     />
 
+                    <DatePicker
+                        style={{ width: width - 40 }}
+                        date={this.state.expense.date}
+                        mode='date'
+                        placeholder='Select Date'
+                        format='YYYY-MM-DD'
+                        minDate='2000-01-01'
+                        maxDate={this.state.expense.date}
+                        confirmBtnText='Confirm'
+                        cancelBtnText='Cancel'
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                marginLeft: 36
+                            }
+                        }}
+                        onDateChange={(date: string) => {
+                            const expense = Object.assign({}, this.state.expense, { date: date });
+                            this.setState({ expense });
+                        }}
+                    />
+
                     <InputWithLabel
                         labelText={'Donor'}
                         placeholder={'Firstname Lastname'}
                         suggestion={this.state.donorSuggestion}
                         suggestionPress={() => this.selectDonorSuggestion()}
-                        onBlur={() => this.setState({donorSuggestion: ''})}
+                        onBlur={() => this.setState({ donorSuggestion: '' })}
                         onChangeText={(donor: string) => {
                             this.findSuggestion(donor, 'donor');
                             this.setDonor(donor);
@@ -97,7 +129,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         placeholder={'Firstname Lastname'}
                         suggestion={this.state.receiverSuggestion}
                         suggestionPress={() => this.selectReceiverSuggestion()}
-                        onBlur={() => this.setState({receiverSuggestion: ''})}
+                        onBlur={() => this.setState({ receiverSuggestion: '' })}
                         onChangeText={(receiver: string) => {
                             this.findSuggestion(receiver, 'receiver');
                             this.setReceiver(receiver);
@@ -114,14 +146,13 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
                                 value={this.state.amountString}
-                                onChangeText={(value: string) => this.updateAmount(value) }
+                                onChangeText={(value: string) => this.updateAmount(value)}
                                 inputref={(input: any) => { (this as any).amount = input; }}
                                 returnKeyType={'done'}
                             />
                         </View>
                         <View style={styles.flex}>
                             <CurrencyPicker
-                                currentCurrency={this.state.expense.currency}
                                 currencies={this.state.currencies}
                                 onValueChange={(currency: any) => {
                                     const expense = Object.assign({}, this.state.expense, { currency: currency });
@@ -137,41 +168,44 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         selectedValue={this.state.expense.category}
                     />
                 </KeyboardAvoidingView>
-
-                <GreenButton buttonText={'BACK'} onPress={() => goBack()} />
-                <GreenButton buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                    </View>
+                </View>
             </View>
         );
     }
 
-
-    updateAmount (value: string) {
-
+    updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({amountString: amount});
-        const expense = Object.assign({}, this.state.expense, {amount: parseFloat(amount)});
-        this.setState({expense});
+        this.setState({ amountString: amount });
+        const expense = Object.assign({}, this.state.expense, { amount: parseFloat(amount) });
+        this.setState({ expense });
     }
 
     findSuggestion(text: string, type: string) {
         let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.persons.map(a => a.firstname + ' ' + a.lastname));
         if (type === 'donor') {
-            this.setState({donorSuggestion: bestSuggestion});
+            this.setState({ donorSuggestion: bestSuggestion });
         } else {
-            this.setState({receiverSuggestion: bestSuggestion});
+            this.setState({ receiverSuggestion: bestSuggestion });
         }
     }
 
     selectDonorSuggestion() {
         let newDonor = this.state.donorSuggestion;
-        (this as any).donor.setNativeProps({text: newDonor});
-        this.setState({donorSuggestion: '', donor: this.createPerson(newDonor)});
+        (this as any).donor.setNativeProps({ text: newDonor });
+        this.setState({ donorSuggestion: '', donor: this.createPerson(newDonor) });
     }
 
     selectReceiverSuggestion() {
         let newReceiver = this.state.receiverSuggestion;
-        (this as any).receiver.setNativeProps({text: newReceiver});
-        this.setState({receiverSuggestion: '', receiver: this.createPerson(newReceiver)});
+        (this as any).receiver.setNativeProps({ text: newReceiver });
+        this.setState({ receiverSuggestion: '', receiver: this.createPerson(newReceiver) });
 
     }
 
@@ -181,11 +215,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     setDonor(text: string) {
-        this.setState({donor: this.createPerson(text)});
+        this.setState({ donor: this.createPerson(text) });
     }
 
     setReceiver(text: string) {
-        this.setState({receiver: this.createPerson(text)});
+        this.setState({ receiver: this.createPerson(text) });
     }
 
     save(goBack: any) {
@@ -264,7 +298,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 ['persons', JSON.stringify(this.state.persons)]
             ]);
         } catch (error) {
-            console.log(error);
+            this.showError(error);
         }
     }
 
@@ -282,7 +316,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         AsyncStorage.getItem('persons')
             .then((value) => {
                 if (value) {
-                    console.log(value);
                     this.setState({
                         persons: JSON.parse(value)
                     });
@@ -295,12 +328,14 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     this.setState({
                         currencies: JSON.parse(value)
                     });
-                } else {
-                    this.setState({
-                        currencies: currencies
-                    }, () => {
-                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-                    });
+                }
+            });
+
+        AsyncStorage.getItem('defaultCurrency')
+            .then((value) => {
+                if (value) {
+                    let expense = Object.assign({}, this.state.expense, { currency: JSON.parse(value) });
+                    this.setState({ expense });
                 }
             });
     }
@@ -327,6 +362,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     inputAmount: {
-        flex: 2
+        flex: 3.6
     }
 });

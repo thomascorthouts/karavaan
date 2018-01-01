@@ -11,6 +11,7 @@ import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
 import GroupExpense from '../screens/GroupTab/GroupExpense';
+import GroupCurrencies from '../screens/GroupTab/GroupCurrencies';
 
 import TransSplit from '../screens/SplitOptions/TransSplit';
 import AmountSplit from '../screens/SplitOptions/AmountSplit';
@@ -18,9 +19,14 @@ import BillSplit from '../screens/SplitOptions/BillSplit';
 
 import TableByExpense from '../screens/Summaries/TableByExpense';
 
+import Settings from '../screens/Settings/Settings';
+import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions';
+
 import Converter from '../screens/Converter';
-import Settings from '../screens/Settings';
 import AddDish from '../components/AddDish';
+import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
+import BalancesSummary from '../screens/Summaries/BalancesSummary';
+import TransactionsSummary from '../screens/Summaries/Transactions';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -44,6 +50,36 @@ export const ExpenseStack = StackNavigator(
     }
 );
 
+export const GroupSummaries = TabNavigator(
+    {
+        CategorySummary: {
+            screen: ExpensesPerCategory,
+            navigationOptions: {
+                tabBarLabel: 'By category'
+            }
+        },
+        BalanceSummary: {
+            screen: BalancesSummary,
+            navigationOptions: {
+                tabBarLabel: 'Balances'
+            }
+        },
+        TransactionSummary: {
+            screen: TransactionsSummary,
+            navigationOptions: {
+                tabBarLabel: 'Transactions'
+            }
+        }
+    }, {
+        tabBarOptions: {
+            activeTintColor: '#D3D3D3',
+            style: {
+                backgroundColor: '#287E6F'
+            }
+        }
+    }
+);
+
 export const GroupStack = StackNavigator(
     {
         GroupFeed: {
@@ -59,8 +95,19 @@ export const GroupStack = StackNavigator(
                 animationEnabled: false
             }
         },
+        GroupCurrencies: {
+            screen: GroupCurrencies,
+            navigationOptions: {
+                tabBarVisible: false,
+                swipeEnabled: false,
+                animationEnabled: false
+            }
+        },
         GroupExpenseFeed: {
-            screen: ExpenseFeed
+            screen: GroupSummaries,
+            navigationOptions: {
+                tabBarVisible: false
+            }
         },
         GroupExpenseDetail: {
             screen: ExpenseDetail,
@@ -137,6 +184,22 @@ export const Expenses = TabNavigator(
     }
 );
 
+export const SettingsStack = StackNavigator(
+    {
+        Settings: {
+            screen: Settings,
+            navigationOptions: {
+                header: null
+            }
+        },
+        UpdateMemberSuggestions: {
+            screen: UpdateMemberSuggestions
+        }
+    }, {
+        mode: 'modal'
+    }
+);
+
 export const Drawer = DrawerNavigator(
     {
         Item1: {
@@ -158,7 +221,7 @@ export const Drawer = DrawerNavigator(
             }
         },
         Item4: {
-            screen: Settings,
+            screen: SettingsStack,
             navigationOptions: {
                 title: 'Settings'
             }

@@ -3,28 +3,33 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 interface IProps {
     keyval: any;
-    val: Expense;
-    viewDetails(): void;
+    transaction: Transaction;
+    currency: Currency;
+    rate?: number;
 }
 
-export class ExpenseItem extends React.Component<IProps, {}> {
+interface Transaction {
+
+    from: Person;
+    to: Person;
+    amount: number;
+}
+
+export class TransactionFeedItem extends React.Component<IProps, {}> {
     constructor(props: IProps) {
         super(props);
     }
 
     render() {
         return (
-            <View key={this.props.keyval} >
-                <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
-                    <View>
-                        <Text style={styles.detailText}>{this.props.val.balances[1].person.firstname} {this.props.val.balances[1].person.lastname}</Text>
-                        <Text style={styles.detailText}>⇨ {this.props.val.balances[0].person.firstname} {this.props.val.balances[0].person.lastname}</Text>
-                        <Text style={styles.detailTextSmall}>{this.props.val.description} - {this.props.val.category}</Text>
-                    </View>
-                    <View style={styles.expense}>
-                        <Text>{this.props.val.currency.symbol}{this.props.val.amount}</Text>
-                    </View>
-                </TouchableOpacity>
+            <View key={this.props.keyval} style={styles.item} >
+                <View>
+                    <Text style={styles.detailText}>{this.props.transaction.from.firstname} {this.props.transaction.from.lastname}</Text>
+                    <Text style={styles.detailText}>⇨ {this.props.transaction.to.firstname} {this.props.transaction.to.lastname}</Text>
+                </View>
+                <View style={styles.expense}>
+                    <Text>{this.props.currency.symbol} {(this.props.rate) ? this.props.rate * this.props.transaction.amount : this.props.transaction.amount}</Text>
+                </View>
             </View>
         );
     }
@@ -60,5 +65,11 @@ const styles = StyleSheet.create({
         top: 10,
         bottom: 10,
         right: 10
+    },
+    green: {
+        color: '#00ff00'
+    },
+    red: {
+        color: '#ff0000'
     }
 });

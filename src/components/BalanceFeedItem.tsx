@@ -3,28 +3,25 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 interface IProps {
     keyval: any;
-    val: Expense;
-    viewDetails(): void;
+    currency: Currency;
+    person: Person;
+    balance: number;
 }
 
-export class ExpenseItem extends React.Component<IProps, {}> {
+export class BalanceFeedItem extends React.Component<IProps, {}> {
     constructor(props: IProps) {
         super(props);
     }
 
     render() {
         return (
-            <View key={this.props.keyval} >
-                <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
+            <View key={this.props.keyval} style={styles.item} >
                     <View>
-                        <Text style={styles.detailText}>{this.props.val.balances[1].person.firstname} {this.props.val.balances[1].person.lastname}</Text>
-                        <Text style={styles.detailText}>⇨ {this.props.val.balances[0].person.firstname} {this.props.val.balances[0].person.lastname}</Text>
-                        <Text style={styles.detailTextSmall}>{this.props.val.description} - {this.props.val.category}</Text>
+                        <Text style={styles.detailText}>{this.props.person.firstname} {this.props.person.lastname}</Text>
                     </View>
                     <View style={styles.expense}>
-                        <Text>{this.props.val.currency.symbol}{this.props.val.amount}</Text>
+                        <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currency.symbol} {this.props.balance}</Text>
                     </View>
-                </TouchableOpacity>
             </View>
         );
     }
@@ -60,5 +57,11 @@ const styles = StyleSheet.create({
         top: 10,
         bottom: 10,
         right: 10
+    },
+    green: {
+        color: '#4B9382'
+    },
+    red: {
+        color: '#ff0000'
     }
 });

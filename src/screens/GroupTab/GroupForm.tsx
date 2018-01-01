@@ -1,9 +1,8 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, TextInput, Picker, AsyncStorage, Dimensions, StatusBar, Alert } from 'react-native';
-import { CurrencyPicker } from '../../components/CurrencySelector';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { currencies } from '../../config/Data';
 import { OptionPicker } from '../../components/Pickers/OptionPicker';
-import { CurrencyInputPicker } from '../../components/Pickers/CurrencyInputPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
@@ -28,7 +27,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         if (state.params.update) {
             return {
                 tabBarVisible: false,
-                headerTitle: `${navigation.state.params.group.name}`,
+                headerTitle: `Update ${navigation.state.params.group.name}`,
                 headerStyle: { 'backgroundColor': '#4B9382' }
             };
         } else {
@@ -46,7 +45,10 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         this.state = {
             group: navParams.group ? navParams.group : {
                 name: '',
-                defaultCurrencies: [] as Array<string>
+                defaultCurrency: {
+                    name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+                } as Currency,
+                currencies: {} as Currencies
             } as Group,
             personArray: [] as PersonList,
             allPersonsArray: [] as PersonList,
@@ -58,7 +60,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { goBack, dispatch } = this.props.navigation;
+        const { goBack, dispatch, navigate } = this.props.navigation;
         let members: ReactNode[] = new Array();
         let personArray = this.state.personArray;
 
@@ -79,7 +81,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             buttonStyle={styles.deleteButton}
                             onPress={() =>
                                 this.confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
-                            }/>
+                            } />
                     </View>
                 </View>
             );
@@ -91,7 +93,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             <View style={styles.container}>
                 <StatusBar hidden={true} />
                 <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.update ? 'Update Group' : 'New Group'}</Text>
+                    <Text style={styles.title}>{this.state.update ? '' : 'New Group'}</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior='padding'>
@@ -108,7 +110,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         returnKeyType={'next'}
                     />
                     <Text> Current Members ({members.length}) </Text>
-                    <ScrollView style={{ height: height * 0.2 }}>
+                    <ScrollView style={{ height: height * 0.3 }}>
                         {members}
                     </ScrollView>
                     <Text> Add Members: </Text>
@@ -119,7 +121,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         autoCapitalize={'words'}
                         suggestion={this.state.memberSuggestion}
                         suggestionPress={() => this.selectSuggestion()}
-                        onBlur={() => this.setState({memberSuggestion: ''})}
+                        onBlur={() => this.setState({ memberSuggestion: '' })}
                         onChangeText={(text: string) => {
                             this.findSuggestion(text);
                         }}
@@ -127,41 +129,63 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             this.addPerson(text.nativeEvent.text);
                         }}
                     />
-                    <CurrencyInputPicker chooseCurrency={this.addDefaultCurrency.bind(this)} currencyList={this.state.currencies}/>
-                    <Text>{this.state.group.defaultCurrencies}</Text>
+                    <Text> Default Currency: </Text>
+                    <CurrencyPicker
+                        currencies={this.state.currencies}
+                        onValueChange={(text: string) => {
+                            const group = Object.assign({}, this.state.group, { defaultCurrency: text });
+                            this.setState({ group });
+                        }}
+                        selectedValue={this.state.group.defaultCurrency}
+                    />
                 </KeyboardAvoidingView>
 
-                <GreenButton buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
-                    if (this.state.update) {
-                        this.confirmDelete('this group', () => this.deleteGroup(dispatch));
-                    } else {
-                        goBack();
-                    }
+                <GreenButton buttonText={'Select Currencies'} onPress={() => {
+                    navigate('GroupCurrencies', {
+                        currencies: Object.assign({}, this.state.currencies),
+                        selected: Object.assign({}, this.state.group.currencies),
+                        default: Object.assign({}, this.state.group.defaultCurrency),
+                        setGroupCurrencies: this.setDefaultCurrencies.bind(this)
+                    });
                 }} />
-                <GreenButton buttonText={'SAVE'} onPress={() => this.validateGroup(goBack)} />
+
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
+                            if (this.state.update) {
+                                this.confirmDelete('this group', () => this.deleteGroup(dispatch));
+                            } else {
+                                goBack();
+                            }
+                        }} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
+                    </View>
+                </View>
             </View>
         );
     }
 
-    addDefaultCurrency(tag: string) {
-        let group = this.state.group;
-        group.defaultCurrencies.push(tag);
-        this.setState({group});
+    setDefaultCurrencies(currencies: Currencies) {
+        console.log(currencies);
+        const group = Object.assign({}, this.state.group, { currencies: currencies });
+        this.setState({ group });
     }
 
     findSuggestion(text: string) {
         let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.allPersonsArray.map(a => a.firstname + ' ' + a.lastname));
         if (!this.state.personArray.find(function (obj: Person) { return obj.firstname + ' ' + obj.lastname === bestSuggestion; })) {
-            this.setState({memberSuggestion: bestSuggestion});
+            this.setState({ memberSuggestion: bestSuggestion });
         }
     }
 
     selectSuggestion() {
-        (this as any).newMember.setNativeProps({text: this.state.memberSuggestion});
-        this.setState({memberSuggestion: ''});
+        (this as any).newMember.setNativeProps({ text: this.state.memberSuggestion });
+        this.setState({ memberSuggestion: '' });
     }
 
-    saveGroup(goBack: any) {
+    saveGroup(dispatch: any) {
         let id = (this.state.update) ? this.state.group.id : this.state.group.name + '#' + new Date().toISOString();
         if (this.state.update) {
             for (let i = 0; i < this.state.groupArray.length; i++) {
@@ -173,13 +197,14 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             this.state.groupArray.push({
                 'id': id,
                 'name': this.state.group.name,
-                'defaultCurrencies': this.state.group.defaultCurrencies
+                'defaultCurrency': this.state.group.defaultCurrency,
+                'currencies': this.state.group.currencies
             });
         }
 
         this.updateStorage(id)
             .then(() => {
-                goBack();
+                dispatch(reset('GroupFeed'));
                 if (!this.state.update) {
                     this.props.navigation.state.params.updateFeedState({ groupArray: this.state.groupArray });
                 }
@@ -304,12 +329,14 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                     this.setState({
                         currencies: JSON.parse(value)
                     });
-                } else {
-                    this.setState({
-                        currencies: currencies
-                    }, () => {
-                        AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
-                    });
+                }
+            });
+
+        AsyncStorage.getItem('defaultCurrency')
+            .then((value) => {
+                if (value) {
+                    const group = Object.assign({}, this.state.group, { defaultCurrency: JSON.parse(value) });
+                    this.setState({ group });
                 }
             });
 
@@ -347,7 +374,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#4B9382'
     },
     rowContainer: {
-        flex: 1,
         flexDirection: 'row'
     },
     title: {

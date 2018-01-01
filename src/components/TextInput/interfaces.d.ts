@@ -38,17 +38,3 @@ interface IPropsWithLabel extends ITextInputProps {
     labelStyle?: any;
     labelText: string;
 }
-
-interface IPropsWithCurrencyPicker extends ITextInputProps {
-    currentCurrency: string;
-    currencies: Currencies;
-    onValueChange: any;
-    selectedValue: string;
-}
-
-interface IPropsCurrencyPicker extends ITextInputProps {
-    currentCurrency: string;
-    currencies: Currencies;
-    onValueChange: any;
-    selectedValue: string;
-}

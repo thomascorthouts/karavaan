@@ -31,6 +31,7 @@
     "expo": "^19.0.0",
     "react": "^16.0.0-alpha.12",
     "react-native": "^0.46.4",
+    "react-native-datepicker": "^1.6.0",
     "react-native-table-component-pro": "^1.0.1",
     "react-navigation": "^1.0.0-beta.21",
     "react-redux": "^5.0.2"

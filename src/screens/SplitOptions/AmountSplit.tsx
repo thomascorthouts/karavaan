@@ -39,7 +39,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 balances: [],
                 description: this.props.navigation.state.params.opts.description,
                 amount: this.props.navigation.state.params.opts.amount,
-                currency:  this.props.navigation.state.params.opts.currency.tag,
+                currency:  this.props.navigation.state.params.opts.currency,
                 category: this.props.navigation.state.params.opts.category,
                 date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
             },
