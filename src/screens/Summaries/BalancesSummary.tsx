@@ -57,14 +57,16 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value: string) => {
                 let expenses = JSON.parse(value);
-                expenses.map((val: Expense) => {
-                    val.balances.map((bal: Balance) => {
-                        let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                        if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
-                        else balances.push(bal);
+                if (expenses) {
+                    expenses.map((val: Expense) => {
+                        val.balances.map((bal: Balance) => {
+                            let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                            if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
+                            else balances.push(bal);
+                        });
                     });
-                });
-                this.setState({balances});
+                    this.setState({balances});
+                }
             });
     }
 }

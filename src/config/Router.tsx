@@ -10,7 +10,7 @@ import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
-import GroupExpense from '../screens/GroupTab/GroupExpense';
+import GroupExpense from '../screens/GroupTab/AddGroupExpense';
 import GroupCurrencies from '../screens/GroupTab/GroupCurrencies';
 
 import TransSplit from '../screens/SplitOptions/TransSplit';
@@ -27,6 +27,7 @@ import AddDish from '../components/AddDish';
 import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
 import BalancesSummary from '../screens/Summaries/BalancesSummary';
 import TransactionsSummary from '../screens/Summaries/Transactions';
+import ExpensesPerPerson from '../screens/Summaries/ExpensesPerPerson';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -68,6 +69,12 @@ export const GroupSummaries = TabNavigator(
             screen: TransactionsSummary,
             navigationOptions: {
                 tabBarLabel: 'Transactions'
+            }
+        },
+        PerPersonSummary: {
+            screen: ExpensesPerPerson,
+            navigationOptions: {
+                tabBarLabel: 'By Person'
             }
         }
     }, {
