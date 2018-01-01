@@ -3,12 +3,19 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 interface IProps {
     keyval: any;
+    transaction: Transaction;
     currency: Currency;
-    person: Person;
-    balance: number;
+    rate?: number;
 }
 
-export class BalanceFeedItem extends React.Component<IProps, {}> {
+interface Transaction {
+
+    from: Person;
+    to: Person;
+    amount: number;
+}
+
+export class TransactionFeedItem extends React.Component<IProps, {}> {
     constructor(props: IProps) {
         super(props);
     }
@@ -16,12 +23,13 @@ export class BalanceFeedItem extends React.Component<IProps, {}> {
     render() {
         return (
             <View key={this.props.keyval} style={styles.item} >
-                    <View>
-                        <Text style={styles.detailText}>{this.props.person.firstname} {this.props.person.lastname}</Text>
-                    </View>
-                    <View style={styles.expense}>
-                        <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currency.symbol} {this.props.balance}</Text>
-                    </View>
+                <View>
+                    <Text style={styles.detailText}>{this.props.transaction.from.firstname} {this.props.transaction.from.lastname}</Text>
+                    <Text style={styles.detailText}>⇨ {this.props.transaction.to.firstname} {this.props.transaction.to.lastname}</Text>
+                </View>
+                <View style={styles.expense}>
+                    <Text>{this.props.currency.symbol} {(this.props.rate) ? this.props.rate * this.props.transaction.amount : this.props.transaction.amount}</Text>
+                </View>
             </View>
         );
     }

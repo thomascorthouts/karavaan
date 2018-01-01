@@ -26,6 +26,7 @@ import Converter from '../screens/Converter';
 import AddDish from '../components/AddDish';
 import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
 import BalancesSummary from '../screens/Summaries/BalancesSummary';
+import TransactionsSummary from '../screens/Summaries/Transactions';
 
 export const ExpenseStack = StackNavigator(
     {
@@ -61,6 +62,12 @@ export const GroupSummaries = TabNavigator(
             screen: BalancesSummary,
             navigationOptions: {
                 tabBarLabel: 'Balances'
+            }
+        },
+        TransactionSummary: {
+            screen: TransactionsSummary,
+            navigationOptions: {
+                tabBarLabel: 'Transactions'
             }
         }
     }, {

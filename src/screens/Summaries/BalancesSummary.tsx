@@ -6,7 +6,7 @@ import {BalanceFeedItem} from '../../components/BalanceFeedItem';
 interface IState {
     group: Group;
     currency: Currency;
-    persons: PersonList;
+    balances: Balances;
 }
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
@@ -33,14 +33,14 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         this.state = {
             group: this.props.navigation.state.params.group,
             currency: this.props.navigation.state.params.group.defaultCurrency,
-            persons: [] as PersonList
+            balances: [] as Balances
         };
     }
 
     render() {
 
-        let balanceItems = this.state.persons.map((val: Person, key: number) => {
-            return <BalanceFeedItem keyval={val.id} currency={this.state.currency} person={val} key={val.id}/>;
+        let balanceItems = this.state.balances.map((val: Balance, key: number) => {
+            return <BalanceFeedItem keyval={val.person.id} currency={this.state.currency} person={val.person} balance={val.amount} key={val.person.id}/>;
         });
 
         return (
@@ -53,8 +53,19 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     }
 
     componentWillMount() {
-        AsyncStorage.getItem('persons-' + this.state.group.id)
-            .then((value: string) => this.setState({persons: JSON.parse(value)}));
+        let balances: Balances = [];
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value: string) => {
+                let expenses = JSON.parse(value);
+                expenses.map((val: Expense) => {
+                    val.balances.map((bal: Balance) => {
+                        let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                        if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
+                        else balances.push(bal);
+                    });
+                });
+                this.setState({balances});
+            });
     }
 }
 
