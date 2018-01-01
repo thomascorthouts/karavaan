@@ -1,8 +1,12 @@
 import React, {Component, ReactNode} from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet } from 'react-native';
+import {
+    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet,
+    Dimensions
+} from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
+import {GreenButton} from '../../components/Buttons/GreenButton';
 
 interface Options {
     splitMode: boolean;
@@ -86,7 +90,10 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { goBack, navigate } = this.props.navigation;
+
+        let height = Dimensions.get('window').height;
+        let width = Dimensions.get('window').width;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
@@ -97,20 +104,36 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         return (
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
-                <Text>{this.state.options.description}</Text>
-                <ErrorText errorText={this.state.error}/>
-                <ScrollView>
+                <KeyboardAvoidingView>
+                <View style={styles.flex}>
+                    <Text style={styles.title}>{this.state.options.description}</Text>
+                </View>
+                    <ErrorText errorText={this.state.error}/>
+                <View>
+                    <Text>Payers</Text>
                     <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
+                <ScrollView>
                     {this.state.payerNodes}
                 </ScrollView>
-                <Text>Receivers</Text>
-                <ScrollView style={styles.ScrollContainer}>
-                    {splitter}
-                </ScrollView>
-                <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <Text>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
-                    <Button onPress={() => this.confirm(navigate)} title={'Add Expense'} />
+                </View>
+                <View>
+                    <Text>Receivers</Text>
+                    <ScrollView>
+                        {splitter}
+                    </ScrollView>
+                </View>
                 </KeyboardAvoidingView>
+                <View>
+                    <Text>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                    <View style={styles.rowContainer}>
+                        <View style={styles.flex}>
+                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                        </View>
+                        <View style={styles.flex}>
+                            <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.confirm(navigate)} buttonText={'ADD'}/>
+                        </View>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -209,33 +232,25 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 }
 
 const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
     container: {
-        flex: 1
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#4B9382'
     },
-    ScrollContainer: {
-        flex: 1
+    rowContainer: {
+        flexDirection: 'row'
     },
-    footer: {
-        position: 'absolute',
-        alignItems: 'center',
-        bottom: 0,
-        left: 0,
-        right: 0
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
-    addButton: {
-        backgroundColor: '#287E6F',
-        width: 90,
-        height: 90,
-        borderRadius: 50,
-        borderColor: '#CCC',
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 8,
-        zIndex: 10
-    },
-    addButtonText: {
-        color: '#FFF',
-        fontSize: 24
+    inputAmount: {
+        flex: 3.6
     }
 });
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Button } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {InputWithLabel} from './TextInput/InputWithLabel';
 import PersonPicker from './Pickers/PersonPicker';
 import {ErrorText} from './Text/ErrorText';
+import {GreenButton} from './Buttons/GreenButton';
 
 interface Options {
     navigation: any;
@@ -36,12 +37,22 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
     render() {
         const { goBack } = this.props.navigation;
         return(
-            <View>
-                    <ErrorText errorText={this.state.error}/>
+            <View style={styles.container}>
+                <Text style={styles.title}>Add Item</Text>
+                <ErrorText errorText={this.state.error}/>
+                <View>
                     <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description}) } />
                     <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount: parseFloat(amount)}) } />
                     <PersonPicker persons={this.state.options.persons} choose={this.choose.bind(this)}/>
-                    <Button title={'Add Item'} onPress={() => this.save(goBack)}/>
+                </View>
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.save(goBack)} buttonText={'ADD'}/>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -66,3 +77,26 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
     }
 
 }
+
+const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#4B9382'
+    },
+    rowContainer: {
+        flexDirection: 'row'
+    },
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    inputAmount: {
+        flex: 3.6
+    }
+});
