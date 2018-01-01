@@ -1,15 +1,14 @@
-import React, {Component, ReactNode} from 'react';
-import {View, ScrollView, Text, AsyncStorage, Picker, Button} from 'react-native';
-import {TransactionFeedItem} from '../../components/TransactionFeedItem';
+import React, { Component, ReactNode } from 'react';
+import { View, ScrollView, Text, AsyncStorage, Picker, Button } from 'react-native';
+import { TransactionFeedItem } from '../../components/TransactionFeedItem';
 
 interface Transaction {
-
     from: Person;
     to: Person;
     amount: number;
 }
 
-interface Transactions extends Array<Transaction> {}
+interface Transactions extends Array<Transaction> { }
 
 interface IState {
     group: Group;
@@ -21,12 +20,12 @@ interface IState {
 
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
 
-    static navigationOptions = ({ navigation }: {navigation: any}) => {
+    static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
-                navigate('GroupForm', {group: state.params.group, groupArray: state.params.groupArray, update: true})
+                navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             }></Button>;
             return {
                 headerTitle: `${title}`,
@@ -49,16 +48,16 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     }
 
     render() {
-
         let trans = this.state.transactions.filter((val: Transaction) => {
             if (this.state.pickerOpt === 'all') return true;
             else return val.from.id === this.state.pickerOpt || val.to.id === this.state.pickerOpt;
         }).map((val: Transaction) => {
-            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} currency={this.state.group.defaultCurrency}/>);
+            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} currency={this.state.group.defaultCurrency} />);
         });
+
         return (
             <View>
-                <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({pickerOpt: val})}>
+                <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
                     <Picker.Item label={''} value={'all'} key={'all'} />
                     {this.state.personPickerItems}
                 </Picker>
@@ -67,30 +66,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                 </ScrollView>
             </View>
         );
-    }
-
-    componentWillMount() {
-        let balances: Balances = [];
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value: string) => {
-                let expenses = JSON.parse(value);
-                if (expenses) {
-                    expenses.map((val: Expense) => {
-                        val.balances.map((bal: Balance) => {
-                            let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                            if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
-                            else balances.push(bal);
-                        });
-                    });
-                    let items: ReactNode[] = [];
-                    balances.map((val: Balance) => {
-                        items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname}
-                                                value={val.person.id} key={val.person.id}/>);
-                    });
-                    this.setState({personPickerItems: items});
-                    this.setState({transactions: this.algorithm(balances)});
-                }
-            });
     }
 
     algorithm(balances: Balances) {
@@ -112,9 +87,10 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         tos = tos.filter((val: Balance) => { return val.amount !== 0; });
 
         if (froms.length === 0 || tos.length === 0) {
-            this.setState({numberOfTransactions: transactions.length});
+            this.setState({ numberOfTransactions: transactions.length });
             return transactions;
         }
+
         // Backtracking
         let amount = 0;
         froms.filter((val: Balance) => { return val.amount !== 0; }).map((negBal: Balance) => {
@@ -133,7 +109,30 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                 }
             });
         });
+
         return transactions;
     }
 
+    componentDidMount() {
+        let balances: Balances = [];
+        AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value: string) => {
+                let expenses = JSON.parse(value);
+                if (expenses) {
+                    expenses.map((val: Expense) => {
+                        val.balances.map((bal: Balance) => {
+                            let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                            if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
+                            else balances.push(bal);
+                        });
+                    });
+                    let items: ReactNode[] = [];
+                    balances.map((val: Balance) => {
+                        items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname}
+                            value={val.person.id} key={val.person.id} />);
+                    });
+                    this.setState({ personPickerItems: items, transactions: this.algorithm(balances) });
+                }
+            });
+    }
 }

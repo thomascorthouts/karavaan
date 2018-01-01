@@ -1,7 +1,7 @@
-import React, {Component, ReactNode} from 'react';
-import {View, ScrollView, Text, Button, TouchableOpacity, AsyncStorage, StyleSheet} from 'react-native';
+import React, { Component, ReactNode } from 'react';
+import { View, ScrollView, Text, Button, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
-import {BalanceFeedItem} from '../../components/BalanceFeedItem';
+import { BalanceFeedItem } from '../../components/BalanceFeedItem';
 
 interface IState {
     group: Group;
@@ -10,12 +10,12 @@ interface IState {
 }
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
-    static navigationOptions = ({ navigation }: {navigation: any}) => {
+    static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
-                navigate('GroupForm', {group: state.params.group, groupArray: state.params.groupArray, update: true})
+                navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             }></Button>;
             return {
                 headerTitle: `${title}`,
@@ -38,9 +38,8 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     }
 
     render() {
-
         let balanceItems = this.state.balances.map((val: Balance, key: number) => {
-            return <BalanceFeedItem keyval={val.person.id} currency={this.state.currency} person={val.person} balance={val.amount} key={val.person.id}/>;
+            return <BalanceFeedItem keyval={val.person.id} currency={this.state.currency} person={val.person} balance={val.amount} key={val.person.id} />;
         });
 
         return (
@@ -52,7 +51,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         );
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let balances: Balances = [];
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value: string) => {
@@ -65,7 +64,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
                             else balances.push(bal);
                         });
                     });
-                    this.setState({balances});
+                    this.setState({ balances });
                 }
             });
     }

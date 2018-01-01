@@ -10,6 +10,7 @@ import { parseMoney } from '../../utils/parsemoney';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import * as StringSimilarity from '../../utils/similarity';
+import { showError } from '../../utils/popup';
 
 interface IState {
     persons: PersonList;
@@ -42,7 +43,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 image: null
             },
             amountString: '0',
-            persons: [],
+            persons: [] as PersonList,
             currencies: currencies,
             expenseArray: this.props.navigation.state.params.expenseArray,
             donor: {
@@ -170,7 +171,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     />
                 </KeyboardAvoidingView>
 
-                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', {expense: this.state.expense, updateImage: this.updateState})} />
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateState })} />
 
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
@@ -188,11 +189,34 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         this.setState(data);
     }
 
+    // Expense Amount
+
     updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({ amountString: amount });
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(amount) });
-        this.setState({ expense });
+        this.setState({ expense: expense, amountString: amount });
+    }
+
+    // Donor and Receiver
+
+    setDonor(text: string) {
+        this.setState({ donor: this.createPerson(text) });
+    }
+
+    setReceiver(text: string) {
+        this.setState({ receiver: this.createPerson(text) });
+    }
+
+    createPerson(text: string) {
+        let firstname = text.split(' ')[0].trim();
+        let lastname = text.split(' ').slice(1).join(' ').trim() || '';
+        let person = {
+            firstname: firstname,
+            lastname: lastname,
+            id: firstname + lastname,
+            balance: 0
+        } as Person;
+        return person;
     }
 
     findSuggestion(text: string, type: string) {
@@ -217,20 +241,16 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
     }
 
+    // Category
+
     setCategory(cat: string) {
         const expense = Object.assign({}, this.state.expense, { category: cat });
         this.setState({ expense });
     }
 
-    setDonor(text: string) {
-        this.setState({ donor: this.createPerson(text) });
-    }
+    // CRUD
 
-    setReceiver(text: string) {
-        this.setState({ receiver: this.createPerson(text) });
-    }
-
-    save(goBack: any) {
+    saveExpense(goBack: any) {
         let balances = [
             { person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency },
             { person: this.state.receiver, amount: -1 * this.state.expense.amount, currency: this.state.expense.currency }
@@ -265,23 +285,11 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         }
 
         if (error === '') {
-            this.save(navigate);
+            this.saveExpense(navigate);
         } else {
-            this.showError(error);
+            showError(error);
         }
 
-    }
-
-    createPerson(text: string) {
-        let firstname = text.split(' ')[0].trim();
-        let lastname = text.split(' ').slice(1).join(' ').trim() || '';
-        let person = {
-            firstname: firstname,
-            lastname: lastname,
-            id: firstname + lastname,
-            balance: 0
-        } as Person;
-        return person;
     }
 
     async addExpenseToStorage() {
@@ -311,46 +319,39 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 ['persons', JSON.stringify(this.state.persons)]
             ]);
         } catch (error) {
-            this.showError(error);
+            showError(error);
         }
     }
 
-    showError(error: string) {
-        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
-            [
-                { text: 'OK', onPress: () => { return false; } }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    componentWillMount() {
-        AsyncStorage.getItem('persons')
+    async componentDidMount() {
+        let persons = await AsyncStorage.getItem('persons')
             .then((value) => {
                 if (value) {
-                    this.setState({
-                        persons: JSON.parse(value)
-                    });
+                    return JSON.parse(value);
+                } else {
+                    return this.state.persons;
                 }
             });
 
-        AsyncStorage.getItem('currencies')
+        let currencies = await AsyncStorage.getItem('currencies')
             .then((value) => {
                 if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value).rates
-                    });
+                    return JSON.parse(value).rates;
+                } else {
+                    return this.state.currencies;
                 }
             });
 
-        AsyncStorage.getItem('defaultCurrency')
+        let expense = await AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
-                    let expense = Object.assign({}, this.state.expense, { currency: JSON.parse(value) });
-                    this.setState({ expense });
+                    return Object.assign({}, this.state.expense, { currency: JSON.parse(value) });
+                } else {
+                    return this.state.expense;
                 }
             });
+
+        this.setState({ expense, currencies, persons });
     }
 }
 

@@ -3,6 +3,7 @@ import { ScrollView, Text, View, StatusBar, Alert, AsyncStorage, NetInfo, StyleS
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { NavigationActions } from 'react-navigation';
+import { showError, confirmDelete } from '../../utils/popup';
 
 interface IState {
     key: number;
@@ -32,9 +33,8 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 
     render() {
         let { image } = this.state.expense;
+        let { height, width } = Dimensions.get('window');
         const { dispatch } = this.props.navigation;
-        let height = Dimensions.get('window').height;
-        let width = Dimensions.get('window').width;
 
         return (
             <View style={styles.container}>
@@ -59,15 +59,15 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.2, resizeMode: 'contain' }} />
                     </View>}
 
-                <GreenButton buttonText={'DELETE'} onPress={() => this.confirmDelete('expense', () => this.deleteGroup(dispatch))} />
+                <GreenButton buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
             </View>
         );
     }
 
-    deleteGroup(dispatch: any) {
+    deleteExpense(dispatch: any) {
         this.state.expenseArray.splice(this.state.key, 1);
 
-        this.deleteStorage()
+        this.updateStorage()
             .then(() => {
                 if (this.state.expenseArrayId === 'expenses') {
                     resetState('ExpenseFeed', dispatch);
@@ -148,36 +148,15 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         this.setState({ balances: text });
     }
 
-    async deleteStorage() {
+    async updateStorage() {
         try {
             await AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
         } catch (error) {
-            this.showError(error);
+            showError(error);
         }
     }
 
-    showError(error: string) {
-        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
-            [
-                { text: 'OK', onPress: () => { return false; } }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    confirmDelete(type: string, callback: any) {
-        Alert.alert('Warning', 'Do you really want to delete ' + type,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'OK', onPress: () => callback() }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {

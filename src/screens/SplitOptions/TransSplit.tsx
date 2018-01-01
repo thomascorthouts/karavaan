@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
-import {ErrorText} from '../../components/Text/ErrorText';
-import {parseMoney} from '../../utils/parsemoney';
+import { ErrorText } from '../../components/Text/ErrorText';
+import { parseMoney } from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import {GreenButton} from '../../components/Buttons/GreenButton';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface Options {
     splitMode: boolean;
@@ -70,7 +70,7 @@ class TransSplit extends Component<IProps, IState> {
                 <View style={styles.flex}>
                     <Text style={styles.title}>{this.state.options.description}</Text>
                 </View>
-                <ErrorText errorText={this.state.error}/>
+                <ErrorText errorText={this.state.error} />
 
                 <View style={styles.rowContainer}>
                     <View style={styles.inputAmount}>
@@ -95,11 +95,11 @@ class TransSplit extends Component<IProps, IState> {
                 <View>
                     <View>
                         <Text>Payer</Text>
-                        <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)}/>
+                        <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)} />
                     </View>
                     <View>
                         <Text>Receiver</Text>
-                        <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)}/>
+                        <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)} />
                     </View>
                 </View>
                 <View style={styles.rowContainer}>
@@ -107,18 +107,17 @@ class TransSplit extends Component<IProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.addTransaction(navigate)} buttonText={'ADD'}/>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.addTransaction(navigate)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
         );
     }
 
-    updateAmount (value: string) {
+    updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({ amountString: amount });
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
-        this.setState({ expense });
+        this.setState({ expense, amountString: amount });
     }
 
     chooseDonor(id: string) {
@@ -133,13 +132,13 @@ class TransSplit extends Component<IProps, IState> {
         let p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             if (isDonor) this.setState({ donor: p });
-            else this.setState( { receiver: p });
+            else this.setState({ receiver: p });
         }
     }
 
     addTransaction(navigate: any) {
         if (!this.state.donor.id || !this.state.receiver.id || this.state.expense.amount === 0) {
-                this.setState({error: 'Not all fields are filled in correctly'});
+            this.setState({ error: 'Not all fields are filled in correctly' });
         } else {
             let donor = this.state.donor;
             donor.balance += this.state.expense.amount;
@@ -156,8 +155,8 @@ class TransSplit extends Component<IProps, IState> {
                 currency: this.state.expense.currency
             }];
 
-            const expense = Object.assign({}, this.state.expense, {balances: balances});
-            this.setState({expense}, () => {
+            const expense = Object.assign({}, this.state.expense, { balances: balances });
+            this.setState({ expense }, () => {
                 this.addExpenseToStorage()
                     .then(() => {
                         navigate('GroupFeed');
@@ -180,33 +179,36 @@ class TransSplit extends Component<IProps, IState> {
                 'splitOption': 'Transaction'
             });
 
-            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
-            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
+            await AsyncStorage.multiSet([
+                ['expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray)],
+                ['persons-' + this.state.group.id, JSON.stringify(this.state.personArray)]
+            ]);
         } catch (error) {
             console.log(error);
         }
     }
 
-    async componentWillMount() {
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+    async componentDidMount() {
+        let personArray = await AsyncStorage.getItem('persons-' + this.state.group.id)
             .then((value) => {
                 if (value) {
-                    this.setState({
-                        expenseArray: JSON.parse(value)
-                    });
+                    return JSON.parse(value);
+                } else {
+                    return this.state.personArray;
                 }
             });
 
-        AsyncStorage.getItem('persons-' + this.state.group.id)
+        let expenseArray = await AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value) => {
                 if (value) {
-                    this.setState({
-                        personArray: JSON.parse(value)
-                    });
+                    return JSON.parse(value);
+                } else {
+                    return this.state.expenseArray;
                 }
             });
+
+        this.setState({ personArray, expenseArray });
     }
-
 }
 
 export default TransSplit;

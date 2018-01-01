@@ -7,7 +7,7 @@ import LoginScreen from '../screens/Login';
 import ExpenseFeed from '../screens/ExpenseTab/ExpenseFeed';
 import AddExpense from '../screens/ExpenseTab/AddExpense';
 import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
-import ImageSelector from '../screens/ExpenseTab/ImageSelector';
+import ImageSelector from '../screens/ImageSelector';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
@@ -17,8 +17,6 @@ import GroupCurrencies from '../screens/GroupTab/GroupCurrencies';
 import TransSplit from '../screens/SplitOptions/TransSplit';
 import AmountSplit from '../screens/SplitOptions/AmountSplit';
 import BillSplit from '../screens/SplitOptions/BillSplit';
-
-import TableByExpense from '../screens/Summaries/TableByExpense';
 
 import Settings from '../screens/Settings/Settings';
 import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions';
@@ -107,6 +105,14 @@ export const GroupStack = StackNavigator(
         GroupForm: {
             screen: GroupForm,
             navigationOptions: {
+                swipeEnabled: false,
+                animationEnabled: false
+            }
+        },
+        ImageSelector: {
+            screen: ImageSelector,
+            navigationOptions: {
+                tabBarVisible: false,
                 swipeEnabled: false,
                 animationEnabled: false
             }
@@ -231,12 +237,6 @@ export const Drawer = DrawerNavigator(
             }
         },
         Item3: {
-            screen: TableByExpense,
-            navigationOptions: {
-                title: 'Summaries'
-            }
-        },
-        Item4: {
             screen: SettingsStack,
             navigationOptions: {
                 title: 'Settings'

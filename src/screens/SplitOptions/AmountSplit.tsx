@@ -1,4 +1,4 @@
-import React, {Component, ReactNode} from 'react';
+import React, { Component, ReactNode } from 'react';
 import {
     View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet,
     Dimensions
@@ -6,7 +6,7 @@ import {
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
-import {GreenButton} from '../../components/Buttons/GreenButton';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface Options {
     splitMode: boolean;
@@ -60,68 +60,37 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         };
     }
 
-    componentWillMount() {
-        AsyncStorage.getItem('persons-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        personArray: JSON.parse(value)
-                    });
-                }
-            })
-            .then(() => {
-                let amounts = [] as Balances;
-                const avg = (this.state.options.splitMode) ? (this.state.options.amount / this.state.personArray.length) * (-1) : 0;
-                this.state.personArray.map((val: Person) => {
-                    amounts.push({ person: val, amount: avg});
-                });
-                let expense = Object.assign({}, this.state.expense, {balances: amounts});
-                this.setState({expense});
-            });
-
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        expenseArray: JSON.parse(value)
-                    });
-                }
-            });
-    }
-
     render() {
+        let { height, width } = Dimensions.get('window');
         const { goBack, navigate } = this.props.navigation;
-
-        let height = Dimensions.get('window').height;
-        let width = Dimensions.get('window').width;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
-                                     onChangeText={this.update.bind(this)}
-                                     submitEditing={() => this.submitEditing()}/>;
+                onChangeText={this.update.bind(this)}
+                submitEditing={() => this.submitEditing()} />;
         });
 
         return (
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
                 <KeyboardAvoidingView>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.options.description}</Text>
-                </View>
-                    <ErrorText errorText={this.state.error}/>
-                <View>
-                    <Text>Payers</Text>
-                    <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
-                <ScrollView>
-                    {this.state.payerNodes}
-                </ScrollView>
-                </View>
-                <View>
-                    <Text>Receivers</Text>
-                    <ScrollView>
-                        {splitter}
-                    </ScrollView>
-                </View>
+                    <View style={styles.flex}>
+                        <Text style={styles.title}>{this.state.options.description}</Text>
+                    </View>
+                    <ErrorText errorText={this.state.error} />
+                    <View>
+                        <Text>Payers</Text>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} />
+                        <ScrollView>
+                            {this.state.payerNodes}
+                        </ScrollView>
+                    </View>
+                    <View>
+                        <Text>Receivers</Text>
+                        <ScrollView>
+                            {splitter}
+                        </ScrollView>
+                    </View>
                 </KeyboardAvoidingView>
                 <View>
                     <Text>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
@@ -130,7 +99,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                             <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                         </View>
                         <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.confirm(navigate)} buttonText={'ADD'}/>
+                            <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(navigate)} buttonText={'ADD'} />
                         </View>
                     </View>
                 </View>
@@ -145,40 +114,39 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
         if (typeof balance !== 'undefined') {
             balance.amount = parseFloat(text) * (-1); // 'Received' money gives a negative balance
-            let expense = Object.assign({}, this.state.expense, {balances: balances});
-            this.setState({expense});
+            let expense = Object.assign({}, this.state.expense, { balances: balances });
+            this.setState({ expense });
         }
     }
 
     addPayer(id: string) {
         let chosen = this.state.payers;
         let nodes = this.state.payerNodes;
-        const p = this.state.personArray.find((val: Person) => {return (val.id === id); });
+        const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            this.setState({payers: chosen});
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => this.submitEditing()} onChangeText={this.setPayerAmount.bind(this)}/>);
-            this.setState({payerNodes: nodes});
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => this.submitEditing()} onChangeText={this.setPayerAmount.bind(this)} />);
+            this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
 
-    setPayerAmount (amount: number, id: string) {
+    setPayerAmount(amount: number, id: string) {
         let payers = this.state.payers;
         let bal = payers.find((val: Balance) => { return (val.person.id === id); });
         if (typeof bal !== 'undefined') {
             bal.amount = amount;
-            this.setState({payers});
+            this.setState({ payers });
         }
     }
 
     submitEditing() {
-        // En wa als ik nu een lege functie wil?
+        return;
     }
 
     confirm(navigate: any) {
         this.fixBalances()
-            .then( () => this.addExpenseToStorage())
-            .then(() => navigate( 'GroupFeed' ))
+            .then(() => this.addExpenseToStorage())
+            .then(() => navigate('GroupFeed'))
             .catch((error: string) => this.setState({ error }));
     }
 
@@ -186,14 +154,14 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         let payer;
         let sum = 0;
         console.log(this.state.expense);
-        let expense = Object.assign( {}, this.state.expense);
+        let expense = Object.assign({}, this.state.expense);
         expense.balances.map((val: Balance) => {
             sum += val.amount;
         });
         this.state.payers.map((val: Balance) => sum += val.amount);
 
         console.log(sum);
-        if ( sum === 0) {
+        if (sum === 0) {
             this.state.payers.map((payerBalance: Balance) => {
                 payer = expense.balances.find((bal: Balance) => {
                     return bal.person.id === payerBalance.person.id;
@@ -201,12 +169,12 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 if (typeof payer !== 'undefined') {
                     payer.amount += payerBalance.amount;
                 } else {
-                    let balanceToPush = Object.assign({}, payerBalance );
+                    let balanceToPush = Object.assign({}, payerBalance);
                     expense.balances.push(balanceToPush);
-                }});
+                }
+            });
             this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
-            this.setState({ expense });
-            this.setState({ error: '' });
+            this.setState({ expense, error: '' });
 
         } else throw 'The total balance is not 0.';
     }
@@ -223,10 +191,48 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 'balances': this.state.expense.balances
             });
 
-            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
-            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
+            await AsyncStorage.multiSet([
+                ['expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray)],
+                ['persons-' + this.state.group.id, JSON.stringify(this.state.personArray)]
+            ]);
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async componentDidMount() {
+        let personArray = await AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return this.state.personArray;
+                }
+            });
+
+        let expenseArray = await AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return this.state.expenseArray;
+                }
+            });
+
+        let expense;
+        if (personArray) {
+            let amounts = [] as Balances;
+            const avg = (this.state.options.splitMode) ? (this.state.options.amount / personArray.length) * (-1) : 0;
+            personArray.map((val: Person) => {
+                amounts.push({ person: val, amount: avg });
+            });
+            expense = Object.assign({}, this.state.expense, { balances: amounts });
+        }
+
+        if (expense) {
+            this.setState({ personArray, expense, expenseArray });
+        } else {
+            this.setState({ personArray, expenseArray });
         }
     }
 }

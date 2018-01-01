@@ -9,6 +9,7 @@ import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState } from '../../utils/navigationactions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import * as StringSimilarity from '../../utils/similarity';
+import { showError, confirmDelete } from '../../utils/popup';
 
 interface IState {
     group: Group;
@@ -60,7 +61,9 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     render() {
+        let { height } = Dimensions.get('window');
         const { goBack, dispatch, navigate } = this.props.navigation;
+
         let members: ReactNode[] = new Array();
         let personArray = this.state.personArray;
 
@@ -80,14 +83,12 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             buttonText={'X'}
                             buttonStyle={styles.deleteButton}
                             onPress={() =>
-                                this.confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
+                                confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
                             } />
                     </View>
                 </View>
             );
         });
-
-        let height = Dimensions.get('window').height;
 
         return (
             <View style={styles.container}>
@@ -113,6 +114,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                     <ScrollView style={{ height: height * 0.3 }}>
                         {members}
                     </ScrollView>
+
                     <Text> Add Members: </Text>
                     <InputWithoutLabel
                         inputref={(input: any) => { (this as any).newMember = input; }}
@@ -122,13 +124,10 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         suggestion={this.state.memberSuggestion}
                         suggestionPress={() => this.selectSuggestion()}
                         onBlur={() => this.setState({ memberSuggestion: '' })}
-                        onChangeText={(text: string) => {
-                            this.findSuggestion(text);
-                        }}
-                        onSubmitEditing={(text: any) => {
-                            this.addPerson(text.nativeEvent.text);
-                        }}
+                        onChangeText={(text: string) => this.findSuggestion(text)}
+                        onSubmitEditing={(text: any) => this.addPerson(text.nativeEvent.text)}
                     />
+
                     <Text> Default Currency: </Text>
                     <CurrencyPicker
                         currencies={this.state.currencies}
@@ -153,7 +152,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
                             if (this.state.update) {
-                                this.confirmDelete('this group', () => this.deleteGroup(dispatch));
+                                confirmDelete('this group', () => this.deleteGroup(dispatch));
                             } else {
                                 goBack();
                             }
@@ -237,7 +236,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         if (error === '') {
             this.saveGroup(navigate);
         } else {
-            this.showError(error);
+            showError(error);
         }
     }
 
@@ -269,7 +268,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                 this.setState({ personArray });
                 (this as any).newMember.clear();
             } else {
-                this.showError('Person already inside group');
+                showError('Person already inside group');
             }
 
             let allPersonsArray = [...this.state.allPersonsArray];
@@ -288,7 +287,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                 ['persons-' + id, JSON.stringify(this.state.personArray)]
             ]);
         } catch (error) {
-            this.showError(error);
+            showError(error);
         }
     }
 
@@ -297,59 +296,42 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
             await AsyncStorage.removeItem('persons-' + id);
         } catch (error) {
-            this.showError(error);
+            showError(error);
         }
     }
 
-    showError(error: string) {
-        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
-            [
-                { text: 'OK', onPress: () => { return false; } }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    confirmDelete(type: string, callback: any) {
-        Alert.alert('Warning', 'Do you really want to delete ' + type,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'OK', onPress: () => callback() }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    componentWillMount() {
-        AsyncStorage.getItem('defaultCurrency')
+    async componentDidMount() {
+        let group = await AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
-                    const group = Object.assign({}, this.state.group, { defaultCurrency: JSON.parse(value) });
-                    this.setState({ group });
+                    return Object.assign({}, this.state.group, { defaultCurrency: JSON.parse(value) });
+                } else {
+                    return this.state.group;
                 }
             });
 
-        AsyncStorage.getItem('persons')
+        let allPersonsArray = await AsyncStorage.getItem('persons')
             .then((value) => {
                 if (value) {
-                    this.setState({
-                        allPersonsArray: JSON.parse(value)
-                    });
+                    return JSON.parse(value);
+                } else {
+                    return this.state.allPersonsArray;
                 }
             });
 
+        let personArray = this.state.personArray;
         if (this.state.update) {
-            AsyncStorage.getItem('persons-' + this.state.group.id)
+            personArray = await AsyncStorage.getItem('persons-' + this.state.group.id)
                 .then((value) => {
                     if (value) {
-                        this.setState({
-                            personArray: JSON.parse(value)
-                        });
+                        return JSON.parse(value);
+                    } else {
+                        return this.state.personArray;
                     }
                 });
         }
+
+        this.setState({ group, personArray, allPersonsArray });
     }
 }
 

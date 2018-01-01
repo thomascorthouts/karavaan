@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import { View, Text, StatusBar, StyleSheet, AsyncStorage, Alert, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
+import { showError, confirmDelete } from '../../utils/popup';
 
 interface IState {
     personArray: PersonList;
@@ -44,7 +45,7 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
                             buttonText={'X'}
                             buttonStyle={styles.deleteButton}
                             onPress={() =>
-                                this.confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
+                                confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
                             } />
                     </View>
                 </View>
@@ -88,7 +89,7 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
                 this.setState({ personArray }, () => this.updateStorage());
                 (this as any).newMember.clear();
             } else {
-                this.showError('Person already inside memberlist');
+                showError('Person already inside memberlist');
             }
         }
     }
@@ -118,32 +119,11 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
                 'persons', JSON.stringify(this.state.personArray)
             );
         } catch (error) {
-            this.showError(error);
+            showError(error);
         }
     }
 
-    showError(error: string) {
-        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
-            [
-                { text: 'OK', onPress: () => { return false; } }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    confirmDelete(type: string, callback: any) {
-        Alert.alert('Warning', 'Do you really want to delete ' + type,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'OK', onPress: () => callback() }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem('persons')
             .then((value) => {
                 if (value) {

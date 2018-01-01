@@ -35,7 +35,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         let navParams = this.props.navigation.state.params;
         this.state = {
             expenseArray: [] as ExpenseList,
-            group: navParams ? navParams.group : {},
+            group: navParams ? navParams.group : {} as Group,
             expenseArrayId: navParams ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
@@ -79,7 +79,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
         navigate(screen, {key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {

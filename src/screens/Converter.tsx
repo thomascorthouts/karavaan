@@ -6,6 +6,8 @@ import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../components/Buttons/GreenButton';
 import { InputWithLabel } from '../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
+import { NavigationActions } from 'react-navigation';
+import { showError } from '../utils/popup';
 
 interface IState {
     currencies: Currencies;
@@ -38,7 +40,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { goBack } = this.props.navigation;
+        const { dispatch } = this.props.navigation;
 
         let height = Dimensions.get('window').height;
         let width = Dimensions.get('window').width;
@@ -121,7 +123,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
                     <View style={styles.rowContainer}>
                         <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
                         </View>
                         <View style={styles.flex}>
                             <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
@@ -137,7 +139,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
             if (isConnected && this.state.latest !== this.state.date.trim()) {
                 this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
             } else if (!isConnected) {
-                this.showError('No internet connection available\n\nUsing exchange rates from ' + this.state.latest);
+                showError('No internet connection available\n\nUsing exchange rates from ' + this.state.latest);
                 this.setState({ date: this.state.latest });
             }
         });
@@ -174,42 +176,32 @@ class Converter extends Component<IDefaultNavProps, IState> {
             })
             .catch((error) => {
                 console.log(error);
-                this.showError('Failed to fetch exchange rates');
+                showError('Failed to fetch exchange rates');
             });
     }
 
-    showError(error: string) {
-        Alert.alert('Warning', error.replace(/^[\n\r]+/, '').trim(),
-            [
-                { text: 'OK', onPress: () => { return false; } }
-            ],
-            { onDismiss: () => undefined }
-        );
-        return true;
-    }
-
-    async componentWillMount() {
-        AsyncStorage.getItem('defaultCurrency')
+    async componentDidMount() {
+        let currency = await AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
-                    let parsed = JSON.parse(value);
-                    this.setState({
-                        currency1: parsed, currency2: parsed
-                    });
+                    return JSON.parse(value);
                 }
             });
 
-        AsyncStorage.getItem('currencies')
+        let currencies = await AsyncStorage.getItem('currencies')
             .then((value) => {
                 if (value) {
-                    let parsed = JSON.parse(value);
-                    this.setState({
-                        currencies: parsed.rates, latest: parsed.latest, isLoading: false
-                    });
+                    return JSON.parse(value);
                 } else {
-                    this.showError('No exchange rate information available');
+                    showError('No exchange rate information available');
                 }
             });
+
+        if (currencies) {
+            this.setState({
+                currency1: currency, currency2: currency, currencies: currencies.rates, latest: currencies.latest, isLoading: false
+            });
+        }
     }
 }
 
