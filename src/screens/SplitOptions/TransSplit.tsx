@@ -13,6 +13,8 @@ interface Options {
     amount: number;
     description: string;
     currencies: Currencies;
+    date: string;
+    category: string;
 }
 
 interface IProps {
@@ -36,25 +38,25 @@ class TransSplit extends Component<IProps, IState> {
     constructor(props: IProps, state: IState) {
         super(props, state);
 
-        let date = new Date();
+        let options = this.props.navigation.state.params.opts as Options;
         this.state = {
             group: this.props.navigation.state.params.group,
-            options: this.props.navigation.state.params.opts as Options,
+            options: options,
             expense: {
                 balances: [],
-                description: this.props.navigation.state.params.opts.description,
-                amount: this.props.navigation.state.params.opts.amount,
-                currency: this.props.navigation.state.params.opts.currency,
-                category: this.props.navigation.state.params.opts.category,
-                date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
+                description: options.description,
+                amount: options.amount,
+                currency: options.currency,
+                category: options.category,
+                date: options.date
             },
-            currencies: this.props.navigation.state.params.opts.currencies,
+            currencies: options.currencies as Currencies,
             donor: {} as Person,
             receiver: {} as Person,
-            expenseArray: [],
+            expenseArray: [] as ExpenseList,
             personArray: [] as PersonList,
             error: '',
-            amountString: this.props.navigation.state.params.opts.amount.toString()
+            amountString: options.amount.toString()
         };
     }
 

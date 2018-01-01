@@ -6,7 +6,7 @@ import { OptionPicker } from '../../components/Pickers/OptionPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import { reset } from '../../utils/navigationactions';
+import { resetState } from '../../utils/navigationactions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import * as StringSimilarity from '../../utils/similarity';
 
@@ -204,7 +204,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
         this.updateStorage(id)
             .then(() => {
-                dispatch(reset('GroupFeed'));
+                resetState('GroupFeed', dispatch);
                 if (!this.state.update) {
                     this.props.navigation.state.params.updateFeedState({ groupArray: this.state.groupArray });
                 }
@@ -220,7 +220,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
         this.deleteStorage(this.state.group.id)
             .then(() => {
-                dispatch(reset('GroupFeed'));
+                resetState('GroupFeed', dispatch);
             });
     }
 
@@ -230,8 +230,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             error += 'Group name can not be empty';
         }
 
-        if (this.state.personArray.length <= 0) {
-            error += '\nThere must be at least one person inside a group';
+        if (this.state.personArray.length <= 1) {
+            error += '\nThere must be at least two persons inside a group';
         }
 
         if (error === '') {

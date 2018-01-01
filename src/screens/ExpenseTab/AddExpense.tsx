@@ -227,6 +227,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             { person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency },
             { person: this.state.receiver, amount: -1 * this.state.expense.amount, currency: this.state.expense.currency }
         ];
+
         const expense = Object.assign({}, this.state.expense, { balances: balances });
         this.setState({ expense }, () => {
             this.addExpenseToStorage()

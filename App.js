@@ -1,3 +1,4 @@
+import Expo from 'expo';
 import React, { Component } from 'react';
 import { AppRegistry, NetInfo, Alert, KeyboardAvoidingView, View, AsyncStorage } from 'react-native';
 import { currencies } from './build/src/config/Data';
@@ -12,6 +13,7 @@ export default class App extends Component {
 
     componentDidMount() {
         // console.disableYellowBox = true;
+        Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     }
 
@@ -22,24 +24,41 @@ export default class App extends Component {
     handleConnectivityChange = (isConnected) => {
         console.log('You are ' + (isConnected ? 'online' : 'offline'));
         if (isConnected) {
-            AsyncStorage.getItem('defaultCurrency').then((value) => {
-                if (value) {
-                    this.updateExchangeRates('?base=' + JSON.parse(value).tag, JSON.parse(value).tag);
-                } else {
-                    this.updateExchangeRates('', 'EUR');
-                    AsyncStorage.setItem('defaultCurrency', JSON.stringify({name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'}));
-                }
-            });
+            AsyncStorage.getItem('currencies')
+                .then((value) => {
+                    let currencies, latest;
+                    if (value) {
+                        let parsed = JSON.parse(value);
+                        currencies = parsed.currencies;
+                        latest = parsed.latest;
+                    }
+
+                    AsyncStorage.getItem('defaultCurrency').then((value) => {
+                        let date = new Date();
+                        let today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                        if (latest && latest === today) {
+                            console.log('currencies up to date');
+                            return
+                        }
+
+                        if (value) {
+                            this.updateExchangeRates('?base=' + JSON.parse(value).tag, JSON.parse(value).tag, today);
+                        } else {
+                            this.updateExchangeRates('', 'EUR', today);
+                            AsyncStorage.setItem('defaultCurrency', JSON.stringify({ name: 'Euro', tag: 'EUR', rate: 1, symbol: '€' }));
+                        }
+                    });
+                });
+
         }
     }
 
-    async updateExchangeRates(url, base) {
+    async updateExchangeRates(url, base, today) {
+        console.log('updating currencies');
         fetch('https://api.fixer.io/latest' + url)
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.rates) {
-                    let date = new Date();
-                    let today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
                     let key;
                     for (key in data.rates) {
                         currencies[key].rate = data.rates[key];
