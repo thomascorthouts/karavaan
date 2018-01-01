@@ -7,6 +7,7 @@ import LoginScreen from '../screens/Login';
 import ExpenseFeed from '../screens/ExpenseTab/ExpenseFeed';
 import AddExpense from '../screens/ExpenseTab/AddExpense';
 import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
+import ImageSelector from '../screens/ExpenseTab/ImageSelector';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
@@ -38,6 +39,14 @@ export const ExpenseStack = StackNavigator(
         },
         AddExpense: {
             screen: AddExpense,
+            navigationOptions: {
+                tabBarVisible: false,
+                swipeEnabled: false,
+                animationEnabled: false
+            }
+        },
+        ImageSelector: {
+            screen: ImageSelector,
             navigationOptions: {
                 tabBarVisible: false,
                 swipeEnabled: false,
