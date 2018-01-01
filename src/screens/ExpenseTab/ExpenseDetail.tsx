@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { ScrollView, Text, View, StatusBar, Alert, AsyncStorage, NetInfo, StyleSheet } from 'react-native';
+import { ScrollView, Text, View, StatusBar, Alert, AsyncStorage, NetInfo, StyleSheet, Image, Dimensions } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { NavigationActions } from 'react-navigation';
@@ -31,7 +31,10 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
+        let { image } = this.state.expense;
         const { dispatch } = this.props.navigation;
+        let height = Dimensions.get('window').height;
+        let width = Dimensions.get('window').width;
 
         return (
             <View style={styles.container}>
@@ -50,6 +53,11 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                         <View>{this.state.balances.length > 0 ? this.state.balances : <Text>Calculating</Text>}</View>
                     </ScrollView>
                 </View>
+
+                {image &&
+                    <View style={styles.flex}>
+                        <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.2, resizeMode: 'contain' }} />
+                    </View>}
 
                 <GreenButton buttonText={'DELETE'} onPress={() => this.confirmDelete('expense', () => this.deleteGroup(dispatch))} />
             </View>
@@ -189,9 +197,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20
     },
-    rowContainer: {
-        flexDirection: 'row'
-    },
     title: {
         fontSize: 30,
         color: '#287E6F',
@@ -200,8 +205,5 @@ const styles = StyleSheet.create({
     },
     textCenter: {
         textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 3.6
     }
 });

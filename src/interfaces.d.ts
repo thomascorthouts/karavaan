@@ -12,6 +12,7 @@ interface Expense {
     amount: number;
     currency: Currency;
     splitOption?: string;
+    image?: any;
 }
 
 interface ExpenseList extends Array<Expense> { }
@@ -77,3 +78,4 @@ interface Balances extends Array<Balance> { }
 // ignore errors for javascript only packages
 declare module 'react-native-table-component-pro'
 declare module 'react-native-datepicker'
+declare module 'expo'

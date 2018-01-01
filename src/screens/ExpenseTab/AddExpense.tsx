@@ -38,7 +38,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 } as Currency,
                 amount: 0,
                 date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
-                balances: []
+                balances: [],
+                image: null
             },
             amountString: '0',
             persons: [],
@@ -58,7 +59,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { goBack } = this.props.navigation;
+        const { goBack, navigate } = this.props.navigation;
 
         let width = Dimensions.get('window').width;
 
@@ -168,6 +169,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         selectedValue={this.state.expense.category}
                     />
                 </KeyboardAvoidingView>
+
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', {expense: this.state.expense, updateImage: this.updateState})} />
+
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
@@ -178,6 +182,10 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 </View>
             </View>
         );
+    }
+
+    updateState = (data: any) => {
+        this.setState(data);
     }
 
     updateAmount(value: string) {
@@ -252,6 +260,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         if (this.state.expense.amount.toString() === '' || isNaN(this.state.expense.amount) || this.state.expense.amount < 0) {
             error += '\nAmount can not be empty';
         }
+        if (this.state.donor.id === this.state.receiver.id) {
+            error += '\nDonor and receiver can not be the same person';
+        }
 
         if (error === '') {
             this.save(navigate);
@@ -281,7 +292,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'currency': this.state.expense.currency,
                 'description': this.state.expense.description.trim(),
                 'category': this.state.expense.category,
-                'balances': this.state.expense.balances
+                'balances': this.state.expense.balances,
+                'image': this.state.expense.image
             });
 
             let donor = this.state.donor;
