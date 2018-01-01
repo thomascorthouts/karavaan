@@ -126,13 +126,13 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             if (balance.amount > 0) {
                 text.push(
                     <Text key={index}>
-                        {balance.person.firstname} {balance.person.lastname} payed {expense.currency.symbol}{balance.amount} {conversion}
+                        {balance.person.firstname} {balance.person.lastname} paid {expense.currency.symbol}{balance.amount} {conversion}
                     </Text>
                 );
             } else {
                 text.push(
                     <Text key={index}>
-                        {balance.person.firstname} {balance.person.lastname} has to pay {expense.currency.symbol}{balance.amount * -1} {conversion}
+                        {balance.person.firstname} {balance.person.lastname} owes {expense.currency.symbol}{balance.amount * -1} {conversion}
                     </Text>
                 );
             }
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 20,
+        padding: 20
     },
     rowContainer: {
         flexDirection: 'row'

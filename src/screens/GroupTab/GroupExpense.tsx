@@ -94,7 +94,10 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     }}
                 />
 
-                <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category} />
+                <View>
+                    <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category} />
+                </View>
+
                 <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({ splitMode })}>
                     <Picker.Item label={'Transaction'} value={'trans'} key={'trans'} />
                     <Picker.Item label={'Split evenly'} value={'even'} key={'even'} />
