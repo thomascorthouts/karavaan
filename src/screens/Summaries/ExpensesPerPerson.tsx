@@ -127,12 +127,15 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         AsyncStorage.getItem('persons-' + this.state.group.id)
             .then((value) => {
                 if (value) {
-                    let persons  = JSON.parse(value).map((val: Person) => {
-                        return <Picker.Item key={val.id} value={val.id} label={val.firstname + ' ' + val.lastname}/>;
-                    });
+                    let array = JSON.parse(value);
+                    if (array) {
+                        let persons = array.map((val: Person) => {
+                            return <Picker.Item key={val.id} value={val.id}
+                                                label={val.firstname + ' ' + val.lastname}/>;
+                        });
 
-                    this.setState({ persons });
-
+                        this.setState({persons});
+                    }
                 }
 
             });

@@ -64,7 +64,7 @@ class TransSplit extends Component<IProps, IState> {
     render() {
         const { goBack, navigate } = this.props.navigation;
 
-        console.log(this.state.expense.currency);
+
         return (
             <View style={styles.container}>
                 <View style={styles.flex}>
@@ -167,8 +167,6 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     async addExpenseToStorage() {
-        console.log(this.state.expense);
-        console.log(this.state.personArray);
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,

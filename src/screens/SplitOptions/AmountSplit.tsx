@@ -185,14 +185,12 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     async fixBalances() {
         let payer;
         let sum = 0;
-        console.log(this.state.expense);
         let expense = Object.assign( {}, this.state.expense);
         expense.balances.map((val: Balance) => {
             sum += val.amount;
         });
         this.state.payers.map((val: Balance) => sum += val.amount);
 
-        console.log(sum);
         if ( sum === 0) {
             this.state.payers.map((payerBalance: Balance) => {
                 payer = expense.balances.find((bal: Balance) => {
@@ -212,7 +210,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     async addExpenseToStorage() {
-        console.log(this.state.expense);
+
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
