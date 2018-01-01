@@ -70,7 +70,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
     }
 
     addExpense(navigate: any) {
-        let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
+        let screen = 'GroupAddExpense';
         navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
     }
 
@@ -115,7 +115,6 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                         expenseMap[expense.category].push(expense);
                     });
 
-                    console.log(expenseMap);
                     this.setState({expenses: expenseMap}, this.updateView);
                 }
             });

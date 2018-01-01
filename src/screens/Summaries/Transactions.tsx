@@ -1,5 +1,5 @@
 import React, {Component, ReactNode} from 'react';
-import {View, ScrollView, Text, AsyncStorage, Picker} from 'react-native';
+import {View, ScrollView, Text, AsyncStorage, Picker, Button} from 'react-native';
 import {TransactionFeedItem} from '../../components/TransactionFeedItem';
 
 interface Transaction {
@@ -20,6 +20,22 @@ interface IState {
 }
 
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
+
+    static navigationOptions = ({ navigation }: {navigation: any}) => {
+        const { state, navigate } = navigation;
+        if (state.params) {
+            const title = state.params.group.name;
+            const headerRight = <Button title={'Edit'} onPress={() =>
+                navigate('GroupForm', {group: state.params.group, groupArray: state.params.groupArray, update: true})
+            }></Button>;
+            return {
+                headerTitle: `${title}`,
+                headerRight: headerRight
+            };
+        } else {
+            return {};
+        }
+    };
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -99,8 +115,8 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         }
         // Backtracking
         let amount = 0;
-        froms.map((negBal: Balance) => {
-            tos.map((posBal: Balance) => {
+        froms.filter((val: Balance) => { return val.amount !== 0; }).map((negBal: Balance) => {
+            tos.filter((val: Balance) => { return val.amount !== 0; }).map((posBal: Balance) => {
                 amount = Math.min(Math.abs(negBal.amount), posBal.amount);
                 negBal.amount += amount;
                 posBal.amount -= amount;

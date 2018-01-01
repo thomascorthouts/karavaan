@@ -9,6 +9,7 @@ interface IProps {
 
 interface IState {
     category: string;
+    otherOptions: ReactNode[];
 }
 
 export class CategoryPicker extends Component<IProps, IState> {
@@ -17,7 +18,8 @@ export class CategoryPicker extends Component<IProps, IState> {
         super(props, state);
 
         this.state = {
-            category: this.props.selectedValue
+            category: this.props.selectedValue,
+            otherOptions: (this.props.otherOptions) ? this.props.otherOptions : []
         };
     }
 
@@ -34,7 +36,7 @@ export class CategoryPicker extends Component<IProps, IState> {
                     <Picker.Item label={'Life'} value={'Life'} key={'life'} />
                     <Picker.Item label={'Transport'} value={'Transport'} key={'trans'} />
                     <Picker.Item label={'Other'} value={'Other'} key={'other'} />
-                    {this.props.otherOptions}
+                    {this.state.otherOptions}
                 </Picker>
             </View>
         );

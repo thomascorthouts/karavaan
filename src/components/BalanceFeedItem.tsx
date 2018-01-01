@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         right: 10
     },
     green: {
-        color: '#00ff00'
+        color: '#4B9382'
     },
     red: {
         color: '#ff0000'
