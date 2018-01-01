@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Button, AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
 import {ErrorText} from '../../components/Text/ErrorText';
 import {parseMoney} from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
+import {GreenButton} from '../../components/Buttons/GreenButton';
 
 interface Options {
     splitMode: boolean;
@@ -61,11 +62,14 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { goBack, navigate } = this.props.navigation;
 
         console.log(this.state.expense.currency);
         return (
-            <View>
+            <View style={styles.container}>
+                <View style={styles.flex}>
+                    <Text style={styles.title}>{this.state.options.description}</Text>
+                </View>
                 <ErrorText errorText={this.state.error}/>
 
                 <View style={styles.rowContainer}>
@@ -88,10 +92,24 @@ class TransSplit extends Component<IProps, IState> {
                         />
                     </View>
                 </View>
-
-                <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)}/>
-                <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)}/>
-                <Button title={'Add Transaction'} onPress={() => this.addTransaction(navigate)} />
+                <View>
+                    <View>
+                        <Text>Payer</Text>
+                        <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)}/>
+                    </View>
+                    <View>
+                        <Text>Receiver</Text>
+                        <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)}/>
+                    </View>
+                </View>
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.addTransaction(navigate)} buttonText={'ADD'}/>
+                    </View>
+                </View>
             </View>
         );
     }

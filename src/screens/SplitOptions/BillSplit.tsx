@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from 'react';
-import {View, Button, ScrollView, AsyncStorage, Text} from 'react-native';
+import {View, Button, ScrollView, AsyncStorage, Text, StyleSheet} from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import {ErrorText} from '../../components/Text/ErrorText';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface Options {
     splitMode: boolean;
@@ -80,21 +81,32 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     render() {
-        const {navigate} = this.props.navigation;
+        const {goBack, navigate} = this.props.navigation;
 
         return (
-            <View>
-                <Text>{this.state.expense.description}</Text>
+            <View style={styles.container}>
+                <Text style={styles.title}>{this.state.options.description}</Text>
                 <ErrorText errorText={this.state.error}/>
-                <ScrollView>
-                    <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
-                    {this.state.payerNodes}
-                </ScrollView>
-                <Button title={'Add Item'} onPress={ () => this.addItem(navigate)}/>
-                <ScrollView >
-                    {this.state.items}
-                </ScrollView>
-                <Button title={'Add Expense'} onPress={() => this.confirm(navigate)}/>
+                <View style={styles.flex}>
+                    <ScrollView>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
+                        {this.state.payerNodes}
+                    </ScrollView>
+                </View>
+                <View style={styles.flex}>
+                    <GreenButton onPress={() => this.addItem(navigate)} buttonText={'Add Item'}/>
+                    <ScrollView>
+                        {this.state.items}
+                    </ScrollView>
+                </View>
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.confirm(navigate)} buttonText={'ADD'}/>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -213,3 +225,26 @@ class BillSplit extends Component<IProps, IState> {
 }
 
 export default BillSplit;
+
+const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#4B9382'
+    },
+    rowContainer: {
+        flexDirection: 'row'
+    },
+    title: {
+        fontSize: 40,
+        color: '#287E6F',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    inputAmount: {
+        flex: 3.6
+    }
+});

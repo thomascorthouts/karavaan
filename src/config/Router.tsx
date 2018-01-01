@@ -10,7 +10,7 @@ import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
-import GroupExpense from '../screens/GroupTab/GroupExpense';
+import GroupExpense from '../screens/GroupTab/AddGroupExpense';
 import GroupCurrencies from '../screens/GroupTab/GroupCurrencies';
 
 import TransSplit from '../screens/SplitOptions/TransSplit';

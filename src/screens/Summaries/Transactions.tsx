@@ -58,7 +58,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         });
         return (
             <View>
-                <Text>Hereby an overview for all transactions to completely settle the debts.</Text>
                 <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({pickerOpt: val})}>
                     <Picker.Item label={''} value={'all'} key={'all'} />
                     {this.state.personPickerItems}
@@ -75,19 +74,22 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value: string) => {
                 let expenses = JSON.parse(value);
-                expenses.map((val: Expense) => {
-                    val.balances.map((bal: Balance) => {
-                        let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                        if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
-                        else balances.push(bal);
+                if (expenses) {
+                    expenses.map((val: Expense) => {
+                        val.balances.map((bal: Balance) => {
+                            let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                            if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
+                            else balances.push(bal);
+                        });
                     });
-                });
-                let items: ReactNode[] = [];
-                balances.map((val: Balance) => {
-                    items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname} value={val.person.id} key={val.person.id}/>);
-                });
-                this.setState({personPickerItems: items});
-                this.setState({transactions: this.algorithm(balances)});
+                    let items: ReactNode[] = [];
+                    balances.map((val: Balance) => {
+                        items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname}
+                                                value={val.person.id} key={val.person.id}/>);
+                    });
+                    this.setState({personPickerItems: items});
+                    this.setState({transactions: this.algorithm(balances)});
+                }
             });
     }
 

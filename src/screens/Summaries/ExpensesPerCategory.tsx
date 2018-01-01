@@ -110,10 +110,9 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                         'Transport': [],
                         'Other': []
                     };
-
-                    expenseArray.map((expense: Expense) => {
-                        expenseMap[expense.category].push(expense);
-                    });
+                    if (expenseArray.length > 0) expenseArray.map((expense: Expense) => {
+                                                        expenseMap[expense.category].push(expense);
+                                                    });
 
                     this.setState({expenses: expenseMap}, this.updateView);
                 }
