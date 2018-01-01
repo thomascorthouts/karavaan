@@ -76,7 +76,7 @@ class ExpenseFeed extends Component<IDefaultNavProps, IState> {
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
-        navigate(screen, {expense: expense});
+        navigate(screen, {key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
     }
 
     componentWillMount() {

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Picker, Button, AsyncStorage, StatusBar, StyleSheet } from 'react-native';
+import { View, Picker, Button, AsyncStorage, StatusBar, StyleSheet, Dimensions } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
-import { parseMoney } from '../../util';
+import { parseMoney } from '../../utils/parsemoney';
 import { currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
+import DatePicker from 'react-native-datepicker';
 
 interface IState {
     description: string;
@@ -15,6 +16,7 @@ interface IState {
     splitMode: string;
     category: string;
     amountString: string;
+    date: string;
 }
 
 class GroupExpense extends Component<IDefaultNavProps, IState> {
@@ -22,6 +24,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let date = new Date();
         this.state = {
             description: '',
             group: this.props.navigation.state.params.group,
@@ -29,12 +32,16 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             amount: 0,
             splitMode: 'trans',
             category: 'Entertainment',
-            amountString: ''
+            amountString: '',
+            date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2)
         };
     }
 
     render() {
         const { navigate } = this.props.navigation;
+
+        let width = Dimensions.get('window').width;
+
         return (
             <View>
                 <StatusBar hidden={true} />
@@ -60,9 +67,37 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         />
                     </View>
                 </View>
+
+                <DatePicker
+                    style={{ width: width - 40 }}
+                    date={this.state.date}
+                    mode='date'
+                    placeholder='Select Date'
+                    format='YYYY-MM-DD'
+                    minDate='2000-01-01'
+                    maxDate={this.state.date}
+                    confirmBtnText='Confirm'
+                    cancelBtnText='Cancel'
+                    customStyles={{
+                        dateIcon: {
+                            position: 'absolute',
+                            left: 0,
+                            top: 4,
+                            marginLeft: 0
+                        },
+                        dateInput: {
+                            marginLeft: 36
+                        }
+                    }}
+                    onDateChange={(date: string) => {
+                        this.setState({ date });
+                    }}
+                />
+
                 <View>
                     <CategoryPicker onValueChange={this.updateCategory.bind(this)} selectedValue={this.state.category} />
                 </View>
+
                 <Picker selectedValue={this.state.splitMode} onValueChange={(splitMode: any) => this.setState({ splitMode })}>
                     <Picker.Item label={'Transaction'} value={'trans'} key={'trans'} />
                     <Picker.Item label={'Split evenly'} value={'even'} key={'even'} />
@@ -93,7 +128,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                 splitMode: (this.state.splitMode === 'even'),
                 currency: this.state.currency,
                 amount: this.state.amount,
-                category: this.state.category
+                category: this.state.category,
+                date: this.state.date
             }
         };
 

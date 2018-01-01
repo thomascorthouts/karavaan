@@ -6,10 +6,10 @@ import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import { parseMoney } from '../../util';
+import { parseMoney } from '../../utils/parsemoney';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
-import * as StringSimilarity from '../../similarity';
+import * as StringSimilarity from '../../utils/similarity';
 
 interface IState {
     persons: PersonList;
@@ -37,7 +37,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
                 } as Currency,
                 amount: 0,
-                date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDay()).slice(-2),
+                date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
                 balances: []
             },
             amountString: '0',
@@ -227,6 +227,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             { person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency },
             { person: this.state.receiver, amount: -1 * this.state.expense.amount, currency: this.state.expense.currency }
         ];
+
         const expense = Object.assign({}, this.state.expense, { balances: balances });
         this.setState({ expense }, () => {
             this.addExpenseToStorage()
@@ -326,7 +327,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             .then((value) => {
                 if (value) {
                     this.setState({
-                        currencies: JSON.parse(value)
+                        currencies: JSON.parse(value).rates
                     });
                 }
             });

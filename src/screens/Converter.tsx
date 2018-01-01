@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, Alert, NetInfo } from 'react-native';
 import { currencies } from '../config/Data';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
@@ -13,6 +13,7 @@ interface IState {
     currency1: Currency;
     currency2: Currency;
     date: string;
+    latest: string;
     isLoading: boolean;
 };
 
@@ -30,7 +31,8 @@ class Converter extends Component<IDefaultNavProps, IState> {
             currency2: {
                 name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
             } as Currency,
-            date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDay()).slice(-2),
+            date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
+            latest: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
             isLoading: true
         };
     }
@@ -42,7 +44,11 @@ class Converter extends Component<IDefaultNavProps, IState> {
         let width = Dimensions.get('window').width;
 
         if (this.state.isLoading) {
-            return <ActivityIndicator />;
+            return (
+                <View style={styles.container}>
+                    <ActivityIndicator />
+                </View>
+            );
         } else {
             return (
                 <View style={styles.container}>
@@ -127,9 +133,14 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     validate = () => {
-        if ((!isNaN(Date.parse(this.state.date))) && this.state.date.split('-').length === 3) {
-            this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
-        }
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected && this.state.latest !== this.state.date.trim()) {
+                this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
+            } else if (!isConnected) {
+                this.showError('No internet connection available\n\nUsing exchange rates from ' + this.state.latest);
+                this.setState({ date: this.state.latest });
+            }
+        });
     }
 
     convert = (amount: number, from: string, to: string) => {
@@ -138,8 +149,8 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
     getRate = (from: string, to: string) => {
         const currencies = this.state.currencies;
-        const rateFrom = currencies[from].rate;
-        const rateTo = currencies[to].rate;
+        const rateFrom = currencies[from].rate as number;
+        const rateTo = currencies[to].rate as number;
 
         return rateTo / rateFrom;
     }
@@ -163,21 +174,8 @@ class Converter extends Component<IDefaultNavProps, IState> {
             })
             .catch((error) => {
                 console.log(error);
-                this.showError('Failed to fetch exchange rates, using last saved rates');
-                AsyncStorage.getItem('currencies')
-                    .then((value) => {
-                        if (value) {
-                            this.setState({
-                                currencies: JSON.parse(value), isLoading: false
-                            });
-                        } else {
-                            this.setState({
-                                currencies: currencies, isLoading: false
-                            });
-                        }
-                    });
+                this.showError('Failed to fetch exchange rates');
             });
-        await AsyncStorage.setItem('currencies', JSON.stringify(this.state.currencies));
     }
 
     showError(error: string) {
@@ -191,8 +189,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
     }
 
     async componentWillMount() {
-        this.getExchangeRate('latest');
-
         AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
@@ -200,6 +196,18 @@ class Converter extends Component<IDefaultNavProps, IState> {
                     this.setState({
                         currency1: parsed, currency2: parsed
                     });
+                }
+            });
+
+        AsyncStorage.getItem('currencies')
+            .then((value) => {
+                if (value) {
+                    let parsed = JSON.parse(value);
+                    this.setState({
+                        currencies: parsed.rates, latest: parsed.latest, isLoading: false
+                    });
+                } else {
+                    this.showError('No exchange rate information available');
                 }
             });
     }

@@ -54,15 +54,6 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
     }
 
     componentWillMount() {
-        AsyncStorage.getItem('currencies')
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        currencies: JSON.parse(value)
-                    });
-                }
-            });
-
         AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {

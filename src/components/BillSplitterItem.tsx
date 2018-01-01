@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
-import {parseMoney} from '../util';
+import {parseMoney} from '../utils/parsemoney';
 
 interface IProps {
     keyval: any;

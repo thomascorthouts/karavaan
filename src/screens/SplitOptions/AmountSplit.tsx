@@ -7,9 +7,11 @@ import { ErrorText } from '../../components/Text/ErrorText';
 interface Options {
     splitMode: boolean;
     currency: Currency;
+    currencies: Currencies;
     amount: number;
     description: string;
     category: string;
+    date: string;
 }
 
 interface IState {
@@ -31,17 +33,17 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let date = new Date();
+        let options = this.props.navigation.state.params.opts as Options;
         this.state = {
-            group: this.props.navigation.state.params.group as Group,
-            options: this.props.navigation.state.params.opts as Options,
+            group: this.props.navigation.state.params.group,
+            options: options,
             expense: {
                 balances: [],
-                description: this.props.navigation.state.params.opts.description,
-                amount: this.props.navigation.state.params.opts.amount,
-                currency:  this.props.navigation.state.params.opts.currency,
-                category: this.props.navigation.state.params.opts.category,
-                date: date.getDay() + ' / ' + (date.getMonth() + 1) + ' / ' + date.getFullYear()
+                description: options.description,
+                amount: options.amount,
+                currency: options.currency,
+                category: options.category,
+                date: options.date
             },
             payers: [] as Balances,
             payerNodes: [] as Array<ReactNode>,
@@ -49,7 +51,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             chosen: [] as PersonList,
             personArray: [] as PersonList,
             expenseArray: [] as ExpenseList,
-            currencies: this.props.navigation.state.params.opts.currencies,
+            currencies: options.currencies as Currencies,
             error: ''
         };
     }
