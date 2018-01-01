@@ -175,7 +175,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
                 }
             })
             .catch((error) => {
-                console.log(error);
                 showError('Failed to fetch exchange rates');
             });
     }

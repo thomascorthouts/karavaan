@@ -78,7 +78,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     }
 
     async getExchangeRate(date: string, base: Currency, current: string) {
-        console.log(this.state.failed);
+
         fetch('https://api.fixer.io/' + date + '?base=' + base.tag + '&symbols=' + current)
             .then((resp) => resp.json())
             .then((data) => {

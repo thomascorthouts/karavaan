@@ -98,7 +98,6 @@ class BillSplit extends Component<IProps, IState> {
             nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
-        console.log(this.state.payers);
     }
 
     setPayerAmount(amount: number, id: string) {
@@ -129,8 +128,7 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     setItemAmount(amount: number, id: string) {
-        console.log(amount);
-        console.log(id);
+
         let dishes = this.state.dishes;
         let dish = dishes.find((val: Dish) => { return (val.id === id); });
         if (typeof dish !== 'undefined') {
@@ -181,7 +179,6 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     async addExpenseToStorage() {
-        console.log(this.state.expense.balances);
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
