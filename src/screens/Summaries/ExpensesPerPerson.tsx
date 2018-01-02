@@ -22,7 +22,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }></Button>;
+            }/>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight

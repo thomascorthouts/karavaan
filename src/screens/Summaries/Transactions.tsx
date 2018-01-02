@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, AsyncStorage, Picker, Button } from 'react-native';
+import { View, ScrollView, AsyncStorage, Picker, Button } from 'react-native';
 import { TransactionFeedItem } from '../../components/TransactionFeedItem';
 
 interface Transaction {
