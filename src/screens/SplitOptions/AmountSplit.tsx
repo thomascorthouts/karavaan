@@ -4,6 +4,7 @@ import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { resetGroupState } from '../../utils/navigationactions';
 
 interface Options {
     splitMode: boolean;
@@ -58,7 +59,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { goBack, navigate } = this.props.navigation;
+        const { goBack, dispatch } = this.props.navigation;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
@@ -95,7 +96,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                             <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                         </View>
                         <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(navigate)} buttonText={'ADD'} />
+                            <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                         </View>
                     </View>
                 </View>
@@ -139,10 +140,10 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         // empty
     }
 
-    confirm(navigate: any) {
+    confirm(dispatch: any) {
         this.fixBalances()
             .then(() => this.addExpenseToStorage())
-            .then(() => navigate('GroupFeed'))
+            .then(() => resetGroupState(this.state.group, this.state.expenseArray, dispatch))
             .catch((error: string) => this.setState({ error }));
     }
 
@@ -173,7 +174,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     async addExpenseToStorage() {
-
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,

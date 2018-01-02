@@ -3,9 +3,10 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 interface IProps {
     keyval: any;
-    currency: Currency;
+    currencySymbol: string;
     person: Person;
     balance: number;
+    rate?: number;
 }
 
 export class BalanceFeedItem extends React.Component<IProps, {}> {
@@ -20,7 +21,7 @@ export class BalanceFeedItem extends React.Component<IProps, {}> {
                         <Text style={styles.detailText}>{this.props.person.firstname} {this.props.person.lastname}</Text>
                     </View>
                     <View style={styles.expense}>
-                        <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currency.symbol} {this.props.balance}</Text>
+                        <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currencySymbol} {(this.props.rate) ? (this.props.rate * this.props.balance).toFixed(2) : this.props.balance.toFixed(2)}</Text>
                     </View>
             </View>
         );
