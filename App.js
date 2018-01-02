@@ -1,13 +1,32 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
-import { AppRegistry, NetInfo, Alert, KeyboardAvoidingView, View, AsyncStorage } from 'react-native';
+import { AppRegistry, NetInfo, Alert, KeyboardAvoidingView, View, AsyncStorage, BackHandler } from 'react-native';
 import { currencies } from './build/src/config/Data';
 import Root from './build/src/config/Router';
+import { NavigationActions } from 'react-navigation';
 
 export default class App extends Component {
+    constructor(props, state) {
+        super(props, state);
+
+        this.state = {
+            currentScreen: 'Login'
+        }
+    }
+
     render() {
         return (
-            <Root />
+            <Root
+                onNavigationStateChange={(prevState, currentState) => {
+                    const currentScreen = this.getCurrentRouteName(currentState);
+                    const prevScreen = this.getCurrentRouteName(prevState);
+
+                    if (prevScreen !== currentScreen) {
+                        this.setState({ currentScreen });
+                    }
+                }}
+                ref={nav => {this.navigator = nav;}}
+            />
         );
     }
 
@@ -15,10 +34,45 @@ export default class App extends Component {
         // console.disableYellowBox = true;
         Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+        BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
     }
 
     componentWillUnmount() {
         NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
+    }
+
+    getCurrentRouteName(navigationState) {
+        if (!navigationState) {
+            return null;
+        }
+        const route = navigationState.routes[navigationState.index];
+
+        // dive into nested navigators
+        if (route.routes) {
+            return this.getCurrentRouteName(route);
+        }
+        return route.routeName;
+    }
+
+    onBackPress = () => {
+        if (this.state.currentScreen === 'Converter' || this.state.currentScreen === 'Settings') {
+            this.navigator.dispatch(NavigationActions.navigate({ routeName: 'Home' }));
+            return true;
+        }
+        
+        if (this.state.currentScreen === 'Login' || this.state.currentScreen === 'ExpenseFeed' || this.state.currentScreen === 'GroupFeed') {
+            Alert.alert('Warning', 'Do you really want to close the application?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: () => BackHandler.exitApp() }
+            ],
+                { onDismiss: () => undefined }
+            );
+            return true;
+        }
+
+        this.navigator.dispatch(NavigationActions.back());
+        return true;
     }
 
     handleConnectivityChange = (isConnected) => {
