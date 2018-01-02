@@ -1,8 +1,8 @@
 import React, { Component, ReactNode } from 'react';
-import {View, Button, ScrollView, AsyncStorage, Text, StyleSheet} from 'react-native';
+import { View, Button, ScrollView, AsyncStorage, Text, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
-import {ErrorText} from '../../components/Text/ErrorText';
+import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface Options {
@@ -58,43 +58,21 @@ class BillSplit extends Component<IProps, IState> {
         };
     }
 
-    componentWillMount() {
-
-        AsyncStorage.getItem('persons-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        personArray: JSON.parse(value)
-                    });
-                }
-            });
-
-        console.log(this.state.personArray);
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
-            .then((value) => {
-                if (value) {
-                    this.setState({
-                        expenseArray: JSON.parse(value)
-                    });
-                }
-            });
-    }
-
     render() {
-        const {goBack, navigate} = this.props.navigation;
+        const { goBack, navigate } = this.props.navigation;
 
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>{this.state.options.description}</Text>
-                <ErrorText errorText={this.state.error}/>
+                <ErrorText errorText={this.state.error} />
                 <View style={styles.flex}>
                     <ScrollView>
-                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}/>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} />
                         {this.state.payerNodes}
                     </ScrollView>
                 </View>
                 <View style={styles.flex}>
-                    <GreenButton onPress={() => this.addItem(navigate)} buttonText={'Add Item'}/>
+                    <GreenButton onPress={() => this.addItem(navigate)} buttonText={'Add Item'} />
                     <ScrollView>
                         {this.state.items}
                     </ScrollView>
@@ -104,7 +82,7 @@ class BillSplit extends Component<IProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }}  onPress={() => this.confirm(navigate)} buttonText={'ADD'}/>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(navigate)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -114,51 +92,48 @@ class BillSplit extends Component<IProps, IState> {
     addPayer(id: string) {
         let chosen = this.state.payers;
         let nodes = this.state.payerNodes;
-        const p = this.state.personArray.find((val: Person) => {return (val.id === id); });
+        const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            this.setState({payers: chosen});
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)}/>);
-            this.setState({payerNodes: nodes});
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)} />);
+            this.setState({ payers: chosen, payerNodes: nodes });
         }
-        console.log(this.state.payers);
     }
 
-    setPayerAmount (amount: number, id: string) {
+    setPayerAmount(amount: number, id: string) {
         let payers = this.state.payers;
         let bal = payers.find((val: Balance) => { return (val.person.id === id); });
         if (typeof bal !== 'undefined') {
             bal.amount = amount;
-            this.setState({payers});
+            this.setState({ payers });
         }
     }
 
-    addItem (navigate: any) {
-        navigate('AddItem', { persons: this.state.personArray, addItem: this.addItemToItems.bind(this)});
+    addItem(navigate: any) {
+        navigate('AddItem', { persons: this.state.personArray, addItem: this.addItemToItems.bind(this) });
     }
 
     addItemToItems(item: Dish) {
         let items = this.state.dishes;
         items.push(item);
-        this.setState({dishes: items}, this.updateItems);
+        this.setState({ dishes: items }, this.updateItems);
     }
 
     updateItems() {
         let items = this.state.dishes.map((val: Dish) => {
-            return (<BillSplitterItem key={val.name} keyval={val.id} val={val.name} amount={val.amount} onChangeText={this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()}/>);
+            return (<BillSplitterItem key={val.name} keyval={val.id} val={val.name} amount={val.amount} onChangeText={this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()} />);
         });
 
-        this.setState({items});
+        this.setState({ items });
     }
 
     setItemAmount(amount: number, id: string) {
-        console.log(amount);
-        console.log(id);
+
         let dishes = this.state.dishes;
-        let dish = dishes.find((val: Dish) => {return (val.id === id); });
+        let dish = dishes.find((val: Dish) => { return (val.id === id); });
         if (typeof dish !== 'undefined') {
             dish.amount = amount;
-            this.setState({dishes}, this.updateItems);
+            this.setState({ dishes }, this.updateItems);
         }
     }
 
@@ -169,7 +144,7 @@ class BillSplit extends Component<IProps, IState> {
     confirm(navigate: any) {
         this.createBalances()
             .then(() => this.addExpenseToStorage())
-            .then(() => navigate( 'GroupFeed' ))
+            .then(() => navigate('GroupFeed'))
             .catch((error: string) => this.setState({ error }));
     }
 
@@ -189,7 +164,7 @@ class BillSplit extends Component<IProps, IState> {
                         return (balance.person.id === val.id);
                     });
                     if (typeof bal === 'undefined') {
-                        bal = {person: val, amount: 0};
+                        bal = { person: val, amount: 0 };
                         balances.push(bal);
                     }
                     bal.amount -= avg;
@@ -198,14 +173,12 @@ class BillSplit extends Component<IProps, IState> {
 
             this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
 
-            let expense = Object.assign({}, this.state.expense, {balances: balances});
-            this.setState({expense});
-            this.setState({ error: '' });
+            let expense = Object.assign({}, this.state.expense, { balances: balances });
+            this.setState({ expense, error: '' });
         } else throw 'The total balance is not 0.';
     }
 
     async addExpenseToStorage() {
-        console.log(this.state.expense.balances);
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,
@@ -216,11 +189,35 @@ class BillSplit extends Component<IProps, IState> {
                 'balances': this.state.expense.balances
             });
 
-            await AsyncStorage.setItem('expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray));
-            await AsyncStorage.setItem('persons-' + this.state.group.id, JSON.stringify(this.state.personArray));
+            await AsyncStorage.multiSet([
+                ['expenses-' + this.state.group.id, JSON.stringify(this.state.expenseArray)],
+                ['persons-' + this.state.group.id, JSON.stringify(this.state.personArray)]
+            ]);
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async componentDidMount() {
+        let personArray = await AsyncStorage.getItem('persons-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return this.state.personArray;
+                }
+            });
+
+        let expenseArray = await AsyncStorage.getItem('expenses-' + this.state.group.id)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return this.state.expenseArray;
+                }
+            });
+
+        this.setState({ personArray, expenseArray });
     }
 }
 

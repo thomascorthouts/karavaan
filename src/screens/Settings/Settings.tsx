@@ -3,6 +3,8 @@ import { View, Text, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { currencies } from '../../config/Data';
+import { resetState } from '../../utils/navigationactions';
+import { NavigationActions } from 'react-navigation';
 
 interface IState {
     currencies: Currencies;
@@ -23,7 +25,7 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { navigate, dispatch, goBack } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -39,11 +41,19 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
                         onValueChange={(currency: Currency) => this.saveDefaultCurrency(currency)}
                         selectedValue={this.state.defaultCurrency}
                     />
+
+                    <Text> </Text>
+                    <Text style={styles.textCenter}> - - - </Text>
+                    <Text> </Text>
+
+                    <GreenButton buttonText={'Update Member Suggestions'} onPress={() => {
+                        navigate('UpdateMemberSuggestions');
+                    }} />
                 </View>
 
-                <GreenButton buttonText={'Update Member Suggestions'} onPress={() => {
-                    navigate('UpdateMemberSuggestions');
-                }} />
+                <GreenButton buttonText={'Done'} onPress={() =>
+                    dispatch(NavigationActions.navigate({routeName: 'Home'}))
+                } />
             </View>
         );
     }
@@ -53,7 +63,7 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
         this.setState({ defaultCurrency: currency });
     }
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem('defaultCurrency')
             .then((value) => {
                 if (value) {
@@ -83,6 +93,9 @@ const styles = StyleSheet.create({
         fontSize: 40,
         color: '#287E6F',
         fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    textCenter: {
         textAlign: 'center'
     }
 });

@@ -7,7 +7,7 @@ import { currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
-import {GreenButton} from '../../components/Buttons/GreenButton';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IState {
     description: string;
@@ -39,9 +39,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
+        let { width } = Dimensions.get('window');
         const { goBack, navigate } = this.props.navigation;
-
-        let width = Dimensions.get('window').width;
 
         return (
             <View style={styles.container}>
@@ -64,7 +63,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <View style={styles.flex}>
                             <CurrencyPicker
                                 currencies={this.state.group.currencies}
-                                onValueChange={(currency: any) => { this.setState({ currency }); }}
+                                onValueChange={(currency: any) => this.setState({ currency })}
                                 selectedValue={this.state.currency}
                             />
                         </View>
@@ -91,9 +90,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                                 marginLeft: 36
                             }
                         }}
-                        onDateChange={(date: string) => {
-                            this.setState({ date });
-                        }}
+                        onDateChange={(date: string) => this.setState({ date })}
                     />
 
                     <View>
@@ -112,7 +109,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.nextScreen(navigate)} buttonText={'NEXT'}/>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.nextScreen(navigate)} buttonText={'NEXT'} />
                     </View>
                 </View>
             </View>

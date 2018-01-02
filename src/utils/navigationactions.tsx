@@ -1,24 +1,24 @@
 import { NavigationActions } from 'react-navigation';
 import { AsyncStorage } from 'react-native';
 
-const reset = (route) => NavigationActions.reset({
+const reset = (route: string) => NavigationActions.reset({
     index: 0,
     actions: [
         NavigationActions.navigate({ routeName: route })
     ]
 });
 
-export const resetState = (route, dispatch) => {
+export const resetState = (route: string, dispatch: any) => {
     dispatch(reset(route));
 };
 
-export const resetGroupState = (group, expenseArray, dispatch) => {
+export const resetGroupState = (group: Group, expenseArray: ExpenseList, dispatch: any) => {
     AsyncStorage.getItem('groups')
         .then((value) => {
             let groupArray = JSON.parse(value);
-            let params = { group: group, expenseArray: expenseArray, groupArray: groupArray }
+            let params = { group: group, expenseArray: expenseArray, groupArray: groupArray };
 
-            const reset = (group, expenseArray) => NavigationActions.reset({
+            const resetGroup = () => NavigationActions.reset({
                 index: 1,
                 actions: [
                     NavigationActions.navigate({ routeName: 'GroupFeed' }),
@@ -26,6 +26,6 @@ export const resetGroupState = (group, expenseArray, dispatch) => {
                 ]
             });
 
-            dispatch(reset());
+            dispatch(resetGroup());
         });
-}
+};

@@ -65,7 +65,7 @@ class Groups extends Component<IProps, IState> {
         navigate('GroupExpenseFeed', { group: group, expenseArray: expenseArray, groupArray: this.state.groupArray});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem('groups')
             .then((value) => {
                 if (value) {

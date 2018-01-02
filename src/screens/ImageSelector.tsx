@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ImagePicker } from 'expo';
 import { Button, Image, View, Dimensions, StyleSheet } from 'react-native';
-import { GreenButton } from '../../components/Buttons/GreenButton';
+import { GreenButton } from '../components/Buttons/GreenButton';
 
 interface IState {
     image: any;
