@@ -1,6 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 import { View, ScrollView, AsyncStorage, Picker, Button } from 'react-native';
 import { TransactionFeedItem } from '../../components/TransactionFeedItem';
+import {getRate} from '../../utils/getRate';
+import {currencies} from '../../config/Data';
+import {CurrencyPicker} from '../../components/Pickers/CurrencyPicker';
 
 interface Transaction {
     from: Person;
@@ -16,6 +19,9 @@ interface IState {
     transactions: Transactions;
     personPickerItems: Array<ReactNode>;
     pickerOpt: string;
+    currencies: Currencies;
+    currency: Currency;
+    rate: number;
 }
 
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
@@ -43,7 +49,10 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             numberOfTransactions: Infinity,
             transactions: [] as Transactions,
             pickerOpt: 'all',
-            personPickerItems: [] as ReactNode[]
+            personPickerItems: [] as ReactNode[],
+            currencies: currencies,
+            currency: this.props.navigation.state.params.group.defaultCurrency,
+            rate: 1
         };
     }
 
@@ -52,7 +61,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             if (this.state.pickerOpt === 'all') return true;
             else return val.from.id === this.state.pickerOpt || val.to.id === this.state.pickerOpt;
         }).map((val: Transaction) => {
-            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} currency={this.state.group.defaultCurrency} />);
+            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} rate={this.state.rate} currencySymbol={this.state.currency.symbol} />);
         });
 
         return (
@@ -61,11 +70,17 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     <Picker.Item label={'All'} value={'all'} key={'all'} />
                     {this.state.personPickerItems}
                 </Picker>
+                <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
                 <ScrollView>
                     {trans}
                 </ScrollView>
             </View>
         );
+    }
+
+    updateRate(curr: Currency) {
+        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies)});
+        this.setState({currency: curr});
     }
 
     algorithm(balances: Balances) {
@@ -92,8 +107,8 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
 
         // Backtracking
         let amount = 0;
-        froms.filter((val: Balance) => { return val.amount !== 0; }).map((negBal: Balance) => {
-            tos.filter((val: Balance) => { return val.amount !== 0; }).map((posBal: Balance) => {
+        froms.filter((val: Balance) => { return val.amount !== 0 && !isNaN(val.amount); }).map((negBal: Balance) => {
+            tos.filter((val: Balance) => { return val.amount !== 0 && !isNaN(val.amount); }).map((posBal: Balance) => {
                 amount = Math.min(Math.abs(negBal.amount), posBal.amount);
                 if (amount !== 0) {
                     negBal.amount += amount;
@@ -115,6 +130,12 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     }
 
     componentDidMount() {
+        let currencies = {};
+        AsyncStorage.getItem('currencies')
+            .then((value: string) => {
+                if (value) currencies = JSON.parse(value).rates;
+            });
+        let rate = 1;
         let balances: Balances = [];
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value: string) => {
@@ -123,6 +144,11 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     expenses.map((val: Expense) => {
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                            // Test whether this works
+                            rate = (val.currency.tag === this.state.group.defaultCurrency.tag) ? 1 : getRate(val.currency.tag, this.state.group.defaultCurrency.tag, currencies);
+                            bal.amount = bal.amount * rate;
+                            bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
+
                             if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
                             else balances.push(bal);
                         });

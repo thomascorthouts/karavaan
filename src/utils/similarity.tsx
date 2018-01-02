@@ -31,6 +31,24 @@ export const findBestMatch = (current: string, list: string[]) => {
     return (bestScore < 1 && bestMatch) ? bestMatch : '';
 };
 
+export const findBestMatches = (current: string, list: string[]) => {
+    if (list.length <= 0 || current === '') {
+        return [];
+    }
+
+    let minScore = 0.3;
+    let bestMatches = [];
+
+    for (let item of list) {
+        let score = compareTwoStrings(item, current);
+        if (score > minScore) {
+            bestMatches.push(item);
+        }
+    }
+
+    return bestMatches;
+};
+
 function editDistance(s1: string, s2: string) {
     s1 = s1.toLowerCase();
     s2 = s2.toLowerCase();

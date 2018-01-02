@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 interface IProps {
     keyval: any;
     transaction: Transaction;
-    currency: Currency;
+    currencySymbol: string;
     rate?: number;
 }
 
@@ -28,7 +28,7 @@ export class TransactionFeedItem extends React.Component<IProps, {}> {
                     <Text style={styles.detailText}>⇨ {this.props.transaction.to.firstname} {this.props.transaction.to.lastname}</Text>
                 </View>
                 <View style={styles.expense}>
-                    <Text>{this.props.currency.symbol} {(this.props.rate) ? this.props.rate * this.props.transaction.amount : this.props.transaction.amount}</Text>
+                    <Text>{this.props.currencySymbol} {(this.props.rate) ? (this.props.rate * this.props.transaction.amount).toFixed(2) : this.props.transaction.amount.toFixed(2)}</Text>
                 </View>
             </View>
         );

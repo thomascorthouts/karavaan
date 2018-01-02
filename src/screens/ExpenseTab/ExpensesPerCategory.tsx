@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface ExpenseMap {
     [index: string]: ExpenseList;
@@ -37,13 +38,14 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
         this.state = {
             category: 'All',
-            group: this.props.navigation.state.params.group,
+            group: navParams ? navParams.group : {} as Group,
             expenses: {} as ExpenseMap,
             feed: [],
-            expenseArrayId: 'expenses-' + this.props.navigation.state.params.group.id,
-            expenseArray: [] as ExpenseList
+            expenseArray: [] as ExpenseList,
+            expenseArrayId: navParams ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 
@@ -51,20 +53,24 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         let { navigate } = this.props.navigation;
         let otherPickerOptions = [<Picker.Item label={'All'} value={'All'} key={'all'} />];
         return (
-            <View style={styles.container}>
+            <View style={styles.flex}>
                 <CategoryPicker
                     selectedValue={this.state.category}
                     onValueChange={(category: string) => this.setState({ category }, () => this.updateView())}
                     otherOptions={otherPickerOptions}
                 />
-                <ScrollView style={styles.ScrollContainer}>
+                <ScrollView style={styles.flex}>
                     {this.state.feed}
                 </ScrollView>
-                <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={() => this.addExpense(navigate)} style={styles.addButton}>
-                        <Text style={styles.addButtonText}> + </Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
+                
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} buttonText={'Summaries'} onPress={() => navigate('GroupSummaries', { group: this.state.group, expenseArray: this.state.expenseArray})} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
+                    </View>
+                </View>
             </View>
         );
     }
@@ -74,32 +80,32 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
     }
 
     addExpense(navigate: any) {
-        let screen = 'GroupAddExpense';
-        navigate(screen, { expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+        let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
+        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+    }
+
+    viewDetails(key: number, navigate: any) {
+        let expense = this.state.expenseArray[key];
+        let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
+        navigate(screen, {key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
     }
 
     updateView() {
         let { navigate } = this.props.navigation;
-        console.log("trigger", this.state.expenses);
         if (this.state.expenses[this.state.category] && this.state.expenses[this.state.category].length > 0) {
-            console.log("change", this.state.expenses[this.state.category]);
             let feed = this.state.expenses[this.state.category].map((val: Expense, key: any) => {
                 return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />;
             });
 
             this.setState({ feed });
+        } else {
+            this.setState({ feed: [] });
         }
-    }
-
-    viewDetails(key: number, navigate: any) {
-        let expense = this.state.expenses[this.state.category][key];
-        let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
-        navigate(screen, { expense: expense });
     }
 
     componentDidMount() {
         let expenseArray: ExpenseList = [];
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {
                     expenseArray = JSON.parse(value);
@@ -120,57 +126,15 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                     this.setState({ expenseArray, expenses: expenseMap }, this.updateView);
                 }
             });
-
     }
-
 }
 
 const styles = StyleSheet.create({
     flex: {
         flex: 1
     },
-    container: {
-        flex: 1
-    },
-    ScrollContainer: {
-        flex: 1
-    },
     rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    footer: {
-        position: 'absolute',
-        alignItems: 'center',
-        bottom: 0,
-        left: 0,
-        right: 0
-    },
-    currentMembers: {
-        flex: 3
-    },
-    deleteButton: {
-        height: 40,
-        paddingVertical: 10
-    },
-    addButton: {
-        backgroundColor: '#287E6F',
-        width: 90,
-        height: 90,
-        borderRadius: 50,
-        borderColor: '#CCC',
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 8,
-        zIndex: 10
-    },
-    addButtonText: {
-        color: '#FFF',
-        fontSize: 24
+        flexDirection: 'row',
+        marginBottom: -7
     }
 });

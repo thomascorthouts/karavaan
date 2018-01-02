@@ -3,7 +3,7 @@ import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation'
 
 import LoginScreen from '../screens/Login';
 
-import ExpenseFeed from '../screens/ExpenseTab/ExpenseFeed';
+import ExpenseFeed from '../screens/ExpenseTab/ExpensesPerCategory';
 import AddExpense from '../screens/ExpenseTab/AddExpense';
 import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
 import ImageSelector from '../screens/ImageSelector';
@@ -22,7 +22,7 @@ import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions
 
 import Converter from '../screens/Converter';
 import AddDish from '../components/AddDish';
-import ExpensesPerCategory from '../screens/Summaries/ExpensesPerCategory';
+
 import BalancesSummary from '../screens/Summaries/BalancesSummary';
 import TransactionsSummary from '../screens/Summaries/Transactions';
 import ExpensesPerPerson from '../screens/Summaries/ExpensesPerPerson';
@@ -59,12 +59,6 @@ export const ExpenseStack = StackNavigator(
 
 export const GroupSummaries = TabNavigator(
     {
-        CategorySummary: {
-            screen: ExpensesPerCategory,
-            navigationOptions: {
-                tabBarLabel: 'By category'
-            }
-        },
         BalanceSummary: {
             screen: BalancesSummary,
             navigationOptions: {
@@ -86,6 +80,9 @@ export const GroupSummaries = TabNavigator(
     }, {
         tabBarOptions: {
             activeTintColor: '#D3D3D3',
+            labelStyle: {
+                fontSize: 12
+            },
             style: {
                 backgroundColor: '#287E6F'
             }
@@ -125,6 +122,12 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupExpenseFeed: {
+            screen: ExpenseFeed,
+            navigationOptions: {
+                tabBarVisible: false
+            }
+        },
+        GroupSummaries: {
             screen: GroupSummaries,
             navigationOptions: {
                 tabBarVisible: false
