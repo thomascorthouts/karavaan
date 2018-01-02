@@ -34,9 +34,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             expense: {
                 description: '',
                 category: 'Entertainment',
-                currency: {
-                    name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
-                } as Currency,
+                currency: {} as Currency,
                 amount: 0,
                 date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
                 balances: [],
@@ -60,9 +58,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
+        let { width } = Dimensions.get('window');
         const { goBack, navigate } = this.props.navigation;
-
-        let width = Dimensions.get('window').width;
 
         return (
             <View style={styles.container}>

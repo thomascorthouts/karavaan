@@ -1,9 +1,9 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
+import { NavigationActions } from 'react-navigation';
 import { AppRegistry, NetInfo, Alert, KeyboardAvoidingView, View, AsyncStorage, BackHandler } from 'react-native';
 import { currencies } from './build/src/config/Data';
 import Root from './build/src/config/Router';
-import { NavigationActions } from 'react-navigation';
 
 export default class App extends Component {
     constructor(props, state) {
