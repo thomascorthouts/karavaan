@@ -167,7 +167,6 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     }
 
     setDefaultCurrencies(currencies: Currencies) {
-        console.log(currencies);
         const group = Object.assign({}, this.state.group, { currencies: currencies });
         this.setState({ group });
     }

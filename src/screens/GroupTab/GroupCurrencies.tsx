@@ -79,7 +79,7 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
     componentDidMount() {
         let selected = Object.assign({}, this.state.selected);
         selected[this.state.default.tag] = this.state.currencies[this.state.default.tag];
-        this.setState({ selected }, () => console.log(this.state.selected));
+        this.setState({ selected });
     }
 }
 

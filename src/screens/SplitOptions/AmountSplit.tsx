@@ -173,7 +173,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     async addExpenseToStorage() {
-
         try {
             this.state.expenseArray.push({
                 'date': this.state.expense.date,

@@ -1,6 +1,5 @@
 import React from 'react';
 import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation';
-import { Button } from 'react-native';
 
 import LoginScreen from '../screens/Login';
 
@@ -224,19 +223,19 @@ export const SettingsStack = StackNavigator(
 
 export const Drawer = DrawerNavigator(
     {
-        Item1: {
+        Expenses: {
             screen: Expenses,
             navigationOptions: {
                 title: 'Expenses'
             }
         },
-        Item2: {
+        Converter: {
             screen: Converter,
             navigationOptions: {
                 title: 'Currency converter'
             }
         },
-        Item3: {
+        Settings: {
             screen: SettingsStack,
             navigationOptions: {
                 title: 'Settings'
