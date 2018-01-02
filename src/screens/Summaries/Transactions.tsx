@@ -26,7 +26,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }></Button>;
+            } />;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -58,7 +58,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         return (
             <View>
                 <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
-                    <Picker.Item label={''} value={'all'} key={'all'} />
+                    <Picker.Item label={'All'} value={'all'} key={'all'} />
                     {this.state.personPickerItems}
                 </Picker>
                 <ScrollView>
@@ -76,7 +76,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         balances.map((val: Balance) => (val.amount > 0) ? tos.push(val) : froms.push(val));
 
         transactions = this.backtracking(froms, tos, transactions);
-        console.log(transactions);
         return transactions;
     }
 

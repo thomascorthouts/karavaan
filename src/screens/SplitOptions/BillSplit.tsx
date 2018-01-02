@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Button, ScrollView, AsyncStorage, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, AsyncStorage, Text, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -170,8 +170,6 @@ class BillSplit extends Component<IProps, IState> {
                     bal.amount -= avg;
                 });
             });
-
-            this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
 
             let expense = Object.assign({}, this.state.expense, { balances: balances });
             this.setState({ expense, error: '' });

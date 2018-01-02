@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
-import { currencies } from '../../config/Data';
 import PersonChooser from '../../components/Pickers/PersonChooser';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { parseMoney } from '../../utils/parsemoney';
@@ -63,7 +62,6 @@ class TransSplit extends Component<IProps, IState> {
 
     render() {
         const { goBack, navigate } = this.props.navigation;
-
 
         return (
             <View style={styles.container}>
@@ -141,9 +139,7 @@ class TransSplit extends Component<IProps, IState> {
             this.setState({ error: 'Not all fields are filled in correctly' });
         } else {
             let donor = this.state.donor;
-            donor.balance += this.state.expense.amount;
             let receiver = this.state.receiver;
-            receiver.balance -= this.state.expense.amount;
 
             let balances = [{
                 person: donor,

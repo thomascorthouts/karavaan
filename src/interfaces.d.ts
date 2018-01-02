@@ -36,7 +36,6 @@ interface Person {
     id: string; // At the moment this is a string of firstname_lastname
     firstname: string;
     lastname: string;
-    balance: number; // Always in ..?
 }
 
 interface PersonList extends Array<Person> { }

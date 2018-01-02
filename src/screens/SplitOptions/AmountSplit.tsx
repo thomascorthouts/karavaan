@@ -1,8 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import {
-    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Button, StyleSheet,
-    Dimensions
-} from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -61,7 +58,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        let { height, width } = Dimensions.get('window');
         const { goBack, navigate } = this.props.navigation;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
@@ -140,7 +136,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 
     submitEditing() {
-        return;
+        // empty
     }
 
     confirm(navigate: any) {
@@ -171,7 +167,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                     expense.balances.push(balanceToPush);
                 }
             });
-            this.state.expense.balances.map((val: Balance) => val.person.balance += val.amount);
             this.setState({ expense, error: '' });
 
         } else throw 'The total balance is not 0.';
