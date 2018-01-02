@@ -16,16 +16,17 @@ export const resetGroupState = (group: Group, expenseArray: ExpenseList, dispatc
     AsyncStorage.getItem('groups')
         .then((value) => {
             let groupArray = JSON.parse(value);
-            let params = { group: group, expenseArray: expenseArray, groupArray: groupArray };
+            console.log(group);
+            let parameters = { group: group, expenseArray: expenseArray, groupArray: groupArray };
 
-            const resetGroup = () => NavigationActions.reset({
+            const resetGroup = (_params: any) => NavigationActions.reset({
                 index: 1,
                 actions: [
                     NavigationActions.navigate({ routeName: 'GroupFeed' }),
-                    NavigationActions.navigate({ routeName: 'GroupExpenseFeed', params: params })
+                    NavigationActions.navigate({ routeName: 'GroupExpenseFeed', params: _params})
                 ]
             });
 
-            dispatch(resetGroup());
+            dispatch(resetGroup(JSON.parse(JSON.stringify(parameters))));
         });
 };

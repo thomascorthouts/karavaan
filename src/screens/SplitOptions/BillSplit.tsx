@@ -4,6 +4,7 @@ import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { resetGroupState } from '../../utils/navigationactions';
 
 interface Options {
     splitMode: boolean;
@@ -59,7 +60,7 @@ class BillSplit extends Component<IProps, IState> {
     }
 
     render() {
-        const { goBack, navigate } = this.props.navigation;
+        const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -82,7 +83,7 @@ class BillSplit extends Component<IProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(navigate)} buttonText={'ADD'} />
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -141,10 +142,10 @@ class BillSplit extends Component<IProps, IState> {
         // Hiep hoi lege functie
     }
 
-    confirm(navigate: any) {
+    confirm(dispatch: any) {
         this.createBalances()
             .then(() => this.addExpenseToStorage())
-            .then(() => navigate('GroupFeed'))
+            .then(() => resetGroupState(this.state.group, this.state.expenseArray, dispatch))
             .catch((error: string) => this.setState({ error }));
     }
 

@@ -24,7 +24,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }/>;
+            } />;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -52,7 +52,11 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         let otherPickerOptions = [<Picker.Item label={'All'} value={'All'} key={'all'} />];
         return (
             <View style={styles.container}>
-                <CategoryPicker selectedValue={this.state.category} onValueChange={this.onCategoryChange.bind(this)} otherOptions={otherPickerOptions} />
+                <CategoryPicker
+                    selectedValue={this.state.category}
+                    onValueChange={(category: string) => this.setState({ category }, () => this.updateView())}
+                    otherOptions={otherPickerOptions}
+                />
                 <ScrollView style={styles.ScrollContainer}>
                     {this.state.feed}
                 </ScrollView>
@@ -74,19 +78,16 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         navigate(screen, { expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
     }
 
-    onCategoryChange(category: string) {
-        this.setState({ category }, this.updateView);
-    }
-
     updateView() {
         let { navigate } = this.props.navigation;
+        console.log("trigger", this.state.expenses);
         if (this.state.expenses[this.state.category] && this.state.expenses[this.state.category].length > 0) {
+            console.log("change", this.state.expenses[this.state.category]);
             let feed = this.state.expenses[this.state.category].map((val: Expense, key: any) => {
-                return <ExpenseItem key={key} keyval={key} val={val}
-                                    viewDetails={() => this.viewDetails(key, navigate)}/>;
+                return <ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />;
             });
 
-            this.setState({feed});
+            this.setState({ feed });
         }
     }
 
@@ -102,7 +103,6 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
             .then((value) => {
                 if (value) {
                     expenseArray = JSON.parse(value);
-                    this.setState({ expenseArray });
                     let expenseMap: ExpenseMap = {
                         'All': expenseArray,
                         'Entertainment': [],
@@ -112,11 +112,12 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                         'Transport': [],
                         'Other': []
                     };
+
                     if (expenseArray.length > 0) expenseArray.map((expense: Expense) => {
                         expenseMap[expense.category].push(expense);
                     });
 
-                    this.setState({ expenses: expenseMap }, this.updateView);
+                    this.setState({ expenseArray, expenses: expenseMap }, this.updateView);
                 }
             });
 

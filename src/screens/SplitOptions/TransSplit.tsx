@@ -6,6 +6,7 @@ import { parseMoney } from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { resetGroupState } from '../../utils/navigationactions';
 
 interface Options {
     splitMode: boolean;
@@ -61,7 +62,7 @@ class TransSplit extends Component<IProps, IState> {
     }
 
     render() {
-        const { goBack, navigate } = this.props.navigation;
+        const { goBack, dispatch } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -105,7 +106,7 @@ class TransSplit extends Component<IProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.addTransaction(navigate)} buttonText={'ADD'} />
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.addTransaction(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -134,7 +135,7 @@ class TransSplit extends Component<IProps, IState> {
         }
     }
 
-    addTransaction(navigate: any) {
+    addTransaction(dispatch: any) {
         if (!this.state.donor.id || !this.state.receiver.id || this.state.expense.amount === 0) {
             this.setState({ error: 'Not all fields are filled in correctly' });
         } else {
@@ -155,7 +156,7 @@ class TransSplit extends Component<IProps, IState> {
             this.setState({ expense }, () => {
                 this.addExpenseToStorage()
                     .then(() => {
-                        navigate('GroupFeed');
+                        resetGroupState(this.state.group, this.state.expenseArray, dispatch);
                     });
             });
         }

@@ -4,11 +4,10 @@ import { View, Picker } from 'react-native';
 interface IProps {
     selectedValue: string;
     otherOptions?: ReactNode[];
-    onValueChange(cat: string): any;
+    onValueChange: any;
 }
 
 interface IState {
-    category: string;
     otherOptions: ReactNode[];
 }
 
@@ -18,18 +17,14 @@ export class CategoryPicker extends Component<IProps, IState> {
         super(props, state);
 
         this.state = {
-            category: this.props.selectedValue,
             otherOptions: (this.props.otherOptions) ? this.props.otherOptions : []
         };
     }
 
     render() {
-
         return (
             <View>
-                <Picker onValueChange={(category: string) => {
-                    this.onValueChange(category);
-                }} selectedValue={this.state.category}>
+                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.selectedValue}>
                     <Picker.Item label={'Entertainment'} value={'Entertainment'} key={'entertainment'} />
                     <Picker.Item label={'Food & Drinks'} value={'Food & Drinks'} key={'food'} />
                     <Picker.Item label={'Home'} value={'Home'} key={'home'} />
@@ -40,10 +35,5 @@ export class CategoryPicker extends Component<IProps, IState> {
                 </Picker>
             </View>
         );
-    }
-
-    onValueChange(category: string) {
-        this.setState({category});
-        this.props.onValueChange(category);
     }
 }
