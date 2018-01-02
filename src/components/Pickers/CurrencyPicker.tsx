@@ -3,8 +3,8 @@ import { View, Picker } from 'react-native';
 
 interface IProps {
     currencies: Currencies;
-    onValueChange: any;
     selectedValue: Currency;
+    onValueChange: any;
 }
 
 export class CurrencyPicker extends Component<IProps, {}> {

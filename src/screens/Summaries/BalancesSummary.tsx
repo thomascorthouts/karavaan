@@ -2,11 +2,15 @@ import React, { Component, ReactNode } from 'react';
 import { View, ScrollView, Text, Button, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import { BalanceFeedItem } from '../../components/BalanceFeedItem';
+import { getRate } from '../../utils/getRate';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 
 interface IState {
     group: Group;
     currency: Currency;
+    currencies: Currencies;
     balances: Balances;
+    rate: number;
 }
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
@@ -32,18 +36,21 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 
         this.state = {
             group: this.props.navigation.state.params.group,
+            currencies: currencies,
             currency: this.props.navigation.state.params.group.defaultCurrency,
-            balances: [] as Balances
+            balances: [] as Balances,
+            rate: 1
         };
     }
 
     render() {
         let balanceItems = this.state.balances.map((val: Balance, key: number) => {
-            return <BalanceFeedItem keyval={val.person.id} currency={this.state.currency} person={val.person} balance={val.amount} key={val.person.id} />;
+            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={this.state.rate} balance={val.amount} key={val.person.id} />;
         });
 
         return (
             <View style={styles.container}>
+                <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
                 <ScrollView style={styles.ScrollContainer}>
                     {balanceItems}
                 </ScrollView>
@@ -51,8 +58,19 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         );
     }
 
+    updateRate(curr: Currency) {
+        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies)});
+        this.setState({currency: curr});
+    }
+
     componentDidMount() {
+        let currencies = {};
+        AsyncStorage.getItem('currencies')
+            .then((value: string) => {
+                if (value) currencies = JSON.parse(value).rates;
+        });
         let balances: Balances = [];
+        let rate = 1;
         AsyncStorage.getItem('expenses-' + this.state.group.id)
             .then((value: string) => {
                 let expenses = JSON.parse(value);
@@ -60,6 +78,11 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
                     expenses.map((val: Expense) => {
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                            // Test whether this works
+                            rate = (val.currency.tag === this.state.group.defaultCurrency.tag) ? 1 : getRate(val.currency.tag, this.state.group.defaultCurrency.tag, currencies);
+                            bal.amount = bal.amount * rate;
+                            bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
+
                             if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
                             else balances.push(bal);
                         });

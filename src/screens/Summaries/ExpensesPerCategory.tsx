@@ -88,6 +88,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
 
             this.setState({feed});
         }
+        else this.setState({feed : []});
     }
 
     viewDetails(key: number, navigate: any) {
