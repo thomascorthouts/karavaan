@@ -95,16 +95,18 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         froms.filter((val: Balance) => { return val.amount !== 0; }).map((negBal: Balance) => {
             tos.filter((val: Balance) => { return val.amount !== 0; }).map((posBal: Balance) => {
                 amount = Math.min(Math.abs(negBal.amount), posBal.amount);
-                negBal.amount += amount;
-                posBal.amount -= amount;
-                transactions.push({
-                    from: negBal.person,
-                    to: posBal.person,
-                    amount: amount
-                });
-                let t = this.backtracking(froms, tos, transactions);
-                if (t && t.length < transactions.length) {
-                    transactions = t;
+                if (amount !== 0) {
+                    negBal.amount += amount;
+                    posBal.amount -= amount;
+                    transactions.push({
+                        from: negBal.person,
+                        to: posBal.person,
+                        amount: amount
+                    });
+                    let t = this.backtracking(froms, tos, transactions);
+                    if (t && t.length < transactions.length) {
+                        transactions = t;
+                    }
                 }
             });
         });
