@@ -11,6 +11,7 @@ import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import * as StringSimilarity from '../../utils/similarity';
 import { showError } from '../../utils/popup';
+import { resetState } from '../../utils/navigationactions';
 
 interface IState {
     persons: PersonList;
@@ -59,7 +60,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
     render() {
         let { width } = Dimensions.get('window');
-        const { goBack, navigate } = this.props.navigation;
+        const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -168,22 +169,23 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     />
                 </KeyboardAvoidingView>
 
-                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateState })} />
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateImage })} />
 
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validate(goBack)} />
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validate(dispatch)} />
                     </View>
                 </View>
             </View>
         );
     }
 
-    updateState = (data: any) => {
-        this.setState(data);
+    updateImage = (image: any) => {
+        const expense = Object.assign({}, this.state.expense, { image: image });
+        this.setState({ expense });
     }
 
     // Expense Amount
@@ -247,7 +249,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
 
     // CRUD
 
-    saveExpense(goBack: any) {
+    saveExpense(dispatch: any) {
         let balances = [
             { person: this.state.donor, amount: this.state.expense.amount, currency: this.state.expense.currency },
             { person: this.state.receiver, amount: -1 * this.state.expense.amount, currency: this.state.expense.currency }
@@ -257,8 +259,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         this.setState({ expense }, () => {
             this.addExpenseToStorage()
                 .then(() => {
-                    goBack();
-                    this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
+                    resetState('ExpenseFeed', dispatch);
                 });
         });
     }

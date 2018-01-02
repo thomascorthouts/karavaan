@@ -16,6 +16,7 @@ interface Options {
     currencies: Currencies;
     date: string;
     category: string;
+    image: any;
 }
 
 interface IProps {
@@ -49,7 +50,8 @@ class TransSplit extends Component<IProps, IState> {
                 amount: options.amount,
                 currency: options.currency,
                 category: options.category,
-                date: options.date
+                date: options.date,
+                image: options.image
             },
             currencies: options.currencies as Currencies,
             donor: {} as Person,
