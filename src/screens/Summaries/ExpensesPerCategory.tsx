@@ -24,7 +24,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }></Button>;
+            }/>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight

@@ -36,9 +36,9 @@ export const currencies: Currencies = {
 export const friends: Array<string> = new Array('Thomas Corthouts', 'Mathias Spanhove', 'Franci Haest', 'Serhat Erdogan');
 
 export const friendList: PersonList = [
-    { id: 'thomas_corthouts', firstname: 'Thomas', lastname: 'Corthouts', balance: 0 },
-    { id: 'mathias_spanhove', firstname: 'Mathias', lastname: 'Spanhove', balance: 0 },
-    { id: 'serhat_erdogan', firstname: 'Serhat', lastname: 'Erdogan', balance: 0 },
-    { id: 'franci_haest', firstname: 'Franci', lastname: 'Haest', balance: 0 }
+    { id: 'thomas_corthouts', firstname: 'Thomas', lastname: 'Corthouts' },
+    { id: 'mathias_spanhove', firstname: 'Mathias', lastname: 'Spanhove' },
+    { id: 'serhat_erdogan', firstname: 'Serhat', lastname: 'Erdogan' },
+    { id: 'franci_haest', firstname: 'Franci', lastname: 'Haest' }
 ];
-export const categories: Array<string> = new Array('Food', 'Transport', 'Other');
+export const categories: Array<string> = new Array('Entertainment', 'Food & Drinks', 'Home', 'Life', 'Transport', 'Other');

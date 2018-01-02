@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, AsyncStorage, Picker, Button } from 'react-native';
+import { View, ScrollView, AsyncStorage, Picker, Button } from 'react-native';
 import { TransactionFeedItem } from '../../components/TransactionFeedItem';
 
 interface Transaction {
@@ -26,7 +26,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }></Button>;
+            } />;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -58,7 +58,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         return (
             <View>
                 <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
-                    <Picker.Item label={''} value={'all'} key={'all'} />
+                    <Picker.Item label={'All'} value={'all'} key={'all'} />
                     {this.state.personPickerItems}
                 </Picker>
                 <ScrollView>
@@ -76,7 +76,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         balances.map((val: Balance) => (val.amount > 0) ? tos.push(val) : froms.push(val));
 
         transactions = this.backtracking(froms, tos, transactions);
-        console.log(transactions);
         return transactions;
     }
 
@@ -96,16 +95,18 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         froms.filter((val: Balance) => { return val.amount !== 0; }).map((negBal: Balance) => {
             tos.filter((val: Balance) => { return val.amount !== 0; }).map((posBal: Balance) => {
                 amount = Math.min(Math.abs(negBal.amount), posBal.amount);
-                negBal.amount += amount;
-                posBal.amount -= amount;
-                transactions.push({
-                    from: negBal.person,
-                    to: posBal.person,
-                    amount: amount
-                });
-                let t = this.backtracking(froms, tos, transactions);
-                if (t && t.length < transactions.length) {
-                    transactions = t;
+                if (amount !== 0) {
+                    negBal.amount += amount;
+                    posBal.amount -= amount;
+                    transactions.push({
+                        from: negBal.person,
+                        to: posBal.person,
+                        amount: amount
+                    });
+                    let t = this.backtracking(froms, tos, transactions);
+                    if (t && t.length < transactions.length) {
+                        transactions = t;
+                    }
                 }
             });
         });
