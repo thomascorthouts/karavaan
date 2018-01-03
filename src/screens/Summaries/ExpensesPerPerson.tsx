@@ -4,14 +4,21 @@ import {
     AsyncStorage, Picker
 } from 'react-native';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
+import { currencies } from '../../config/Data';
+import { getRate } from '../../utils/getRate';
 
 interface IState {
     person: string;
     group: Group;
     expenses: ExpenseList;
     feed: ReactNode[];
+    currencies: Currencies;
     expenseArrayId: string;
+    personArrayId: string;
     persons: ReactNode[];
+    currency: Currency;
+    rate: number;
 }
 
 export default class ExpensesPerPerson extends Component<IDefaultNavProps, IState> {
@@ -19,7 +26,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
-            const title = state.params.group.name;
+            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             }/>;
@@ -35,13 +42,21 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
+        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
             person: 'All',
             group: this.props.navigation.state.params.group,
             expenses: [] as ExpenseList,
             feed: [],
-            expenseArrayId: 'expenses-' + this.props.navigation.state.params.group.id,
-            persons: [] as ReactNode[]
+            currencies: currencies,
+            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses',
+            personArrayId: bool ? 'persons-' + navParams.group.id : 'persons',
+            persons: [] as ReactNode[],
+            currency: bool ? this.props.navigation.state.params.group.defaultCurrency : {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            },
+            rate: 1
         };
     }
 
@@ -50,18 +65,20 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
 
         return (
             <View style={styles.container}>
-                <Picker selectedValue={this.state.person} onValueChange={(person: string) => this.onPersonChange(person)}>
-                    <Picker.Item key={'All'} value={'All'} label={'All'} />
-                    {this.state.persons}
-                </Picker>
                 <ScrollView style={styles.ScrollContainer}>
                     {this.state.feed}
                 </ScrollView>
-                <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={() => this.addExpense(navigate)} style={styles.addButton}>
-                        <Text style={styles.addButtonText}> + </Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <Picker selectedValue={this.state.person} onValueChange={(person: string) => this.onPersonChange(person)}>
+                            <Picker.Item key={'All'} value={'All'} label={'All Users'} />
+                            {this.state.persons}
+                        </Picker>
+                    </View>
+                    <View style={styles.flex}>
+                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -74,9 +91,8 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         this.setState(data);
     }
 
-    addExpense(navigate: any) {
-        let screen = 'GroupAddExpense';
-        navigate(screen, { expenseArray: this.state.expenses, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+    updateRate(curr: Currency) {
+        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
     }
 
     updateView() {
@@ -105,7 +121,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     componentDidMount() {
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {
                     let expenses = JSON.parse(value);
@@ -122,7 +138,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
                 }
             });
 
-        AsyncStorage.getItem('persons-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.personArrayId)
             .then((value) => {
                 if (value) {
                     let array = JSON.parse(value);
@@ -150,40 +166,5 @@ const styles = StyleSheet.create({
     },
     rowContainer: {
         flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    footer: {
-        position: 'absolute',
-        alignItems: 'center',
-        bottom: 0,
-        left: 0,
-        right: 0
-    },
-    currentMembers: {
-        flex: 3
-    },
-    deleteButton: {
-        height: 40,
-        paddingVertical: 10
-    },
-    addButton: {
-        backgroundColor: '#287E6F',
-        width: 90,
-        height: 90,
-        borderRadius: 50,
-        borderColor: '#CCC',
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 8,
-        zIndex: 10
-    },
-    addButtonText: {
-        color: '#FFF',
-        fontSize: 24
     }
 });
