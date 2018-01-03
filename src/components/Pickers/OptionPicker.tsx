@@ -7,6 +7,7 @@ interface IProps {
     onChangeText: any;
     textInput: string;
     options: Array<ReactNode>;
+    placeholder: string;
 }
 
 export class OptionPicker extends Component<IProps, {}> {
@@ -23,7 +24,7 @@ export class OptionPicker extends Component<IProps, {}> {
         return (
             <View>
                 <InputWithLabel labelText={this.props.inputLabel} value={this.props.textInput}
-                                onChangeText={this.props.onChangeText}/>
+                                onChangeText={this.props.onChangeText} placeholder={this.props.placeholder}/>
                 <ScrollView style={{
                     height: height * 0.2
                 }}>

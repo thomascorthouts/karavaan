@@ -56,6 +56,9 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                     <InputWithLabel
                         labelText={'Description'}
                         onChangeText={(description: any) => this.setState({ description })}
+                        onSubmitEditing={() => (this as any).amount.focus()}
+                        returnKeyType={'next'}
+                        autoCapitalize={'sentences'}
                     />
 
                     <View style={styles.rowContainer}>
@@ -65,6 +68,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                                 value={this.state.amountString}
                                 returnKeyType={'done'}
                                 keyboardType={'numeric'}
+                                inputref={(input: any) => { (this as any).amount = input; }}
                             />
                         </View>
                         <View style={styles.flex}>

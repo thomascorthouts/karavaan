@@ -74,7 +74,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         }}
                         onSubmitEditing={() => (this as any).donor.focus()}
                         returnKeyType={'next'}
-                        autoCapitalize={'words'}
+                        autoCapitalize={'sentences'}
                     />
 
                     <DatePicker
@@ -191,7 +191,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     // Donor and Receiver
 
     setDonor(text: string) {
-        console.log(text);
         this.setState({ donor: this.createPerson(text) });
     }
 

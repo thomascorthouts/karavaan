@@ -140,7 +140,6 @@ class TransSplit extends Component<IProps, IState> {
     updateAmount(value: string) {
         let amount = parseMoney(value);
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
-        console.log(amount);
         this.setState({ expense, amountString: amount });
     }
 
