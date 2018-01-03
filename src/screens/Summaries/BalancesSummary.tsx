@@ -30,7 +30,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let navParams = this.props.navigation.state.params;
+        let navParams = JSON.parse(JSON.stringify(this.props.navigation.state.params));
         this.state = {
             currencies: navParams.currencies,
             defaultCurrency: navParams.defaultCurrency,

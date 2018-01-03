@@ -41,7 +41,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let navParams = this.props.navigation.state.params;
+        let navParams = JSON.parse(JSON.stringify(this.props.navigation.state.params));
         this.state = {
             numberOfTransactions: Infinity,
             transactions: [] as Transactions,

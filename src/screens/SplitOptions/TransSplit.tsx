@@ -173,7 +173,8 @@ class TransSplit extends Component<IProps, IState> {
                 'description': this.state.expense.description,
                 'category': this.state.expense.category,
                 'balances': this.state.expense.balances,
-                'splitOption': 'Transaction'
+                'image': this.state.expense.image,
+                'isTransaction': true
             });
 
             await AsyncStorage.multiSet([

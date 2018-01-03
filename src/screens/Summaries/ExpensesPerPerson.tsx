@@ -36,7 +36,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
-        let navParams = this.props.navigation.state.params;
+        let navParams = JSON.parse(JSON.stringify(this.props.navigation.state.params));
         this.state = {
             person: 'All',
             expenseArray: navParams.expenseArray,
@@ -81,7 +81,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     updateRate(curr: Currency) {
-        this.setState({ currency: curr });
+        this.setState({ currency: curr }, this.updateView);
     }
 
     updateView() {
@@ -91,11 +91,11 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
             if (this.state.person !== 'All') {
                 val.balances.map((bal: Balance) => {
                     if (bal.person.id === this.state.person) {
-                        feed.push(<ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
+                        feed.push(<ExpenseItem key={key} keyval={key} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
                     }
                 });
             } else {
-                feed.push(<ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
+                feed.push(<ExpenseItem key={key} keyval={key} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
             }
         });
         this.setState({ feed });

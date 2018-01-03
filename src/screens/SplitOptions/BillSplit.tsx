@@ -189,7 +189,8 @@ class BillSplit extends Component<IProps, IState> {
                 'currency': this.state.expense.currency,
                 'description': this.state.expense.description,
                 'category': this.state.expense.category,
-                'balances': this.state.expense.balances
+                'balances': this.state.expense.balances,
+                'image': this.state.expense.image
             });
 
             await AsyncStorage.multiSet([

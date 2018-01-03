@@ -299,7 +299,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'description': this.state.expense.description.trim(),
                 'category': this.state.expense.category,
                 'balances': this.state.expense.balances,
-                'image': this.state.expense.image
+                'image': this.state.expense.image,
+                'isTransaction': true
             });
 
             let donor = this.state.donor;
