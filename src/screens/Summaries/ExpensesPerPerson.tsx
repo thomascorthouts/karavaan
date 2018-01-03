@@ -13,7 +13,6 @@ interface IState {
     group: Group;
     expenses: ExpenseList;
     feed: ReactNode[];
-    currencies: Currencies;
     expenseArrayId: string;
     personArrayId: string;
     persons: ReactNode[];

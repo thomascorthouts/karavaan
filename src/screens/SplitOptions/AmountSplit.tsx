@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Switch } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -28,6 +28,7 @@ interface IState {
     payers: Balances;
     payerNodes: Array<ReactNode>;
     error: string;
+    splitEven: boolean;
 }
 
 class AmountSplit extends Component<IDefaultNavProps, IState> {
@@ -54,7 +55,8 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             personArray: [] as PersonList,
             expenseArray: [] as ExpenseList,
             currencies: options.currencies as Currencies,
-            error: ''
+            error: '',
+            splitEven: this.props.navigation.state.params.opts.splitMode
         };
     }
 
@@ -156,7 +158,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
         this.state.payers.map((val: Balance) => sum += val.amount);
 
-        if (sum === 0) {
+        if (sum === 0 || sum < expense.balances.length * 0.01) {
             this.state.payers.map((payerBalance: Balance) => {
                 payer = expense.balances.find((bal: Balance) => {
                     return bal.person.id === payerBalance.person.id;
@@ -215,7 +217,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         let expense;
         if (personArray) {
             let amounts = [] as Balances;
-            const avg = (this.state.options.splitMode) ? (this.state.options.amount / personArray.length) * (-1) : 0;
+            const avg = (this.state.options.splitMode) ? parseFloat(((this.state.options.amount / personArray.length) * (-1)).toFixed(2)) : 0;
             personArray.map((val: Person) => {
                 amounts.push({ person: val, amount: avg });
             });
