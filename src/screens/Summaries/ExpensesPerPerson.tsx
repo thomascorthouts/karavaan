@@ -5,15 +5,17 @@ import {
 } from 'react-native';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import {currencies} from '../../config/Data';
-import {getRate} from '../../utils/getRate';
+import { currencies } from '../../config/Data';
+import { getRate } from '../../utils/getRate';
 
 interface IState {
     person: string;
     group: Group;
     expenses: ExpenseList;
     feed: ReactNode[];
+    currencies: Currencies;
     expenseArrayId: string;
+    personArrayId: string;
     persons: ReactNode[];
     currencies: Currencies;
     currency: Currency;
@@ -25,7 +27,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
-            const title = state.params.group.name;
+            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             }/>;
@@ -41,15 +43,20 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
+        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
             person: 'All',
             group: this.props.navigation.state.params.group,
             expenses: [] as ExpenseList,
             feed: [],
-            expenseArrayId: 'expenses-' + this.props.navigation.state.params.group.id,
-            persons: [] as ReactNode[],
             currencies: currencies,
-            currency: this.props.navigation.state.params.group.defaultCurrency,
+            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses',
+            personArrayId: bool ? 'persons-' + navParams.group.id : 'persons',
+            persons: [] as ReactNode[],
+            currency: bool ? this.props.navigation.state.params.group.defaultCurrency : {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            },
             rate: 1
         };
     }
@@ -115,7 +122,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     componentDidMount() {
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value) => {
                 if (value) {
                     let expenses = JSON.parse(value);
@@ -132,7 +139,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
                 }
             });
 
-        AsyncStorage.getItem('persons-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.personArrayId)
             .then((value) => {
                 if (value) {
                     let array = JSON.parse(value);

@@ -1,5 +1,5 @@
-import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, Button, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
+import { View, ScrollView, Button, AsyncStorage, StyleSheet } from 'react-native';
 import { currencies } from '../../config/Data';
 import { BalanceFeedItem } from '../../components/BalanceFeedItem';
 import { getRate } from '../../utils/getRate';
@@ -11,13 +11,14 @@ interface IState {
     currencies: Currencies;
     balances: Balances;
     rate: number;
+    expenseArrayId: string;
 }
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
-            const title = state.params.group.name;
+            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             }/>;
@@ -34,17 +35,22 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
+        let navParams = this.props.navigation.state.params;
+        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
-            group: this.props.navigation.state.params.group,
+            group: bool ? navParams.group : {} as Group,
             currencies: currencies,
-            currency: this.props.navigation.state.params.group.defaultCurrency,
+            currency: bool ? navParams.group.defaultCurrency : {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            },
             balances: [] as Balances,
-            rate: 1
+            rate: 1,
+            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 
     render() {
-        let balanceItems = this.state.balances.map((val: Balance, key: number) => {
+        let balanceItems = this.state.balances.map((val: Balance) => {
             return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={this.state.rate} balance={val.amount} key={val.person.id} />;
         });
 
@@ -63,7 +69,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
+        this.setState({rate: getRate(this.state.currency.tag, curr.tag, this.state.currencies), currency: curr});
     }
 
     componentDidMount() {
@@ -74,7 +80,8 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         });
         let balances: Balances = [];
         let rate = 1;
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value: string) => {
                 let expenses = JSON.parse(value);
                 if (expenses) {
@@ -82,7 +89,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
                             // Test whether this works
-                            rate = (val.currency.tag === this.state.group.defaultCurrency.tag) ? 1 : getRate(val.currency.tag, this.state.group.defaultCurrency.tag, currencies);
+                            rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, currencies);
                             bal.amount = bal.amount * rate;
                             bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
 
@@ -97,36 +104,6 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 }
 
 const styles = StyleSheet.create({
-    item: {
-        flex: 1,
-        position: 'relative',
-        padding: 20,
-        paddingRight: 100,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#111'
-    },
-    detailText: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        flexWrap: 'wrap'
-    },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12,
-        flexWrap: 'wrap'
-    },
-    expense: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        top: 10,
-        bottom: 10,
-        right: 10
-    },
     flex: {
         flex: 1
     },
@@ -138,18 +115,5 @@ const styles = StyleSheet.create({
     },
     rowContainer: {
         flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    footer: {
-        position: 'absolute',
-        alignItems: 'center',
-        bottom: 0,
-        left: 0,
-        right: 0
     }
 });
