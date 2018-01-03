@@ -39,13 +39,14 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         super(props, state);
 
         let navParams = this.props.navigation.state.params;
+        let bool = navParams && Object.keys(navParams.group).length !== 0;
         this.state = {
             category: 'All',
-            group: navParams ? navParams.group : {} as Group,
+            group: bool ? navParams.group : {} as Group,
             expenses: {} as ExpenseMap,
             feed: [],
             expenseArray: [] as ExpenseList,
-            expenseArrayId: navParams ? 'expenses-' + navParams.group.id : 'expenses'
+            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 

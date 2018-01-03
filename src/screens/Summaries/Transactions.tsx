@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import {View, ScrollView, AsyncStorage, Picker, Button, StyleSheet} from 'react-native';
+import { View, ScrollView, AsyncStorage, Picker, Button, StyleSheet } from 'react-native';
 import { TransactionFeedItem } from '../../components/TransactionFeedItem';
 import {getRate} from '../../utils/getRate';
 import {currencies} from '../../config/Data';
@@ -22,6 +22,7 @@ interface IState {
     currencies: Currencies;
     currency: Currency;
     rate: number;
+    expenseArrayId: string;
 }
 
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
@@ -29,7 +30,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params) {
-            const title = state.params.group.name;
+            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             } />;
@@ -44,15 +45,21 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
+
+        let navParams = this.props.navigation.state.params;
+        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
-            group: this.props.navigation.state.params.group,
+            group: bool ? this.props.navigation.state.params.group : {} as Group,
             numberOfTransactions: Infinity,
             transactions: [] as Transactions,
             pickerOpt: 'all',
             personPickerItems: [] as ReactNode[],
             currencies: currencies,
-            currency: this.props.navigation.state.params.group.defaultCurrency,
-            rate: 1
+            currency: bool ? navParams.group.defaultCurrency : {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            },
+            rate: 1,
+            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses'
         };
     }
 
@@ -88,7 +95,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
+        this.setState({rate: getRate(this.state.currency.tag, curr.tag, this.state.currencies), currency: curr});
     }
 
     algorithm(balances: Balances) {
@@ -143,18 +150,19 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             .then((value: string) => {
                 if (value) currencies = JSON.parse(value).rates;
             });
+
         let rate = 1;
         let balances: Balances = [];
-        AsyncStorage.getItem('expenses-' + this.state.group.id)
+        AsyncStorage.getItem(this.state.expenseArrayId)
             .then((value: string) => {
                 let expenses = JSON.parse(value);
                 if (expenses) {
                     expenses.map((val: Expense) => {
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                            rate = (val.currency.tag === this.state.group.defaultCurrency.tag) ? 1 : getRate(val.currency.tag, this.state.group.defaultCurrency.tag, currencies);
+                            rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, currencies);
                             bal.amount = bal.amount * rate;
-                            bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
+                            bal.amount = (bal.amount > 0) ? Math.floor(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2) : Math.ceil(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2);
 
                             if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
                             else balances.push(bal);
@@ -163,9 +171,9 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     let items: ReactNode[] = [];
                     balances.map((val: Balance) => {
                         items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname}
-                                                value={val.person.id} key={val.person.id} />);
+                                                value={val.person.id} key={val.person.id}/>);
                     });
-                    this.setState({ personPickerItems: items, transactions: this.algorithm(balances) });
+                    this.setState({personPickerItems: items, transactions: this.algorithm(balances)});
                 }
             });
     }
