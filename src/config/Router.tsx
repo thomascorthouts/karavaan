@@ -27,32 +27,6 @@ import BalancesSummary from '../screens/Summaries/BalancesSummary';
 import TransactionsSummary from '../screens/Summaries/Transactions';
 import ExpensesPerPerson from '../screens/Summaries/ExpensesPerPerson';
 
-export const ExpenseStack = StackNavigator(
-    {
-        ExpenseFeed: {
-            screen: ExpenseFeed
-        },
-        ExpenseDetail: {
-            screen: ExpenseDetail
-        },
-        AddExpense: {
-            screen: AddExpense,
-            navigationOptions: {
-                tabBarVisible: false
-            }
-        },
-        ImageSelector: {
-            screen: ImageSelector,
-            navigationOptions: {
-                tabBarVisible: false
-            }
-        }
-    }, {
-        mode: 'modal',
-        headerMode: 'none'
-    }
-);
-
 export const GroupSummaries = TabNavigator(
     {
         BalanceSummary: {
@@ -86,6 +60,41 @@ export const GroupSummaries = TabNavigator(
     }
 );
 
+export const ExpenseStack = StackNavigator(
+    {
+        ExpenseFeed: {
+            screen: ExpenseFeed
+        },
+        ExpenseDetail: {
+            screen: ExpenseDetail,
+            navigationOptions: {
+                tabBarVisible: false
+            }
+        },
+        AddExpense: {
+            screen: AddExpense,
+            navigationOptions: {
+                tabBarVisible: false
+            }
+        },
+        ImageSelector: {
+            screen: ImageSelector,
+            navigationOptions: {
+                tabBarVisible: false
+            }
+        },
+        ExpenseSummaries: {
+            screen: GroupSummaries,
+            navigationOptions: {
+                tabBarVisible: false
+            }
+        }
+    }, {
+        mode: 'modal',
+        headerMode: 'none'
+    }
+);
+
 export const GroupStack = StackNavigator(
     {
         GroupFeed: {
@@ -95,7 +104,10 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupForm: {
-            screen: GroupForm
+            screen: GroupForm,
+            navigationOptions: {
+                tabBarVisible: false
+            }
         },
         ImageSelector: {
             screen: ImageSelector,
@@ -124,12 +136,14 @@ export const GroupStack = StackNavigator(
         GroupExpenseDetail: {
             screen: ExpenseDetail,
             navigationOptions: {
+                tabBarVisible: false,
                 header: null
             }
         },
         GroupAddExpense: {
             screen: GroupExpense,
             navigationOptions: {
+                tabBarVisible: false,
                 header: null
             }
         },

@@ -3,7 +3,7 @@ import { View, Picker, Button, KeyboardAvoidingView, StatusBar, StyleSheet, Dime
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { parseMoney } from '../../utils/parsemoney';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';

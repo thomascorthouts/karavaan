@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, TextInput, Picker, AsyncStorage, Dimensions, StatusBar, Alert } from 'react-native';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 import { OptionPicker } from '../../components/Pickers/OptionPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -55,7 +55,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             allPersonsArray: [] as PersonList,
             memberSuggestion: '',
             groupArray: navParams.groupArray,
-            currencies: currencies,
+            currencies: _currencies,
             update: navParams.update
         };
     }

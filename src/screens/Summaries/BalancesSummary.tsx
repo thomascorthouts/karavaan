@@ -1,57 +1,48 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Button, AsyncStorage, StyleSheet } from 'react-native';
-import { currencies } from '../../config/Data';
-import { BalanceFeedItem } from '../../components/BalanceFeedItem';
+import { View, ScrollView, Button, AsyncStorage, StyleSheet, ActivityIndicator } from 'react-native';
+import { _currencies } from '../../config/Data';
+import { BalanceFeedItem } from '../../components/FeedItems/BalanceFeedItem';
 import { getRate } from '../../utils/getRate';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 
 interface IState {
-    group: Group;
+    defaultCurrency: Currency;
     currency: Currency;
     currencies: Currencies;
     balances: Balances;
-    rate: number;
-    expenseArrayId: string;
+    expenseArray: ExpenseList;
 }
+
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
-        if (state.params) {
-            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
-            const headerRight = <Button title={'Edit'} onPress={() =>
-                navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }/>;
+        if (state.params && 'group' in state.params) {
+            const title = state.params.group.name;
             return {
-                headerTitle: `${title}`,
-                headerRight: headerRight
+                headerTitle: `${title}`
             };
         } else {
             return {};
         }
     };
 
-    // This is initially programmed for a group
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
         let navParams = this.props.navigation.state.params;
-        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
-            group: bool ? navParams.group : {} as Group,
-            currencies: currencies,
-            currency: bool ? navParams.group.defaultCurrency : {
-                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
-            },
+            currencies: navParams.currencies,
+            defaultCurrency: navParams.defaultCurrency,
+            currency: navParams.currency,
             balances: [] as Balances,
-            rate: 1,
-            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses'
+            expenseArray: navParams.expenseArray
         };
     }
 
     render() {
         let balanceItems = this.state.balances.map((val: Balance) => {
-            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={this.state.rate} balance={val.amount} key={val.person.id} />;
+            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={this.state.currency.rate} balance={val.amount} key={val.person.id} />;
         });
 
         return (
@@ -61,7 +52,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
                 </ScrollView>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
+                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency} />
                     </View>
                 </View>
             </View>
@@ -69,43 +60,39 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.currency.tag, curr.tag, this.state.currencies), currency: curr});
+        this.setState({ currency: curr });
     }
 
-    componentDidMount() {
-        let currencies = {};
-        AsyncStorage.getItem('currencies')
-            .then((value: string) => {
-                if (value) currencies = JSON.parse(value).rates;
-        });
-        let balances: Balances = [];
-        let rate = 1;
+    async componentWillMount() {
+        let expenses = this.state.expenseArray;
+        let balances = [] as Balances;
+        if (expenses) {
+            expenses.map((val: Expense) => {
+                val.balances.map((bal: Balance) => {
+                    let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
+                    // Test whether this works
+                    let rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, this.state.currencies);
+                    bal.amount = bal.amount * rate;
+                    bal.amount = (bal.amount > 0) ? Math.floor(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2) : Math.ceil(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2);
 
-        AsyncStorage.getItem(this.state.expenseArrayId)
-            .then((value: string) => {
-                let expenses = JSON.parse(value);
-                if (expenses) {
-                    expenses.map((val: Expense) => {
-                        val.balances.map((bal: Balance) => {
-                            let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                            // Test whether this works
-                            rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, currencies);
-                            bal.amount = bal.amount * rate;
-                            bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
-
-                            if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
-                            else balances.push(bal);
-                        });
-                    });
-                    this.setState({ balances });
-                }
+                    if (typeof balFound !== 'undefined') balFound.amount += bal.amount;
+                    else balances.push(bal);
+                });
             });
+        }
+
+        this.setState({ balances });
     }
 }
 
 const styles = StyleSheet.create({
     flex: {
         flex: 1
+    },
+    flexCenter: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1

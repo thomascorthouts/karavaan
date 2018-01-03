@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, Alert, NetInfo } from 'react-native';
-import { currencies } from '../config/Data';
+import { _currencies } from '../config/Data';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../components/Buttons/GreenButton';
@@ -8,6 +8,7 @@ import { InputWithLabel } from '../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
+import { getRate } from '../utils/getRate';
 
 interface IState {
     currencies: Currencies;
@@ -25,7 +26,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         let date = new Date();
         this.state = {
-            currencies: currencies,
+            currencies: _currencies,
             value: '0',
             currency1: {
                 name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
@@ -47,7 +48,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         if (this.state.isLoading) {
             return (
-                <View style={styles.container}>
+                <View style={styles.flexCenter}>
                     <ActivityIndicator />
                 </View>
             );
@@ -123,7 +124,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
                     <View style={styles.rowContainer}>
                         <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
+                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'CLOSE'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
                         </View>
                         <View style={styles.flex}>
                             <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
@@ -138,27 +139,22 @@ class Converter extends Component<IDefaultNavProps, IState> {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected && this.state.latest !== this.state.date.trim()) {
                 this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
-            } else if (!isConnected) {
+            } else if (!isConnected && this.state.latest) {
                 showError('No internet connection available\n\nUsing exchange rates from ' + this.state.latest);
                 this.setState({ date: this.state.latest });
+            } else if (!isConnected) {
+                showError('No internet connection available');
             }
         });
     }
 
     convert = (amount: number, from: string, to: string) => {
-        return amount * this.getRate(from, to);
-    }
-
-    getRate = (from: string, to: string) => {
-        const currencies = this.state.currencies;
-        const rateFrom = currencies[from].rate as number;
-        const rateTo = currencies[to].rate as number;
-
-        return rateTo / rateFrom;
+        let conversion = amount * getRate(from, to, this.state.currencies);
+        return (isNaN(conversion)) ? 0 : conversion;
     }
 
     async getExchangeRate(date: string) {
-        let currs = JSON.parse(JSON.stringify(currencies));
+        let currs = JSON.parse(JSON.stringify(_currencies));
         fetch('https://api.fixer.io/' + date)
             .then((resp) => resp.json())
             .then((data) => {
@@ -209,6 +205,11 @@ export default Converter;
 const styles = StyleSheet.create({
     flex: {
         flex: 1
+    },
+    flexCenter: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1,

@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
-import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { _currencies } from '../../config/Data';
 
 interface ExpenseMap {
     [index: string]: ExpenseList;
@@ -63,10 +64,10 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                 <ScrollView style={styles.flex}>
                     {this.state.feed}
                 </ScrollView>
-                
+
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} buttonText={'Summaries'} onPress={() => navigate('GroupSummaries', { group: this.state.group, expenseArray: this.state.expenseArray})} />
+                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} buttonText={'Summaries'} onPress={() => this.viewSummaries(navigate)} />
                     </View>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginHorizontal: 2 }} onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
@@ -82,13 +83,54 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
 
     addExpense(navigate: any) {
         let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
-        navigate(screen, {expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+        navigate(screen, { expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+    }
+
+    async viewSummaries(navigate: any) {
+        let currencies = await AsyncStorage.getItem('currencies')
+            .then((value: string) => {
+                if (value) {
+                    return JSON.parse(value).rates;
+                } else {
+                    return _currencies;
+                }
+            });
+
+        let personId = this.state.expenseArrayId === 'expenses' ? 'persons' : 'persons-' + this.state.group.id;
+        let personArray = await AsyncStorage.getItem(personId)
+            .then((value) => {
+                if (value) {
+                    return JSON.parse(value);
+                } else {
+                    return [];
+                }
+            });
+
+        AsyncStorage.getItem('defaultCurrency').then((value) => {
+            let currency = {
+                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
+            };
+            if (value) {
+                currency = JSON.parse(value);
+            }
+
+            if (this.state.expenseArrayId === 'expenses') {
+                navigate('ExpenseSummaries', {
+                    currency: currency, defaultCurrency: currency, currencies: currencies, expenseArray: this.state.expenseArray, personArray: personArray
+                });
+            } else {
+                navigate('GroupSummaries', {
+                    currency: this.state.group.defaultCurrency, defaultCurrency: currency, currencies: currencies,
+                    group: this.state.group, expenseArray: this.state.expenseArray, personArray: personArray
+                });
+            }
+        });
     }
 
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
-        navigate(screen, {key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState});
+        navigate(screen, { key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState });
     }
 
     updateView() {

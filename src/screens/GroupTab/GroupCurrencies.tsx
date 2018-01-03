@@ -1,9 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Alert, StatusBar, AsyncStorage, Button } from 'react-native';
 import { TabNavigator } from 'react-navigation';
-import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 
 interface IState {
     currencies: Currencies;

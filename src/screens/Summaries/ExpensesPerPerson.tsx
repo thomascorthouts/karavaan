@@ -3,37 +3,30 @@ import {
     Button, View, ScrollView, StyleSheet,
     AsyncStorage, Picker
 } from 'react-native';
-import { ExpenseItem } from '../../components/ExpenseFeedItem';
+import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 import { getRate } from '../../utils/getRate';
 
 interface IState {
     person: string;
-    group: Group;
-    expenses: ExpenseList;
+    expenseArray: ExpenseList;
+    personArray: PersonList;
     feed: ReactNode[];
     currencies: Currencies;
-    expenseArrayId: string;
-    personArrayId: string;
     persons: ReactNode[];
-    currencies: Currencies;
+    defaultCurrency: Currency;
     currency: Currency;
-    rate: number;
 }
 
 export default class ExpensesPerPerson extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
-        if (state.params) {
-            const title = (typeof state.params.group.name !== 'undefined') ? state.params.group.name : 'Summaries';
-            const headerRight = <Button title={'Edit'} onPress={() =>
-                navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }/>;
+        if (state.params && 'group' in state.params) {
+            const title = state.params.group.name;
             return {
-                headerTitle: `${title}`,
-                headerRight: headerRight
+                headerTitle: `${title}`
             };
         } else {
             return {};
@@ -44,20 +37,15 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         super(props, state);
 
         let navParams = this.props.navigation.state.params;
-        let bool = Object.keys(navParams.group).length !== 0;
         this.state = {
             person: 'All',
-            group: this.props.navigation.state.params.group,
-            expenses: [] as ExpenseList,
+            expenseArray: navParams.expenseArray,
             feed: [],
-            currencies: currencies,
-            expenseArrayId: bool ? 'expenses-' + navParams.group.id : 'expenses',
-            personArrayId: bool ? 'persons-' + navParams.group.id : 'persons',
+            currencies: navParams.currencies,
+            personArray: navParams.personArray,
             persons: [] as ReactNode[],
-            currency: bool ? this.props.navigation.state.params.group.defaultCurrency : {
-                name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
-            },
-            rate: 1
+            defaultCurrency: navParams.defaultCurrency,
+            currency: navParams.currency
         };
     }
 
@@ -71,13 +59,13 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
                 </ScrollView>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <Picker selectedValue={this.state.person} onValueChange={(person: string) => this.onPersonChange(person)}>
+                        <Picker style={{ height: 40 }} selectedValue={this.state.person} onValueChange={(person: string) => this.onPersonChange(person)}>
                             <Picker.Item key={'All'} value={'All'} label={'All Users'} />
                             {this.state.persons}
                         </Picker>
                     </View>
                     <View style={styles.flex}>
-                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
+                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency} />
                     </View>
                 </View>
             </View>
@@ -93,65 +81,53 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
+        this.setState({ currency: curr });
     }
 
     updateView() {
         let { navigate } = this.props.navigation;
         let feed: ReactNode[] = [];
-        this.state.expenses.map((val: Expense, key: any) => {
+        this.state.expenseArray.map((val: Expense, key: any) => {
             if (this.state.person !== 'All') {
                 val.balances.map((bal: Balance) => {
                     if (bal.person.id === this.state.person) {
-                        feed.push(<ExpenseItem key={key} keyval={key} val={val}
-                            viewDetails={() => this.viewDetails(key, navigate)} />);
+                        feed.push(<ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
                     }
                 });
             } else {
-                feed.push(<ExpenseItem key={key} keyval={key} val={val}
-                    viewDetails={() => this.viewDetails(key, navigate)} />);
+                feed.push(<ExpenseItem key={key} keyval={key} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
             }
         });
         this.setState({ feed });
     }
 
     viewDetails(key: number, navigate: any) {
-        let expense = this.state.expenses[key];
-        let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
+        let expense = this.state.expenseArray[key];
+        let screen = ('group' in this.props.navigation.state.params) ? 'GroupExpenseDetail' : 'ExpenseDetail';
         navigate(screen, { expense: expense });
     }
 
-    componentDidMount() {
-        AsyncStorage.getItem(this.state.expenseArrayId)
-            .then((value) => {
-                if (value) {
-                    let expenses = JSON.parse(value);
+    componentWillMount() {
+        let expenses = [...this.state.expenseArray];
+        let personArray = this.state.personArray;
 
-                    expenses = expenses.sort((exp1: Expense, exp2: Expense) => {
-                        let a = exp1.date;
-                        let b = exp2.date;
-                        a = a.split('-').join('');
-                        b = b.split('-').join('');
-                        return a > b ? 1 : a < b ? -1 : 0;
-                    });
-                    // Expenses is now sorted by date
-                    this.setState({ expenses: expenses }, this.updateView);
-                }
+        // Expenses is now sorted by date
+        expenses = expenses.sort((exp1: Expense, exp2: Expense) => {
+            let a = exp1.date;
+            let b = exp2.date;
+            a = a.split('-').join('');
+            b = b.split('-').join('');
+            return a > b ? 1 : a < b ? -1 : 0;
+        });
+
+        let persons = this.state.persons;
+        if (personArray) {
+            persons = personArray.map((val: Person) => {
+                return <Picker.Item key={val.id} value={val.id} label={val.firstname + ' ' + val.lastname} />;
             });
+        }
 
-        AsyncStorage.getItem(this.state.personArrayId)
-            .then((value) => {
-                if (value) {
-                    let array = JSON.parse(value);
-                    if (array) {
-                        let persons = array.map((val: Person) => {
-                            return <Picker.Item key={val.id} value={val.id} label={val.firstname + ' ' + val.lastname} />;
-                        });
-
-                        this.setState({ persons });
-                    }
-                }
-            });
+        this.setState({ persons, expenseArray: expenses }, this.updateView);
     }
 }
 
