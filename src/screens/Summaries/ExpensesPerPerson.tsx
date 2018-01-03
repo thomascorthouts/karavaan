@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import {
-    Button, View, ScrollView, KeyboardAvoidingView, TouchableOpacity, Text, StyleSheet,
+    Button, View, ScrollView, StyleSheet,
     AsyncStorage, Picker
 } from 'react-native';
 import { ExpenseItem } from '../../components/ExpenseFeedItem';
@@ -17,6 +17,7 @@ interface IState {
     expenseArrayId: string;
     personArrayId: string;
     persons: ReactNode[];
+    currencies: Currencies;
     currency: Currency;
     rate: number;
 }

@@ -70,7 +70,9 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         }).map((val: Transaction) => {
             return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} rate={this.state.rate} currencySymbol={this.state.currency.symbol} />);
         });
-
+        if (Object.getOwnPropertyNames(trans).length === 0) {
+            trans = [];
+        }
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.ScrollContainer}>
@@ -158,7 +160,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     expenses.map((val: Expense) => {
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                            // Test whether this works
                             rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, currencies);
                             bal.amount = bal.amount * rate;
                             bal.amount = (bal.amount > 0) ? Math.floor(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2) : Math.ceil(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2);
@@ -177,6 +178,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             });
     }
 }
+
 const styles = StyleSheet.create({
     flex: {
         flex: 1

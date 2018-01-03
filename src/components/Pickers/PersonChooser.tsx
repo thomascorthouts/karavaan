@@ -37,7 +37,7 @@ class PersonChooser extends Component<IProps, IState> {
         let name;
         this.props.persons.map((person: Person, index: number) => {
             name = person.firstname + ' ' + person.lastname;
-            if (name.includes(this.state.input)) {
+            if (name.toLocaleLowerCase().includes(this.state.input.toLocaleLowerCase())) {
                 options.push(<TouchableOpacity onPress={() => this.choose(person)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
             }
         });
