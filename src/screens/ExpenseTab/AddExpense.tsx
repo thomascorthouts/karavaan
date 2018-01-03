@@ -4,7 +4,7 @@ import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel'
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { parseMoney } from '../../utils/parsemoney';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
@@ -43,7 +43,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             },
             amountString: '0',
             persons: [] as PersonList,
-            currencies: currencies,
+            currencies: _currencies,
             expenseArray: this.props.navigation.state.params.expenseArray,
             donor: {
                 firstname: '',
@@ -299,7 +299,8 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 'description': this.state.expense.description.trim(),
                 'category': this.state.expense.category,
                 'balances': this.state.expense.balances,
-                'image': this.state.expense.image
+                'image': this.state.expense.image,
+                'isTransaction': true
             });
 
             let donor = this.state.donor;

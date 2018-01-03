@@ -11,7 +11,7 @@ interface Expense {
     balances: Balances;
     amount: number;
     currency: Currency;
-    splitOption?: string;
+    isTransaction?: boolean;
     image?: any;
 }
 

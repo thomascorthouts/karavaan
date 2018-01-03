@@ -2,7 +2,7 @@ import Expo from 'expo';
 import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
 import { AppRegistry, NetInfo, Alert, KeyboardAvoidingView, View, AsyncStorage, BackHandler } from 'react-native';
-import { currencies } from './build/src/config/Data';
+import { _currencies } from './build/src/config/Data';
 import Root from './build/src/config/Router';
 
 export default class App extends Component {
@@ -115,16 +115,16 @@ export default class App extends Component {
                 if (data.rates) {
                     let key;
                     for (key in data.rates) {
-                        currencies[key].rate = data.rates[key];
-                        currencies[key].base = base;
-                        currencies[key].date = today;
+                        _currencies[key].rate = data.rates[key];
+                        _currencies[key].base = base;
+                        _currencies[key].date = today;
                     }
-                    currencies[base].rate = 1;
-                    currencies[base].base = base;
-                    currencies[base].date = today;
+                    _currencies[base].rate = 1;
+                    _currencies[base].base = base;
+                    _currencies[base].date = today;
                     let result = {
                         latest: today,
-                        rates: currencies
+                        rates: _currencies
                     };
                     AsyncStorage.setItem('currencies', JSON.stringify(result));
                 } else {

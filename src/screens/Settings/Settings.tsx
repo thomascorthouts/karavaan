@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import { currencies } from '../../config/Data';
+import { _currencies } from '../../config/Data';
 import { resetState } from '../../utils/navigationactions';
 import { NavigationActions } from 'react-navigation';
 
@@ -17,7 +17,7 @@ class Settings extends React.Component<IDefaultNavProps, IState> {
         super(props, state);
 
         this.state = {
-            currencies: currencies,
+            currencies: _currencies,
             defaultCurrency: {
                 name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
             } as Currency

@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 interface IProps {
     keyval: any;
     val: Expense;
+    currency?: Currency;
     viewDetails(): void;
 }
 
@@ -13,8 +14,14 @@ export class ExpenseItem extends React.Component<IProps, {}> {
     }
 
     render() {
+        let amount;
+        if (this.props.currency && this.props.currency.rate) {
+            amount = this.props.currency.symbol + (this.props.currency.rate * this.props.val.amount).toFixed(2);
+        } else {
+            amount = this.props.val.currency.symbol + (this.props.val.amount).toFixed(2);
+        }
 
-        if (this.props.val.splitOption && this.props.val.splitOption === 'Transaction') {
+        if (this.props.val.isTransaction) {
             return (
                 <View key={this.props.keyval}>
                     <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
@@ -27,7 +34,7 @@ export class ExpenseItem extends React.Component<IProps, {}> {
                                 style={styles.detailTextSmall}>{this.props.val.category} - {this.props.val.description}</Text>
                         </View>
                         <View style={styles.expense}>
-                            <Text>{this.props.val.currency.symbol}{this.props.val.amount}</Text>
+                            <Text>{amount}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -43,7 +50,7 @@ export class ExpenseItem extends React.Component<IProps, {}> {
                                 style={styles.detailTextSmall}>{this.props.val.category}</Text>
                         </View>
                         <View style={styles.expense}>
-                            <Text>{this.props.val.currency.symbol}{this.props.val.amount}</Text>
+                            <Text>{amount}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

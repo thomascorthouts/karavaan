@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage, StatusBar } from 'react-native';
-import { GroupItem } from '../../components/GroupFeedItem';
+import { GroupItem } from '../../components/FeedItems/GroupFeedItem';
 
 interface IProps {
     navigation: any;

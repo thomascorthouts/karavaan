@@ -16,7 +16,6 @@ export const resetGroupState = (group: Group, expenseArray: ExpenseList, dispatc
     AsyncStorage.getItem('groups')
         .then((value) => {
             let groupArray = JSON.parse(value);
-            console.log(group);
             let parameters = { group: group, expenseArray: expenseArray, groupArray: groupArray };
 
             const resetGroup = (_params: any) => NavigationActions.reset({
