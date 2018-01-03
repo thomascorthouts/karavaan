@@ -32,6 +32,7 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
                 </View>
                 <View style={styles.expense}>
                     <InputWithoutLabel
+                        inputStyle={{ width: 55 }}
                         onSubmitEditing={this.props.submitEditing()}
                         value={this.state.amount.toString()}
                         onChangeText={(text: any) => {
