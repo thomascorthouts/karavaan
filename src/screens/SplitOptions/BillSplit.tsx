@@ -13,6 +13,7 @@ interface Options {
     description: string;
     category: string;
     date: string;
+    image: any;
 }
 
 interface IProps {
@@ -47,7 +48,8 @@ class BillSplit extends Component<IProps, IState> {
                 amount: options.amount,
                 currency: options.currency,
                 category: options.category,
-                date: options.date
+                date: options.date,
+                image: options.image
             },
             payers: [] as Balances,
             payerNodes: [] as Array<ReactNode>,
