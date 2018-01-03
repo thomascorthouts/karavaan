@@ -222,7 +222,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             });
     }
 
-    validateGroup(navigate: any) {
+    validateGroup(dispatch: any) {
         let error = '';
         if (this.state.group.name === undefined || this.state.group.name === '') {
             error += 'Group name can not be empty';
@@ -233,7 +233,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         }
 
         if (error === '') {
-            this.saveGroup(navigate);
+            this.saveGroup(dispatch);
         } else {
             showError(error);
         }

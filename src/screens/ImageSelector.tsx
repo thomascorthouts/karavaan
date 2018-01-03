@@ -5,7 +5,6 @@ import { GreenButton } from '../components/Buttons/GreenButton';
 
 interface IState {
     image: any;
-    expense: Expense;
 }
 
 class ImageSelector extends Component<IDefaultNavProps, IState> {
@@ -13,8 +12,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         super(props, state);
 
         this.state = {
-            image: null,
-            expense: this.props.navigation.state.params.expense as Expense
+            image: null
         };
     }
 
@@ -52,11 +50,8 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
     }
 
     selectImage = (goBack: any) => {
-        const expense = Object.assign({}, this.state.expense, { image: this.state.image });
-        this.setState({ expense }, () => {
-            goBack();
-            this.props.navigation.state.params.updateImage({ expense: expense });
-        });
+        goBack();
+        this.props.navigation.state.params.updateImage(this.state.image);
     }
 
     pickImage = async () => {

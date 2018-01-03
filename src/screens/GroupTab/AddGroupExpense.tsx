@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Picker, Button, KeyboardAvoidingView, StatusBar, StyleSheet, Dimensions } from 'react-native';
+import { View, Picker, Button, KeyboardAvoidingView, StatusBar, StyleSheet, Dimensions, Text } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { parseMoney } from '../../utils/parsemoney';
@@ -18,6 +18,7 @@ interface IState {
     category: string;
     amountString: string;
     date: string;
+    image: any;
 }
 
 class GroupExpense extends Component<IDefaultNavProps, IState> {
@@ -34,7 +35,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             splitMode: 'trans',
             category: 'Entertainment',
             amountString: '',
-            date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2)
+            date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
+            image: null
         };
     }
 
@@ -45,7 +47,12 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
-                <KeyboardAvoidingView>
+
+                <View style={styles.flex}>
+                    <Text style={styles.title}>New Expense</Text>
+                </View>
+
+                <KeyboardAvoidingView behavior={'padding'}>
                     <InputWithLabel
                         labelText={'Description'}
                         onChangeText={(description: any) => this.setState({ description })}
@@ -104,6 +111,9 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <Picker.Item label={'Exact amounts'} value={'amounts'} key={'amounts'} />
                     </Picker>
                 </KeyboardAvoidingView>
+
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.image, updateImage: this.updateImage })} />
+
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
@@ -116,10 +126,13 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
+    updateImage = (image: any) => {
+        this.setState({ image });
+    }
+
     updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({ amountString: amount });
-        this.setState({ amount: parseFloat(amount) });
+        this.setState({ amountString: amount, amount: parseFloat(amount) });
     }
 
     updateCategory(cat: string) {
@@ -136,7 +149,8 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                 currency: this.state.currency,
                 amount: this.state.amount,
                 category: this.state.category,
-                date: this.state.date
+                date: this.state.date,
+                image: this.state.image
             }
         };
 
