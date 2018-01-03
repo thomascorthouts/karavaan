@@ -69,12 +69,14 @@ class BillSplit extends Component<IProps, IState> {
                 <Text style={styles.title}>{this.state.options.description}</Text>
                 <ErrorText errorText={this.state.error} />
                 <View style={styles.flex}>
+                    <View style={styles.flex}>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}  />
+                    </View>
                     <ScrollView>
-                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} />
                         {this.state.payerNodes}
                     </ScrollView>
                 </View>
-                <View style={styles.flex}>
+                <View style={{flex: 0.8}}>
                     <GreenButton onPress={() => this.addItem(navigate)} buttonText={'Add Item'} />
                     <ScrollView>
                         {this.state.items}
@@ -98,7 +100,7 @@ class BillSplit extends Component<IProps, IState> {
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)} />);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
@@ -170,7 +172,7 @@ class BillSplit extends Component<IProps, IState> {
                         bal = { person: val, amount: 0 };
                         balances.push(bal);
                     }
-                    bal.amount -= avg;
+                    bal.amount -= parseFloat(avg.toFixed(2));
                 });
             });
 
