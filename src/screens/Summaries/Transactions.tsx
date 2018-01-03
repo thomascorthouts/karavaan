@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, AsyncStorage, Picker, Button } from 'react-native';
+import {View, ScrollView, AsyncStorage, Picker, Button, StyleSheet} from 'react-native';
 import { TransactionFeedItem } from '../../components/TransactionFeedItem';
 import {getRate} from '../../utils/getRate';
 import {currencies} from '../../config/Data';
@@ -63,24 +63,32 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
         }).map((val: Transaction) => {
             return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} rate={this.state.rate} currencySymbol={this.state.currency.symbol} />);
         });
-
+        if (Object.getOwnPropertyNames(trans).length === 0) {
+            trans = [];
+        }
         return (
-            <View>
-                <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
-                    <Picker.Item label={'All'} value={'all'} key={'all'} />
-                    {this.state.personPickerItems}
-                </Picker>
-                <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
-                <ScrollView>
+            <View style={styles.container}>
+                <ScrollView style={styles.ScrollContainer}>
                     {trans}
                 </ScrollView>
+
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <Picker selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
+                            <Picker.Item label={'All Users'} value={'all'} key={'all'} />
+                            {this.state.personPickerItems}
+                        </Picker>
+                    </View>
+                    <View style={styles.flex}>
+                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
+                    </View>
+                </View>
             </View>
         );
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies)});
-        this.setState({currency: curr});
+        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
     }
 
     algorithm(balances: Balances) {
@@ -144,7 +152,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     expenses.map((val: Expense) => {
                         val.balances.map((bal: Balance) => {
                             let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                            // Test whether this works
                             rate = (val.currency.tag === this.state.group.defaultCurrency.tag) ? 1 : getRate(val.currency.tag, this.state.group.defaultCurrency.tag, currencies);
                             bal.amount = bal.amount * rate;
                             bal.amount = (bal.amount > 0) ? Math.floor( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2) : Math.ceil( bal.amount * Math.pow(10, 2) ) / Math.pow(10, 2);
@@ -156,10 +163,25 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                     let items: ReactNode[] = [];
                     balances.map((val: Balance) => {
                         items.push(<Picker.Item label={val.person.firstname + ' ' + val.person.lastname}
-                            value={val.person.id} key={val.person.id} />);
+                                                value={val.person.id} key={val.person.id} />);
                     });
                     this.setState({ personPickerItems: items, transactions: this.algorithm(balances) });
                 }
             });
     }
 }
+
+const styles = StyleSheet.create({
+    flex: {
+        flex: 1
+    },
+    container: {
+        flex: 1
+    },
+    ScrollContainer: {
+        flex: 1
+    },
+    rowContainer: {
+        flexDirection: 'row'
+    }
+});
