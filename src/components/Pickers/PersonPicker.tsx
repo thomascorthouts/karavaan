@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { OptionPicker } from './OptionPicker';
 
 interface IProps {
@@ -38,7 +38,7 @@ class PersonPicker extends Component<IProps, IState> {
         this.props.persons.map((person: Person, index: number) => {
             name = person.firstname + ' ' + person.lastname;
             if (name.toLowerCase().includes(this.state.input.toLocaleLowerCase())) {
-                options.push(<TouchableOpacity onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
+                options.push(<TouchableOpacity style={styles.item} onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
             }
         });
 
@@ -54,3 +54,35 @@ class PersonPicker extends Component<IProps, IState> {
 }
 
 export default PersonPicker;
+
+const styles = StyleSheet.create({
+    item: {
+        flex: 1,
+        position: 'relative',
+        paddingRight: 100,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#111'
+    },
+    detailText: {
+        paddingLeft: 20,
+        borderLeftWidth: 10,
+        borderLeftColor: '#4B9382',
+        flexWrap: 'wrap'
+    },
+    detailTextSmall: {
+        paddingLeft: 20,
+        borderLeftWidth: 10,
+        borderLeftColor: '#4B9382',
+        fontSize: 12,
+        flexWrap: 'wrap'
+    },
+    expense: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        top: 10,
+        bottom: 10,
+        right: 10
+    }
+});
