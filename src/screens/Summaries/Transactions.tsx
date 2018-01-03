@@ -73,7 +73,7 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <Picker style={{ height: 40 }} selectedValue={this.state.pickerOpt} onValueChange={(val: string) => this.setState({ pickerOpt: val })}>
-                            <Picker.Item label={'All Users'} value={'all'} key={'all'} />
+                            <Picker.Item label={'All Persons'} value={'all'} key={'all'} />
                             {this.state.personPickerItems}
                         </Picker>
                     </View>

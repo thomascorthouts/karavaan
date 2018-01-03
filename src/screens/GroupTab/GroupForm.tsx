@@ -17,7 +17,6 @@ interface IState {
     personArray: PersonList; // persons in this group
     allPersonsArray: PersonList; // All persons ever added to a group
     currencies: Currencies;
-    memberSuggestion: string;
     update: boolean;
 }
 
@@ -53,7 +52,6 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             } as Group,
             personArray: [] as PersonList,
             allPersonsArray: [] as PersonList,
-            memberSuggestion: '',
             groupArray: navParams.groupArray,
             currencies: _currencies,
             update: navParams.update
@@ -121,10 +119,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                         placeholder={'Firstname Lastname'}
                         returnKeyType={'done'}
                         autoCapitalize={'words'}
-                        suggestion={this.state.memberSuggestion}
-                        suggestionPress={() => this.selectSuggestion()}
-                        onBlur={() => this.setState({ memberSuggestion: '' })}
-                        onChangeText={(text: string) => this.findSuggestion(text)}
+                        options={this.state.allPersonsArray.map(a => a.firstname + ' ' + a.lastname)}
                         onSubmitEditing={(text: any) => this.addPerson(text.nativeEvent.text)}
                     />
 
@@ -169,18 +164,6 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     setDefaultCurrencies(currencies: Currencies) {
         const group = Object.assign({}, this.state.group, { currencies: currencies });
         this.setState({ group });
-    }
-
-    findSuggestion(text: string) {
-        let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.allPersonsArray.map(a => a.firstname + ' ' + a.lastname));
-        if (!this.state.personArray.find(function (obj: Person) { return obj.firstname + ' ' + obj.lastname === bestSuggestion; })) {
-            this.setState({ memberSuggestion: bestSuggestion });
-        }
-    }
-
-    selectSuggestion() {
-        (this as any).newMember.setNativeProps({ text: this.state.memberSuggestion });
-        this.setState({ memberSuggestion: '' });
     }
 
     saveGroup(dispatch: any) {

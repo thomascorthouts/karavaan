@@ -17,7 +17,7 @@ export const findBestMatch = (current: string, list: string[]) => {
         return '';
     }
 
-    let bestScore = 0.3;
+    let bestScore = 0.2;
     let bestMatch;
 
     for (let item of list) {
@@ -36,7 +36,7 @@ export const findBestMatches = (current: string, list: string[]) => {
         return [];
     }
 
-    let minScore = 0.3;
+    let minScore = 0.2;
     let bestMatches = [];
 
     for (let item of list) {

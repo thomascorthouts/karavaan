@@ -53,7 +53,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
 
     render() {
         let { navigate } = this.props.navigation;
-        let otherPickerOptions = [<Picker.Item label={'All'} value={'All'} key={'all'} />];
+        let otherPickerOptions = [<Picker.Item label={'All Categories'} value={'All'} key={'all'} />];
         return (
             <View style={styles.flex}>
                 <CategoryPicker

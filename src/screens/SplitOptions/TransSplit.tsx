@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
-import PersonChooser from '../../components/Pickers/PersonChooser';
+import { View, Text, AsyncStorage, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { parseMoney } from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
+import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
+import { showError } from '../../utils/popup';
 
 interface Options {
     splitMode: boolean;
@@ -32,7 +33,6 @@ interface IState {
     receiver: Person;
     expenseArray: ExpenseList;
     personArray: PersonList;
-    error: string;
     amountString: string;
 }
 
@@ -58,7 +58,6 @@ class TransSplit extends Component<IProps, IState> {
             receiver: {} as Person,
             expenseArray: [] as ExpenseList,
             personArray: [] as PersonList,
-            error: '',
             amountString: options.amount.toString()
         };
     }
@@ -71,38 +70,61 @@ class TransSplit extends Component<IProps, IState> {
                 <View style={styles.flex}>
                     <Text style={styles.title}>{this.state.options.description}</Text>
                 </View>
-                <ErrorText errorText={this.state.error} />
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.inputAmount}>
-                        <InputWithoutLabel
-                            onChangeText={(value: string) => this.updateAmount(value)}
-                            value={this.state.amountString}
-                            returnKeyType={'done'}
-                            keyboardType={'numeric'}
-                        />
-                    </View>
-                    <View style={styles.flex}>
-                        <CurrencyPicker
-                            currencies={this.state.group.currencies}
-                            onValueChange={(currency: Currency) => {
-                                const expense = Object.assign({}, this.state.expense, { currency: currency });
-                                this.setState({ expense });
-                            }}
-                            selectedValue={this.state.expense.currency}
-                        />
-                    </View>
-                </View>
-                <View>
-                    <View>
-                        <Text>Payer</Text>
-                        <PersonChooser persons={this.state.personArray} choose={this.chooseDonor.bind(this)} />
+                <KeyboardAvoidingView behavior='padding'>
+                    <View style={styles.rowContainer}>
+                        <View style={styles.inputAmount}>
+                            <InputWithoutLabel
+                                onChangeText={(value: string) => this.updateAmount(value)}
+                                value={this.state.amountString}
+                                onSubmitEditing={() => (this as any).donor.focus()}
+                                returnKeyType={'next'}
+                                keyboardType={'numeric'}
+                            />
+                        </View>
+                        <View style={styles.flex}>
+                            <CurrencyPicker
+                                currencies={this.state.group.currencies}
+                                onValueChange={(currency: Currency) => {
+                                    const expense = Object.assign({}, this.state.expense, { currency: currency });
+                                    this.setState({ expense });
+                                }}
+                                selectedValue={this.state.expense.currency}
+                            />
+                        </View>
                     </View>
                     <View>
-                        <Text>Receiver</Text>
-                        <PersonChooser persons={this.state.personArray} choose={this.chooseReceiver.bind(this)} />
+                        <View>
+                            <InputWithLabel
+                                labelText={'Donor'}
+                                placeholder={'Firstname Lastname'}
+                                options={this.state.personArray.map(a => a.firstname + ' ' + a.lastname)}
+                                selectOption={(option: string) => this.chooseDonor(option)}
+                                onChangeText={(donor: string) => {
+                                    this.chooseDonor(donor);
+                                }}
+                                onSubmitEditing={() => (this as any).receiver.focus()}
+                                inputref={(input: any) => { (this as any).donor = input; }}
+                                returnKeyType={'next'}
+                                autoCapitalize={'words'}
+                            />
+                        </View>
+                        <View>
+                            <InputWithLabel
+                                labelText={'Receiver'}
+                                placeholder={'Firstname Lastname'}
+                                options={this.state.personArray.map(a => a.firstname + ' ' + a.lastname)}
+                                selectOption={(option: string) => this.chooseReceiver(option)}
+                                onChangeText={(receiver: string) => {
+                                    this.chooseReceiver(receiver);
+                                }}
+                                inputref={(input: any) => { (this as any).receiver = input; }}
+                                returnKeyType={'done'}
+                                autoCapitalize={'words'}
+                            />
+                        </View>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
@@ -118,15 +140,27 @@ class TransSplit extends Component<IProps, IState> {
     updateAmount(value: string) {
         let amount = parseMoney(value);
         const expense = Object.assign({}, this.state.expense, { amount: parseFloat(value) });
+        console.log(amount);
         this.setState({ expense, amountString: amount });
     }
 
-    chooseDonor(id: string) {
-        this.choose(id, true);
+    chooseDonor(text: string) {
+        this.choose(this.createPerson(text).id, true);
     }
 
-    chooseReceiver(id: string) {
-        this.choose(id, false);
+    chooseReceiver(text: string) {
+        this.choose(this.createPerson(text).id, false);
+    }
+
+    createPerson(text: string) {
+        let firstname = text.split(' ')[0].trim();
+        let lastname = text.split(' ').slice(1).join(' ').trim() || '';
+        let person = {
+            firstname: firstname,
+            lastname: lastname,
+            id: firstname + lastname
+        } as Person;
+        return person;
     }
 
     choose(id: string, isDonor: boolean) {
@@ -139,7 +173,7 @@ class TransSplit extends Component<IProps, IState> {
 
     addTransaction(dispatch: any) {
         if (!this.state.donor.id || !this.state.receiver.id || this.state.expense.amount === 0) {
-            this.setState({ error: 'Not all fields are filled in correctly' });
+            showError('Not all fields are filled in correctly');
         } else {
             let donor = this.state.donor;
             let receiver = this.state.receiver;

@@ -34,7 +34,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     render() {
         let { image } = this.state.expense;
         let { height, width } = Dimensions.get('window');
-        const { dispatch } = this.props.navigation;
+        const { dispatch, goBack } = this.props.navigation;
 
         return (
             <View style={styles.container}>
@@ -59,7 +59,15 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.2, resizeMode: 'contain' }} />
                     </View>}
 
-                <GreenButton buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
+                    </View>
+                </View>
+
             </View>
         );
     }
@@ -171,6 +179,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20
+    },
+    rowContainer: {
+        flexDirection: 'row'
     },
     title: {
         fontSize: 30,

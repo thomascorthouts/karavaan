@@ -60,7 +60,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
                         <Picker style={{ height: 40 }} selectedValue={this.state.person} onValueChange={(person: string) => this.onPersonChange(person)}>
-                            <Picker.Item key={'All'} value={'All'} label={'All Users'} />
+                            <Picker.Item key={'All Persons'} value={'All'} label={'All Users'} />
                             {this.state.persons}
                         </Picker>
                     </View>
