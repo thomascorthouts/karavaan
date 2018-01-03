@@ -280,6 +280,9 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
     async updateStorage(id: string) {
         try {
+            if (Object.getOwnPropertyNames(this.state.group.currencies).length === 0) {
+                this.state.group.currencies[this.state.group.defaultCurrency.tag] = this.state.group.defaultCurrency;
+            }
             await AsyncStorage.multiSet([
                 ['groups', JSON.stringify(this.state.groupArray)],
                 ['persons', JSON.stringify(this.state.allPersonsArray)],

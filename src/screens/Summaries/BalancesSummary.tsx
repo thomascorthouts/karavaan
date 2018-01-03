@@ -20,7 +20,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
             const title = state.params.group.name;
             const headerRight = <Button title={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
-            }></Button>;
+            }/>;
             return {
                 headerTitle: `${title}`,
                 headerRight: headerRight
@@ -50,17 +50,20 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 
         return (
             <View style={styles.container}>
-                <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
                 <ScrollView style={styles.ScrollContainer}>
                     {balanceItems}
                 </ScrollView>
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency}/>
+                    </View>
+                </View>
             </View>
         );
     }
 
     updateRate(curr: Currency) {
-        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies)});
-        this.setState({currency: curr});
+        this.setState({rate: getRate(this.state.group.defaultCurrency.tag, curr.tag, this.state.currencies), currency: curr});
     }
 
     componentDidMount() {
