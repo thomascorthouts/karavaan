@@ -69,10 +69,11 @@ class BillSplit extends Component<IProps, IState> {
                 <Text style={styles.title}>{this.state.options.description}</Text>
                 <ErrorText errorText={this.state.error} />
                 <View style={styles.flex}>
-                    <View style={styles.flex}>
+                    <Text>Who payed and how much?</Text>
+                    <View style={{flex: 1.1}}>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}  />
                     </View>
-                    <ScrollView>
+                    <ScrollView style={styles.ScrollContainer}>
                         {this.state.payerNodes}
                     </ScrollView>
                 </View>
@@ -229,6 +230,9 @@ export default BillSplit;
 
 const styles = StyleSheet.create({
     flex: {
+        flex: 1
+    },
+    ScrollContainer: {
         flex: 1
     },
     container: {

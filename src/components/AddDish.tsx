@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {View, Text, StyleSheet, Switch} from 'react-native';
+import React, {Component, ReactNode} from 'react';
+import {View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet} from 'react-native';
 import {InputWithLabel} from './TextInput/InputWithLabel';
 import PersonPicker from './Pickers/PersonPicker';
 import {ErrorText} from './Text/ErrorText';
@@ -18,6 +18,7 @@ interface IState {
     item: Dish;
     error: string;
     all: boolean;
+    receivers: Array<ReactNode>;
 }
 
 export default class AddDish extends Component<IDefaultNavProps, IState> {
@@ -32,7 +33,8 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
             users: [],
             item: {} as Dish,
             error: '',
-            all: false
+            all: false,
+            receivers: []
         };
     }
 
@@ -42,14 +44,23 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
             <View style={styles.container}>
                 <Text style={styles.title}>Add Item</Text>
                 <ErrorText errorText={this.state.error}/>
-                <View>
+                <View style={styles.flex}>
                     <InputWithLabel labelText={'description'} value={ this.state.description } onChangeText={(description: string) => this.setState({description}) } />
                     <InputWithLabel labelText={'amount'} value={ this.state.amount.toString() } onChangeText={ (amount: string) =>  this.setState({amount: parseFloat(amount)}) } />
-                    <View style={styles.rowContainer}>
-                        <Text>Split between all users</Text>
-                        <Switch onTintColor={'#287E6F'} value={this.state.all} onValueChange={(all: boolean) => this.setState({all})}/>
+                    <View style={{flex: 0.13}}>
+                        <Text>Between who should the item be split?</Text>
+                        <View style={styles.rowContainer}>
+                            <Text>Split between all users</Text>
+                            <Switch onTintColor={'#287E6F'} value={this.state.all} onValueChange={(all: boolean) => this.setState({all})}/>
+                        </View>
                     </View>
-                    <PersonPicker persons={this.state.options.persons} choose={this.choose.bind(this)}/>
+                    <View style={styles.flex}>
+                        <PersonPicker persons={this.state.options.persons} choose={this.choose.bind(this)}/>
+                        <Text>Selected users:</Text>
+                        <ScrollView>
+                            {this.state.receivers}
+                        </ScrollView>
+                    </View>
                 </View>
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
@@ -65,11 +76,23 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
 
     choose(id: string) {
         let chosen = this.state.users;
+        let receivers = this.state.receivers;
         const p = this.state.options.persons.find((val: Person) => {return (val.id === id); });
-        if (typeof p !== 'undefined') {
+        if (typeof p !== 'undefined' && typeof this.state.users.find((val: Person) => {return (val.id === id); }) === 'undefined') {
             chosen.push(p);
-            this.setState({users: chosen});
+            receivers.push(<View key={'receiver' + p.id} style={styles.rowContainer}><TouchableOpacity onPress={() => this.remove(p.id)}><Text>{p.firstname} {p.lastname}</Text></TouchableOpacity></View>);
+            this.setState({users: chosen, receivers: receivers});
         }
+    }
+
+    remove(id: string) {
+        let chosen = this.state.users;
+        let receivers = this.state.receivers;
+        chosen = chosen.filter((val: Person, key: number) => { return val.id !== id; });
+        receivers = chosen.map((val: Person) => {
+             return (<View key={'receiver' + val.id} style={styles.rowContainer}><TouchableOpacity onPress={() => this.remove(val.id)}><Text>{val.firstname} {val.lastname}</Text></TouchableOpacity></View>);
+        });
+        this.setState({users: chosen, receivers});
     }
 
     save(goBack: any) {
