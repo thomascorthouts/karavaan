@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { OptionPicker } from './OptionPicker';
+import * as StringSimilarity from '../../utils/similarity';
 
 interface IProps {
     persons: PersonList;
@@ -25,7 +26,7 @@ class PersonPicker extends Component<IProps, IState> {
     render() {
         return (
             <View>
-                <OptionPicker inputLabel={'Name:'} onChangeText={(text: any) => {
+                <OptionPicker inputLabel={'Name:'} placeholder={'Firstname Lastname'} onChangeText={(text: any) => {
                     this.setState({ input: text }, () => this.updateOptions());
                 }} textInput={this.state.input} options={this.state.options} />
             </View>
@@ -37,19 +38,20 @@ class PersonPicker extends Component<IProps, IState> {
         let name;
         this.props.persons.map((person: Person, index: number) => {
             name = person.firstname + ' ' + person.lastname;
-            if (name.toLowerCase().includes(this.state.input.toLocaleLowerCase())) {
+            if (name.toLowerCase().includes(this.state.input.toLocaleLowerCase()) || StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3) {
                 options.push(<TouchableOpacity style={styles.item} onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
             }
         });
 
         this.setState({ options: options });
     }
-    componentWillMount() {
-        this.updateOptions();
-    }
 
     choose(id: string) {
         this.props.choose(id);
+    }
+
+    componentWillMount() {
+        this.updateOptions();
     }
 }
 

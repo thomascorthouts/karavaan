@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage, StatusBar } from 'react-native';
 import { GroupItem } from '../../components/FeedItems/GroupFeedItem';
+import { GreenButton } from '../../components/Buttons/GreenButton';
 
 interface IProps {
     navigation: any;
@@ -32,15 +33,12 @@ class Groups extends Component<IProps, IState> {
 
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
+                <StatusBar hidden={true} />
                 <ScrollView style={styles.ScrollContainer}>
                     {groups}
                 </ScrollView>
-                <KeyboardAvoidingView behavior='padding' style={styles.footer} >
-                    <TouchableOpacity onPress={() => this.addGroup(navigate)} style={styles.addButton}>
-                        <Text style={styles.addButtonText}> + </Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
+
+                <GreenButton onPress={() => this.addGroup(navigate)} buttonText='New Group' buttonStyle={{ marginBottom: 3, marginHorizontal: 2 }} />
             </View>
         );
     }
@@ -50,7 +48,7 @@ class Groups extends Component<IProps, IState> {
     }
 
     addGroup(navigate: any) {
-        navigate('GroupForm', { groupArray: this.state.groupArray, updateFeedState: this.updateState, update: false});
+        navigate('GroupForm', { groupArray: this.state.groupArray, updateFeedState: this.updateState, update: false });
     }
 
     async viewExpenses(group: Group, navigate: any) {
@@ -62,7 +60,7 @@ class Groups extends Component<IProps, IState> {
                     return [];
                 }
             });
-        navigate('GroupExpenseFeed', { group: group, expenseArray: expenseArray, groupArray: this.state.groupArray});
+        navigate('GroupExpenseFeed', { group: group, expenseArray: expenseArray, groupArray: this.state.groupArray });
     }
 
     componentDidMount() {

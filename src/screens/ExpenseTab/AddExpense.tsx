@@ -20,9 +20,7 @@ interface IState {
     expenseArray: ExpenseList;
     amountString: string;
     donor: Person;
-    donorSuggestion: string;
     receiver: Person;
-    receiverSuggestion: string;
 }
 
 export class AddExpense extends Component<IDefaultNavProps, IState> {
@@ -49,12 +47,10 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                 firstname: '',
                 lastname: ''
             } as Person,
-            donorSuggestion: '',
             receiver: {
                 firstname: '',
                 lastname: ''
-            } as Person,
-            receiverSuggestion: ''
+            } as Person
         };
     }
 
@@ -78,7 +74,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                         }}
                         onSubmitEditing={() => (this as any).donor.focus()}
                         returnKeyType={'next'}
-                        autoCapitalize={'words'}
+                        autoCapitalize={'sentences'}
                     />
 
                     <DatePicker
@@ -111,11 +107,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     <InputWithLabel
                         labelText={'Donor'}
                         placeholder={'Firstname Lastname'}
-                        suggestion={this.state.donorSuggestion}
-                        suggestionPress={() => this.selectDonorSuggestion()}
-                        onBlur={() => this.setState({ donorSuggestion: '' })}
+                        options={this.state.persons.map(a => a.firstname + ' ' + a.lastname)}
+                        selectOption={(option: string) => this.setDonor(option)}
                         onChangeText={(donor: string) => {
-                            this.findSuggestion(donor, 'donor');
                             this.setDonor(donor);
                         }}
                         onSubmitEditing={() => (this as any).receiver.focus()}
@@ -127,11 +121,9 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
                     <InputWithLabel
                         labelText={'Receiver'}
                         placeholder={'Firstname Lastname'}
-                        suggestion={this.state.receiverSuggestion}
-                        suggestionPress={() => this.selectReceiverSuggestion()}
-                        onBlur={() => this.setState({ receiverSuggestion: '' })}
+                        options={this.state.persons.map(a => a.firstname + ' ' + a.lastname)}
+                        selectOption={(option: string) => this.setReceiver(option)}
                         onChangeText={(receiver: string) => {
-                            this.findSuggestion(receiver, 'receiver');
                             this.setReceiver(receiver);
                         }}
                         onSubmitEditing={() => (this as any).amount.focus()}
@@ -216,28 +208,6 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
             balance: 0
         } as Person;
         return person;
-    }
-
-    findSuggestion(text: string, type: string) {
-        let bestSuggestion = StringSimilarity.findBestMatch(text, this.state.persons.map(a => a.firstname + ' ' + a.lastname));
-        if (type === 'donor') {
-            this.setState({ donorSuggestion: bestSuggestion });
-        } else {
-            this.setState({ receiverSuggestion: bestSuggestion });
-        }
-    }
-
-    selectDonorSuggestion() {
-        let newDonor = this.state.donorSuggestion;
-        (this as any).donor.setNativeProps({ text: newDonor });
-        this.setState({ donorSuggestion: '', donor: this.createPerson(newDonor) });
-    }
-
-    selectReceiverSuggestion() {
-        let newReceiver = this.state.receiverSuggestion;
-        (this as any).receiver.setNativeProps({ text: newReceiver });
-        this.setState({ receiverSuggestion: '', receiver: this.createPerson(newReceiver) });
-
     }
 
     // Category
@@ -375,6 +345,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     inputAmount: {
-        flex: 3.6
+        flex: 2
     }
 });

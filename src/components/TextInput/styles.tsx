@@ -22,8 +22,9 @@ const textInputStyles = StyleSheet.create({
         marginTop: -10,
         marginBottom: 10,
         paddingHorizontal: 10,
-        borderColor: '#444',
-        borderWidth: 1
+        borderColor: '#AAA',
+        borderStyle: 'solid',
+        borderTopWidth: 1
     },
     suggestionText: {
         color: '#CCC'
