@@ -26,7 +26,7 @@ class PersonPicker extends Component<IProps, IState> {
     render() {
         return (
             <View>
-                <OptionPicker inputLabel={'Name:'} placeholder={'Firstname Lastname'} onChangeText={(text: any) => {
+                <OptionPicker inputLabel={''} placeholder={'Firstname Lastname'} onChangeText={(text: any) => {
                     this.setState({ input: text }, () => this.updateOptions());
                 }} textInput={this.state.input} options={this.state.options} />
             </View>

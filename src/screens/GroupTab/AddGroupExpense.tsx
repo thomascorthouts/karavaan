@@ -8,6 +8,7 @@ import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel'
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { showError } from '../../utils/popup';
 
 interface IState {
     description: string;
@@ -16,7 +17,6 @@ interface IState {
     amount: number;
     splitMode: string;
     category: string;
-    amountString: string;
     date: string;
     image: any;
 }
@@ -34,7 +34,6 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             amount: 0,
             splitMode: 'trans',
             category: 'Entertainment',
-            amountString: '',
             date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
             image: null
         };
@@ -65,7 +64,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <View style={styles.inputAmount}>
                             <InputWithoutLabel
                                 onChangeText={(amount: string) => this.updateAmount(amount)}
-                                value={this.state.amountString}
+                                value={this.state.amount.toString()}
                                 returnKeyType={'done'}
                                 keyboardType={'numeric'}
                                 inputref={(input: any) => { (this as any).amount = input; }}
@@ -123,7 +122,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.nextScreen(navigate)} buttonText={'NEXT'} />
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.validate(navigate)} buttonText={'NEXT'} />
                     </View>
                 </View>
             </View>
@@ -136,11 +135,28 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
 
     updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({ amountString: amount, amount: parseFloat(amount) });
+        this.setState({ amount: parseFloat(amount) });
     }
 
     updateCategory(cat: string) {
         this.setState({ category: cat });
+    }
+
+    validate(navigate: any) {
+        let error = '';
+        if (this.state.description === undefined || this.state.description === '') {
+            error += 'Description can not be empty';
+        }
+
+        if (this.state.amount.toString() === '' || isNaN(this.state.amount) || this.state.amount < 0) {
+            error += '\nAmount can not be empty';
+        }
+
+        if (error === '') {
+            this.nextScreen(navigate);
+        } else {
+            showError(error);
+        }
     }
 
     nextScreen = (navigate: any) => {

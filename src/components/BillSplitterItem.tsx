@@ -7,7 +7,6 @@ interface IProps {
     keyval: any;
     val: string;
     amount: number;
-    submitEditing(): any;
     onChangeText(amount: number, id: string): any;
 }
 
@@ -33,7 +32,6 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
                 <View style={styles.expense}>
                     <InputWithoutLabel
                         inputStyle={{ width: 55 }}
-                        onSubmitEditing={this.props.submitEditing()}
                         value={this.state.amount.toString()}
                         onChangeText={(text: any) => {
                             this.update( text, this.props.keyval);
@@ -45,7 +43,6 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
     }
 
     update (value: string, id: string) {
-
         let amount = parseMoney(value);
         this.setState({ amount });
         this.props.onChangeText(parseFloat(amount) , id);

@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker, Dimensions } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
@@ -24,7 +24,8 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         const { state, navigate } = navigation;
         if (state.params) {
             const title = state.params.group.name;
-            const headerRight = <Button title={'Edit'} onPress={() =>
+            const width = Dimensions.get('window').width;
+            const headerRight = <GreenButton buttonStyle={{margin: 10, width: width * 0.2, borderRadius: 10 }} buttonText={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             } />;
             return {
@@ -61,7 +62,8 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                     onValueChange={(category: string) => this.setState({ category }, () => this.updateView())}
                     otherOptions={otherPickerOptions}
                 />
-                <ScrollView style={styles.flex}>
+
+                <ScrollView style={[styles.flex, {borderTopWidth: 0.5, borderTopColor: '#111'}]}>
                     {this.state.feed}
                 </ScrollView>
 

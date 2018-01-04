@@ -101,7 +101,7 @@ class BillSplit extends Component<IProps, IState> {
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} submitEditing={() => undefined} onChangeText={this.setPayerAmount.bind(this)} />);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
@@ -127,7 +127,7 @@ class BillSplit extends Component<IProps, IState> {
 
     updateItems() {
         let items = this.state.dishes.map((val: Dish) => {
-            return (<BillSplitterItem key={val.name} keyval={val.id} val={val.name} amount={val.amount} onChangeText={this.setItemAmount.bind(this)} submitEditing={() => this.submitEditing()} />);
+            return (<BillSplitterItem key={val.name} keyval={val.id} val={val.name} amount={val.amount} onChangeText={this.setItemAmount.bind(this)} />);
         });
 
         this.setState({ items });
@@ -143,10 +143,6 @@ class BillSplit extends Component<IProps, IState> {
         }
     }
 
-    submitEditing() {
-        // Hiep hoi lege functie
-    }
-
     confirm(dispatch: any) {
         this.createBalances()
             .then(() => this.addExpenseToStorage())
@@ -158,11 +154,16 @@ class BillSplit extends Component<IProps, IState> {
         let balances = this.state.payers; // begin from payers as base
         let avg: number;
         let bal;
-        let sum = 0;
-        this.state.payers.map((val: Balance) => sum += val.amount);
-        this.state.dishes.map((item: Dish) => sum -= item.amount);
+        let sumPayers = 0;
+        let sumItems = 0;
+        this.state.payers.map((val: Balance) => sumPayers += val.amount);
+        this.state.dishes.map((item: Dish) => sumItems += item.amount);
 
-        if (sum === 0) {
+        if (sumPayers !== this.state.options.amount) {
+            throw 'The total balance is not equal to the total amount (=' + this.state.options.amount + ')';
+        }
+
+        if (sumPayers !== sumItems) {
             this.state.dishes.map((item: Dish) => {
                 avg = item.amount / item.users.length;
                 item.users.map((val: Person) => {
