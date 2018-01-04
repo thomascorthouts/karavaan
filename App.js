@@ -87,18 +87,17 @@ export default class App extends Component {
                         latest = parsed.latest;
                     }
 
-                    AsyncStorage.getItem('defaultCurrency').then((value) => {
-                        let date = new Date();
-                        let today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-                        if (latest && latest === today) {
-                            console.log('currencies up to date');
-                            return
-                        }
+                    let date = new Date();
+                    let today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    if (latest && latest === today) {
+                        console.log('currencies up to date');
+                        return;
+                    }
 
-                        if (value) {
-                            this.updateExchangeRates('?base=' + JSON.parse(value).tag, JSON.parse(value).tag, today);
-                        } else {
-                            this.updateExchangeRates('', 'EUR', today);
+                    this.updateExchangeRates('EUR', today);
+
+                    AsyncStorage.getItem('defaultCurrency').then((value) => {
+                        if (!value) {
                             AsyncStorage.setItem('defaultCurrency', JSON.stringify({ name: 'Euro', tag: 'EUR', rate: 1, symbol: '€' }));
                         }
                     });
@@ -107,14 +106,14 @@ export default class App extends Component {
         }
     }
 
-    async updateExchangeRates(url, base, today) {
+    async updateExchangeRates(base, today) {
         console.log('updating currencies');
         let headers = {
             'Content-Type': 'application/json',
             'Cache-Control': 'no-cache'
         };
 
-        fetch('http://api.fixer.io/latest' + url, { method: 'GET', headers: headers, body: null })
+        fetch('http://api.fixer.io/latest', { method: 'GET', headers: headers, body: null })
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.rates) {

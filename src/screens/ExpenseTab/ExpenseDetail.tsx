@@ -103,8 +103,8 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                     expenseArray[this.state.key] = expense;
                     this.setState({ expense, expenseArray }, () => {
                         AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
-                        this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
                         this.createBalances(expense, base, data.rates[current], true);
+                        this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
                     });
                 } else {
                     this.createBalances(expense, base, 0, false);

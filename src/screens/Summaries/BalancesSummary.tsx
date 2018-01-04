@@ -63,14 +63,13 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         this.setState({ currency: curr });
     }
 
-    async componentWillMount() {
+    componentWillMount() {
         let expenses = this.state.expenseArray;
         let balances = [] as Balances;
         if (expenses) {
             expenses.map((val: Expense) => {
                 val.balances.map((bal: Balance) => {
                     let balFound = balances.find((x: Balance) => x.person.id === bal.person.id);
-                    // Test whether this works
                     let rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, this.state.currencies);
                     bal.amount = bal.amount * rate;
                     bal.amount = (bal.amount > 0) ? Math.floor(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2) : Math.ceil(bal.amount * Math.pow(10, 2)) / Math.pow(10, 2);
