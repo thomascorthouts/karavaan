@@ -155,7 +155,13 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
     async getExchangeRate(date: string) {
         let currs = JSON.parse(JSON.stringify(_currencies));
-        fetch('https://api.fixer.io/' + date)
+
+        let headers = {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        };
+
+        fetch('http://api.fixer.io/' + date, { method: 'GET', headers: headers, body: null })
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.rates) {
@@ -171,7 +177,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                 }
             })
             .catch((error) => {
-                showError('Failed to fetch exchange rates');
+                showError('Failed to fetch exchange rates\n\n' + error);
             });
     }
 
@@ -230,6 +236,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     inputAmount: {
-        flex: 3.6
+        flex: 2
     }
 });

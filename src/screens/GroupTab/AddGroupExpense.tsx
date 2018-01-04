@@ -189,6 +189,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     inputAmount: {
-        flex: 3.6
+        flex: 2
     }
 });

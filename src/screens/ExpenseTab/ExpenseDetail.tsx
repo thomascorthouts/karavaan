@@ -86,8 +86,12 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
     }
 
     async getExchangeRate(date: string, base: Currency, current: string) {
+        let headers = {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        };
 
-        fetch('https://api.fixer.io/' + date + '?base=' + base.tag + '&symbols=' + current)
+        fetch('http://api.fixer.io/' + date + '?base=' + base.tag + '&symbols=' + current, { method: 'GET', headers: headers, body: null })
             .then((resp) => resp.json())
             .then((data) => {
                 const expense = JSON.parse(JSON.stringify(this.state.expense));
@@ -109,7 +113,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             })
             .catch((error) => {
                 console.log(error);
-                this.setState({ failed: true });
+                this.setState({ failed: true }, () => this.createBalances(this.state.expense, base, 0, false));
             });
     }
 

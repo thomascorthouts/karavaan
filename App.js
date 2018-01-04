@@ -25,7 +25,7 @@ export default class App extends Component {
                         this.setState({ currentScreen });
                     }
                 }}
-                ref={nav => {this.navigator = nav;}}
+                ref={nav => { this.navigator = nav; }}
             />
         );
     }
@@ -60,7 +60,7 @@ export default class App extends Component {
             this.navigator.dispatch(NavigationActions.navigate({ routeName: 'Home' }));
             return true;
         }
-        
+
         if (this.state.currentScreen === 'Login' || this.state.currentScreen === 'ExpenseFeed' || this.state.currentScreen === 'GroupFeed') {
             Alert.alert('Warning', 'Do you really want to close the application?', [
                 { text: 'Cancel', style: 'cancel' },
@@ -109,7 +109,12 @@ export default class App extends Component {
 
     async updateExchangeRates(url, base, today) {
         console.log('updating currencies');
-        fetch('https://api.fixer.io/latest' + url)
+        let headers = {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        };
+
+        fetch('http://api.fixer.io/latest' + url, { method: 'GET', headers: headers, body: null })
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.rates) {
