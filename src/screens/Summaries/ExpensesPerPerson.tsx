@@ -11,6 +11,7 @@ import { getRate } from '../../utils/getRate';
 interface IState {
     person: string;
     expenseArray: ExpenseList;
+    expenseArrayId: string;
     personArray: PersonList;
     feed: ReactNode[];
     currencies: Currencies;
@@ -24,12 +25,13 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params && 'group' in state.params) {
-            const title = state.params.group.name;
             return {
-                headerTitle: `${title}`
+                headerTitle: `${state.params.group.name} Summaries`
             };
         } else {
-            return {};
+            return {
+                headerTitle: 'Expense Summaries'
+            };
         }
     };
 
@@ -40,6 +42,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         this.state = {
             person: 'All',
             expenseArray: navParams.expenseArray,
+            expenseArrayId: navParams.expenseArrayId,
             feed: [],
             currencies: navParams.currencies,
             personArray: navParams.personArray,
@@ -77,7 +80,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     updateState = (data: any) => {
-        this.setState(data);
+        this.setState(data, () => this.updateView());
     }
 
     updateRate(curr: Currency) {
@@ -88,14 +91,15 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         let { navigate } = this.props.navigation;
         let feed: ReactNode[] = [];
         this.state.expenseArray.map((val: Expense, key: any) => {
+            let rate = (val.currency.tag === this.state.currency.tag) ? 1 : getRate(val.currency.tag, this.state.currency.tag, this.state.currencies);
             if (this.state.person !== 'All') {
                 val.balances.map((bal: Balance) => {
                     if (bal.person.id === this.state.person) {
-                        feed.push(<ExpenseItem key={key} keyval={key} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
+                        feed.push(<ExpenseItem key={key} keyval={key} rate={rate} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
                     }
                 });
             } else {
-                feed.push(<ExpenseItem key={key} keyval={key} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
+                feed.push(<ExpenseItem key={key} keyval={key} rate={rate} currency={this.state.currency} val={val} viewDetails={() => this.viewDetails(key, navigate)} />);
             }
         });
         this.setState({ feed });
@@ -104,7 +108,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = ('group' in this.props.navigation.state.params) ? 'GroupExpenseDetail' : 'ExpenseDetail';
-        navigate(screen, { expense: expense });
+        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState });
     }
 
     componentWillMount() {

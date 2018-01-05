@@ -67,18 +67,19 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
-                onChangeText={this.update.bind(this)}
-                submitEditing={() => this.submitEditing()} />;
+                onChangeText={this.update.bind(this)}/>;
         });
 
         return (
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
+
+                <View style={styles.flex}>
+                    <Text style={styles.title}>{this.state.options.description}</Text>
+                </View>
+                <ErrorText errorText={this.state.error} />
+
                 <KeyboardAvoidingView>
-                    <View style={styles.flex}>
-                        <Text style={styles.title}>{this.state.options.description}</Text>
-                    </View>
-                    <ErrorText errorText={this.state.error} />
                     <View>
                         <Text>Payers</Text>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} />
@@ -93,15 +94,17 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                         </ScrollView>
                     </View>
                 </KeyboardAvoidingView>
-                <View>
-                    <Text>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
-                    <View style={styles.rowContainer}>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
-                        </View>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
-                        </View>
+
+                <View style={styles.flexCenter}>
+                    <Text style={{fontWeight: 'bold', fontSize: 16}}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                </View>
+
+                <View style={styles.rowContainer}>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                    </View>
+                    <View style={styles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -126,7 +129,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} submitEditing={() => this.submitEditing()} onChangeText={this.setPayerAmount.bind(this)} />);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
@@ -138,10 +141,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             bal.amount = amount;
             this.setState({ payers });
         }
-    }
-
-    submitEditing() {
-        // empty
     }
 
     confirm(dispatch: any) {
@@ -238,6 +237,11 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 const styles = StyleSheet.create({
     flex: {
         flex: 1
+    },
+    flexCenter: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1,

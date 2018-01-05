@@ -5,6 +5,7 @@ interface IProps {
     keyval: any;
     val: Expense;
     currency?: Currency;
+    rate?: number;
     viewDetails(): void;
 }
 
@@ -15,8 +16,8 @@ export class ExpenseItem extends React.Component<IProps, {}> {
 
     render() {
         let amount;
-        if (this.props.currency && this.props.currency.rate) {
-            amount = this.props.currency.symbol + (this.props.currency.rate * this.props.val.amount).toFixed(2);
+        if (this.props.currency && this.props.rate) {
+            amount = this.props.currency.symbol + (this.props.rate * this.props.val.amount).toFixed(2);
         } else {
             amount = this.props.val.currency.symbol + (this.props.val.amount).toFixed(2);
         }
