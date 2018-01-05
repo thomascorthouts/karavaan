@@ -29,12 +29,13 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params && 'group' in state.params) {
-            const title = state.params.group.name;
             return {
-                headerTitle: `${title}`
+                headerTitle: `${state.params.group.name} Summaries`
             };
         } else {
-            return {};
+            return {
+                headerTitle: 'Expense Summaries'
+            };
         }
     };
 

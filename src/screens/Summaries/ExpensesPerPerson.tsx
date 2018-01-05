@@ -11,6 +11,7 @@ import { getRate } from '../../utils/getRate';
 interface IState {
     person: string;
     expenseArray: ExpenseList;
+    expenseArrayId: string;
     personArray: PersonList;
     feed: ReactNode[];
     currencies: Currencies;
@@ -24,12 +25,13 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state, navigate } = navigation;
         if (state.params && 'group' in state.params) {
-            const title = state.params.group.name;
             return {
-                headerTitle: `${title}`
+                headerTitle: `${state.params.group.name} Summaries`
             };
         } else {
-            return {};
+            return {
+                headerTitle: 'Expense Summaries'
+            };
         }
     };
 
@@ -40,6 +42,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         this.state = {
             person: 'All',
             expenseArray: navParams.expenseArray,
+            expenseArrayId: navParams.expenseArrayId,
             feed: [],
             currencies: navParams.currencies,
             personArray: navParams.personArray,
@@ -77,7 +80,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     updateState = (data: any) => {
-        this.setState(data);
+        this.setState(data, () => this.updateView());
     }
 
     updateRate(curr: Currency) {
@@ -105,7 +108,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = ('group' in this.props.navigation.state.params) ? 'GroupExpenseDetail' : 'ExpenseDetail';
-        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, updateFeedState: this.updateState });
+        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState });
     }
 
     componentWillMount() {

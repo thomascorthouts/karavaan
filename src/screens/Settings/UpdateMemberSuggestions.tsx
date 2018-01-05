@@ -12,7 +12,7 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         return {
-            headerTitle: 'Return to settings',
+            headerTitle: 'Settings',
             headerStyle: { 'backgroundColor': '#4B9382' }
         };
     };

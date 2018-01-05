@@ -63,35 +63,44 @@ export const GroupSummaries = TabNavigator(
 export const ExpenseStack = StackNavigator(
     {
         ExpenseFeed: {
-            screen: ExpenseFeed
+            screen: ExpenseFeed,
+            navigationOptions: {
+                header: null
+            }
         },
         ExpenseDetail: {
             screen: ExpenseDetail,
             navigationOptions: {
+                header: null,
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         AddExpense: {
             screen: AddExpense,
             navigationOptions: {
+                header: null,
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         ImageSelector: {
             screen: ImageSelector,
             navigationOptions: {
+                header: null,
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         ExpenseSummaries: {
             screen: GroupSummaries,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         }
     }, {
-        mode: 'modal',
-        headerMode: 'none'
+        mode: 'modal'
     }
 );
 
@@ -106,36 +115,42 @@ export const GroupStack = StackNavigator(
         GroupForm: {
             screen: GroupForm,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         ImageSelector: {
             screen: ImageSelector,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         GroupCurrencies: {
             screen: GroupCurrencies,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         GroupExpenseFeed: {
             screen: ExpenseFeed,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         GroupSummaries: {
             screen: GroupSummaries,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false
             }
         },
         GroupExpenseDetail: {
             screen: ExpenseDetail,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -143,6 +158,7 @@ export const GroupStack = StackNavigator(
         GroupAddExpense: {
             screen: GroupExpense,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -150,6 +166,7 @@ export const GroupStack = StackNavigator(
         GroupAddTransaction: {
             screen: TransSplit,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -157,6 +174,7 @@ export const GroupStack = StackNavigator(
         GroupAddBill: {
             screen: BillSplit,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -164,6 +182,7 @@ export const GroupStack = StackNavigator(
         AddItem: {
             screen: AddDish,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -171,6 +190,7 @@ export const GroupStack = StackNavigator(
         GroupAddByAmount: {
             screen: AmountSplit,
             navigationOptions: {
+                swipeEnabled: false,
                 tabBarVisible: false,
                 header: null
             }
@@ -195,7 +215,7 @@ export const Expenses = TabNavigator(
             }
         }
     }, {
-        swipeEnabled: false,
+        swipeEnabled: true,
         tabBarOptions: {
             activeTintColor: '#D3D3D3',
             style: {
