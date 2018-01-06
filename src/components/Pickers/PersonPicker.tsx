@@ -6,6 +6,7 @@ import * as StringSimilarity from '../../utils/similarity';
 interface IProps {
     persons: PersonList;
     choose: any;
+    style?: any;
 }
 
 interface IState {
@@ -36,9 +37,11 @@ class PersonPicker extends Component<IProps, IState> {
     updateOptions() {
         let options = [] as ReactNode[];
         let name;
+        let len = 0;
         this.props.persons.map((person: Person, index: number) => {
             name = person.firstname + ' ' + person.lastname;
-            if (name.toLowerCase().includes(this.state.input.toLocaleLowerCase()) || StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3) {
+            if (StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3 && len < 2) {
+                len++;
                 options.push(<TouchableOpacity style={styles.item} onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
             }
         });
