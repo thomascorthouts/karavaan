@@ -118,12 +118,12 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
 
             if (this.state.expenseArrayId === 'expenses') {
                 navigate('ExpenseSummaries', {
-                    currency: currency, defaultCurrency: currency, currencies: currencies, expenseArray: this.state.expenseArray, 
+                    currency: currency, defaultCurrency: currency, currencies: currencies, expenseArray: this.state.expenseArray,
                     expenseArrayId: this.state.expenseArrayId, personArray: personArray
                 });
             } else {
                 navigate('GroupSummaries', {
-                    currency: this.state.group.defaultCurrency, defaultCurrency: currency, currencies: currencies,
+                    currency: this.state.group.defaultCurrency, defaultCurrency: this.state.group.defaultCurrency, currencies: currencies,
                     group: this.state.group, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, personArray: personArray
                 });
             }

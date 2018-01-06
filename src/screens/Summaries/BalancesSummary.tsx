@@ -43,7 +43,7 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 
     render() {
         let balanceItems = this.state.balances.map((val: Balance) => {
-            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={this.state.currency.rate} balance={val.amount} key={val.person.id} />;
+            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={getRate(this.state.defaultCurrency.tag, this.state.currency.tag, this.state.currencies)} balance={val.amount} key={val.person.id} />;
         });
 
         return (
