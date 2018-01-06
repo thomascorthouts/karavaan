@@ -87,8 +87,8 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
 
     remove(id: string) {
         let chosen = this.state.users;
-        let receivers = this.state.receivers;
-        chosen = chosen.filter((val: Person, key: number) => { return val.id !== id; });
+        let receivers;
+        chosen = chosen.filter((val: Person) => { return val.id !== id; });
         receivers = chosen.map((val: Person) => {
              return (<View key={'receiver' + val.id} style={styles.rowContainer}><TouchableOpacity onPress={() => this.remove(val.id)}><Text>{val.firstname} {val.lastname}</Text></TouchableOpacity></View>);
         });

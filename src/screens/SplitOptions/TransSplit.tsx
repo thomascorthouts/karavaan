@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, AsyncStorage, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { ErrorText } from '../../components/Text/ErrorText';
 import { parseMoney } from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
@@ -154,12 +153,11 @@ class TransSplit extends Component<IProps, IState> {
     createPerson(text: string) {
         let firstname = text.split(' ')[0].trim();
         let lastname = text.split(' ').slice(1).join(' ').trim() || '';
-        let person = {
+        return {
             firstname: firstname,
             lastname: lastname,
             id: firstname + lastname
         } as Person;
-        return person;
     }
 
     choose(id: string, isDonor: boolean) {

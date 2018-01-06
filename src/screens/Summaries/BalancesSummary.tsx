@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Button, AsyncStorage, StyleSheet, ActivityIndicator } from 'react-native';
-import { _currencies } from '../../config/Data';
+import { View, ScrollView,  StyleSheet } from 'react-native';
 import { BalanceFeedItem } from '../../components/FeedItems/BalanceFeedItem';
 import { getRate } from '../../utils/getRate';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
@@ -16,7 +15,7 @@ interface IState {
 export default class BalancesSummary extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
-        const { state, navigate } = navigation;
+        const { state } = navigation;
         if (state.params && 'group' in state.params) {
             return {
                 headerTitle: `${state.params.group.name} Summaries`

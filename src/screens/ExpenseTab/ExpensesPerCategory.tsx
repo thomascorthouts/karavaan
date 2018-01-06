@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker, Dimensions } from 'react-native';
+import { View, ScrollView, StyleSheet, AsyncStorage, Picker, Dimensions } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
@@ -79,7 +79,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         );
     }
 
-    updateState = (data: any) => {
+    updateState(data: any) {
         this.setState(data);
     }
 

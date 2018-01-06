@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, BackHandler, Alert, AsyncStorage, StatusBar } from 'react-native';
+import { StyleSheet, View, ScrollView,  AsyncStorage, StatusBar } from 'react-native';
 import { GroupItem } from '../../components/FeedItems/GroupFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 
@@ -43,7 +43,7 @@ class Groups extends Component<IProps, IState> {
         );
     }
 
-    updateState = (data: any) => {
+    updateState (data: any) {
         this.setState(data);
     }
 

@@ -1,14 +1,11 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, TextInput, Picker, AsyncStorage, Dimensions, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, AsyncStorage, Dimensions, StatusBar } from 'react-native';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { _currencies } from '../../config/Data';
-import { OptionPicker } from '../../components/Pickers/OptionPicker';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
-import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState } from '../../utils/navigationactions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
-import * as StringSimilarity from '../../utils/similarity';
 import { showError, confirmDelete } from '../../utils/popup';
 
 interface IState {
@@ -62,7 +59,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         let { height } = Dimensions.get('window');
         const { goBack, dispatch, navigate } = this.props.navigation;
 
-        let members: ReactNode[] = new Array();
+        let members: ReactNode[] = [];
         let personArray = this.state.personArray;
 
         personArray.map((person: Person, key: any) => {
@@ -225,13 +222,12 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
     createPerson(text: string) {
         let firstname = text.split(' ')[0].trim();
         let lastname = text.split(' ').slice(1).join(' ').trim() || '';
-        let person = {
+        return {
             firstname: firstname,
             lastname: lastname,
             id: firstname + lastname,
             balance: 0
         } as Person;
-        return person;
     }
 
     deletePerson(key: any) {

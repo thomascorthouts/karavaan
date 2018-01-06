@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import {
-    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Switch,
+    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet,
     Dimensions
 } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';

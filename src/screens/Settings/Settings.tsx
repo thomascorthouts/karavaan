@@ -3,7 +3,6 @@ import { View, Text, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { _currencies } from '../../config/Data';
-import { resetState } from '../../utils/navigationactions';
 import { NavigationActions } from 'react-navigation';
 
 interface IState {
@@ -11,7 +10,7 @@ interface IState {
     defaultCurrency: Currency;
 }
 
-class Settings extends React.Component<IDefaultNavProps, IState> {
+class Settings extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);

@@ -38,7 +38,7 @@ class PersonPicker extends Component<IProps, IState> {
         let options = [] as ReactNode[];
         let name;
         let len = 0;
-        this.props.persons.map((person: Person, index: number) => {
+        this.props.persons.map((person: Person) => {
             name = person.firstname + ' ' + person.lastname;
             if (StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3 && len < 2) {
                 len++;

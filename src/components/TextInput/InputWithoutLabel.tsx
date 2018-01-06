@@ -58,9 +58,9 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
     updateSuggestions() {
         let suggestions = [] as ReactNode[];
         if (this.props.options && this.state.input.trim() !== '') {
-            this.props.options.map((option: string, index: number) => {
+            this.props.options.map((option: string) => {
                 if (option !== this.state.input || suggestions.length > 3) {
-                    if (option.toLocaleLowerCase().includes(this.state.input.toLocaleLowerCase()) || StringSimilarity.compareTwoStrings(option, this.state.input) > 0.3) {
+                    if (StringSimilarity.compareTwoStrings(option, this.state.input) > 0.3) {
                         suggestions.push(
                             <TouchableOpacity style={textInputStyles.suggestionButton} onPress={() => this.selectSuggestion(option)} key={option}>
                                 <Text style={textInputStyles.suggestionText}>{option}</Text>

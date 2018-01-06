@@ -1,8 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, AsyncStorage, Picker, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, Picker, StyleSheet } from 'react-native';
 import { TransactionFeedItem } from '../../components/FeedItems/TransactionFeedItem';
 import { getRate } from '../../utils/getRate';
-import { _currencies } from '../../config/Data';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 
 interface Transaction {
@@ -27,7 +26,7 @@ interface IState {
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
-        const { state, navigate } = navigation;
+        const { state } = navigation;
         if (state.params && 'group' in state.params) {
             return {
                 headerTitle: `${state.params.group.name} Summaries`
