@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Image, StatusBar, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
-import { textInputStyles } from '../components/TextInput/styles';
 import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
 

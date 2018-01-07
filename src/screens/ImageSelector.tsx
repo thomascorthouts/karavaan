@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImagePicker } from 'expo';
-import { Button, Image, View, Dimensions, StyleSheet } from 'react-native';
+import { Image, View, Dimensions, StyleSheet } from 'react-native';
 import { GreenButton } from '../components/Buttons/GreenButton';
 
 interface IState {
@@ -49,12 +49,12 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    selectImage = (goBack: any) => {
+    selectImage(goBack: any) {
         goBack();
         this.props.navigation.state.params.updateImage(this.state.image);
     }
 
-    pickImage = async () => {
+    async pickImage() {
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true
         });

@@ -1,5 +1,8 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Switch } from 'react-native';
+import {
+    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet,
+    Dimensions
+} from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -64,6 +67,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 
     render() {
         const { goBack, dispatch } = this.props.navigation;
+        let height = Dimensions.get('window').height;
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
@@ -82,14 +86,14 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                 <KeyboardAvoidingView>
                     <View>
                         <Text>Payers</Text>
-                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} />
-                        <ScrollView>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{height: height * 0.2}}/>
+                        <ScrollView style={{height: height * 0.2}}>
                             {this.state.payerNodes}
                         </ScrollView>
                     </View>
                     <View>
                         <Text>Receivers</Text>
-                        <ScrollView>
+                        <ScrollView style={{height: height * 0.2}}>
                             {splitter}
                         </ScrollView>
                     </View>
@@ -129,7 +133,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
     }

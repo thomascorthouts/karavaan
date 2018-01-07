@@ -14,7 +14,7 @@ export class CurrencyPicker extends Component<IProps, {}> {
 
     render() {
         let current;
-        let currenciesItems: ReactNode[] = new Array();
+        let currenciesItems: ReactNode[] = [];
         for (let currency in this.props.currencies) {
             current = this.props.currencies[currency];
             currenciesItems.push(<Picker.Item label={current.tag + ' - ' + current.name} value={current} key={current.tag} />);

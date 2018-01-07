@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, Picker, Button, KeyboardAvoidingView, StatusBar, StyleSheet, Dimensions, Text } from 'react-native';
+import { View, Picker, KeyboardAvoidingView, StatusBar, StyleSheet, Dimensions, Text } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { parseMoney } from '../../utils/parsemoney';
-import { _currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
@@ -129,7 +128,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    updateImage = (image: any) => {
+    updateImage(image: any) {
         this.setState({ image });
     }
 

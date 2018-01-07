@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, Text, StyleSheet, AsyncStorage, KeyboardAvoidingView, TouchableOpacity, Button, Picker, Dimensions } from 'react-native';
+import { View, ScrollView, StyleSheet, AsyncStorage, Picker, Dimensions } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
@@ -79,7 +79,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         );
     }
 
-    updateState = (data: any) => {
+    updateState(data: any) {
         this.setState(data);
     }
 
@@ -118,12 +118,12 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
 
             if (this.state.expenseArrayId === 'expenses') {
                 navigate('ExpenseSummaries', {
-                    currency: currency, defaultCurrency: currency, currencies: currencies, expenseArray: this.state.expenseArray, 
+                    currency: currency, defaultCurrency: currency, currencies: currencies, expenseArray: this.state.expenseArray,
                     expenseArrayId: this.state.expenseArrayId, personArray: personArray
                 });
             } else {
                 navigate('GroupSummaries', {
-                    currency: this.state.group.defaultCurrency, defaultCurrency: currency, currencies: currencies,
+                    currency: this.state.group.defaultCurrency, defaultCurrency: this.state.group.defaultCurrency, currencies: currencies,
                     group: this.state.group, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, personArray: personArray
                 });
             }

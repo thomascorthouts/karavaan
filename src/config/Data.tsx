@@ -32,5 +32,3 @@ export const _currencies: Currencies = {
     'USD': { name: 'US Dollar', tag: 'USD', rate: 1.1847, symbol: '$' },
     'ZAR': { name: 'South African Rand', tag: 'ZAR', rate: 16.008, symbol: 'R' }
 };
-
-export const _categories: Array<string> = new Array('Entertainment', 'Food & Drinks', 'Home', 'Life', 'Transport', 'Other');
