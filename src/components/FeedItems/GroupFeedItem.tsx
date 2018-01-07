@@ -8,6 +8,7 @@ interface IProps {
 }
 
 export class GroupItem extends React.Component<IProps, {}> {
+
     constructor(props: IProps) {
         super(props);
     }
@@ -38,20 +39,5 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         borderLeftWidth: 10,
         borderLeftColor: '#4B9382'
-    },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12
-    },
-    expense: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        top: 10,
-        bottom: 10,
-        right: 10
     }
 });

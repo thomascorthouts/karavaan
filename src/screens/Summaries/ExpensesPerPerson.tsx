@@ -49,7 +49,6 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     render() {
-
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.ScrollContainer}>

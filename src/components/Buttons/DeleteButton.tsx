@@ -3,6 +3,7 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { buttonStyles } from './styles';
 
 export class DeleteButton extends React.Component<IPropsDeleteButton, {}> {
+
     constructor(props: IPropsDeleteButton) {
         super(props);
     }

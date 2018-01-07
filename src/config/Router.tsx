@@ -2,30 +2,30 @@ import React from 'react';
 import { TabNavigator, StackNavigator, DrawerNavigator } from 'react-navigation';
 
 import LoginScreen from '../screens/Login';
+import Converter from '../screens/Converter';
 
-import ExpenseFeed from '../screens/ExpenseTab/ExpensesPerCategory';
-import AddExpense from '../screens/ExpenseTab/AddExpense';
+import ExpenseFeed from '../screens/ExpenseTab/ExpenseFeed';
+import ExpenseForm from '../screens/ExpenseTab/ExpenseForm';
 import ExpenseDetail from '../screens/ExpenseTab/ExpenseDetail';
-import ImageSelector from '../screens/ImageSelector';
 
 import GroupFeed from '../screens/GroupTab/GroupFeed';
 import GroupForm from '../screens/GroupTab/GroupForm';
-import GroupExpense from '../screens/GroupTab/AddGroupExpense';
+import GroupExpenseForm from '../screens/GroupTab/GroupExpenseForm';
 import GroupCurrencies from '../screens/GroupTab/GroupCurrencies';
 
 import TransSplit from '../screens/SplitOptions/TransSplit';
 import AmountSplit from '../screens/SplitOptions/AmountSplit';
 import BillSplit from '../screens/SplitOptions/BillSplit';
 
-import Settings from '../screens/Settings/Settings';
-import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions';
-
-import Converter from '../screens/Converter';
-import AddDish from '../components/AddDish';
-
 import BalancesSummary from '../screens/Summaries/BalancesSummary';
 import TransactionsSummary from '../screens/Summaries/Transactions';
 import ExpensesPerPerson from '../screens/Summaries/ExpensesPerPerson';
+
+import Settings from '../screens/Settings/Settings';
+import UpdateMemberSuggestions from '../screens/Settings/UpdateMemberSuggestions';
+
+import AddDish from '../components/AddDish';
+import ImageSelector from '../screens/ImageSelector';
 
 export const GroupSummaries = TabNavigator(
     {
@@ -77,7 +77,7 @@ export const ExpenseStack = StackNavigator(
             }
         },
         AddExpense: {
-            screen: AddExpense,
+            screen: ExpenseForm,
             navigationOptions: {
                 header: null,
                 swipeEnabled: false,
@@ -156,7 +156,7 @@ export const GroupStack = StackNavigator(
             }
         },
         GroupAddExpense: {
-            screen: GroupExpense,
+            screen: GroupExpenseForm,
             navigationOptions: {
                 swipeEnabled: false,
                 tabBarVisible: false,

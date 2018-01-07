@@ -249,8 +249,5 @@ const styles = StyleSheet.create({
         color: '#287E6F',
         fontWeight: 'bold',
         textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
     }
 });

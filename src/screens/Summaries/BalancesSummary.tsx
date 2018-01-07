@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView,  StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { BalanceFeedItem } from '../../components/FeedItems/BalanceFeedItem';
 import { getRate } from '../../utils/getRate';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
@@ -42,7 +42,16 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 
     render() {
         let balanceItems = this.state.balances.map((val: Balance) => {
-            return <BalanceFeedItem keyval={val.person.id} currencySymbol={this.state.currency.symbol} person={val.person} rate={getRate(this.state.defaultCurrency.tag, this.state.currency.tag, this.state.currencies)} balance={val.amount} key={val.person.id} />;
+            return (
+                <BalanceFeedItem
+                    keyval={val.person.id}
+                    currencySymbol={this.state.currency.symbol}
+                    person={val.person}
+                    rate={getRate(this.state.defaultCurrency.tag, this.state.currency.tag, this.state.currencies)}
+                    balance={val.amount}
+                    key={val.person.id}
+                />
+            );
         });
 
         return (
@@ -87,11 +96,6 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
 const styles = StyleSheet.create({
     flex: {
         flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
     },
     container: {
         flex: 1

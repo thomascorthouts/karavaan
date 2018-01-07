@@ -15,6 +15,7 @@ interface IState {
 }
 
 class ExpenseDetail extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 

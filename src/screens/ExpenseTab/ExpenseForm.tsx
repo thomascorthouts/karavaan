@@ -21,7 +21,7 @@ interface IState {
     receiver: Person;
 }
 
-export class AddExpense extends Component<IDefaultNavProps, IState> {
+export class ExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -321,7 +321,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 }
 
-export default AddExpense;
+export default ExpenseForm;
 
 const styles = StyleSheet.create({
     flex: {

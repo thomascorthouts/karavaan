@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { InputWithoutLabel } from './TextInput/InputWithoutLabel';
-import {parseMoney} from '../utils/parsemoney';
+import { parseMoney } from '../utils/parsemoney';
 
 interface IProps {
     keyval: any;
@@ -15,6 +15,7 @@ interface IState {
 }
 
 export default class BillSplitterItem extends React.Component<IProps, IState> {
+
     constructor(props: IProps, state: IState) {
         super(props, state);
 
@@ -34,7 +35,7 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
                         inputStyle={{ width: 55 }}
                         value={this.state.amount.toString()}
                         onChangeText={(text: any) => {
-                            this.update( text, this.props.keyval);
+                            this.update(text, this.props.keyval);
                         }}
                     />
                 </View>
@@ -42,10 +43,10 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
         );
     }
 
-    update (value: string, id: string) {
+    update(value: string, id: string) {
         let amount = parseMoney(value);
         this.setState({ amount });
-        this.props.onChangeText(parseFloat(amount) , id);
+        this.props.onChangeText(parseFloat(amount), id);
     }
 }
 
@@ -62,12 +63,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         borderLeftWidth: 10,
         borderLeftColor: '#4B9382'
-    },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12
     },
     expense: {
         position: 'absolute',

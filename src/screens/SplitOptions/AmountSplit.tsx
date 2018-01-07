@@ -1,8 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import {
-    View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet,
-    Dimensions
-} from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Dimensions } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
@@ -71,7 +68,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 
         let splitter = this.state.expense.balances.map((val: Balance, key: number) => {
             return <BillSplitterItem key={key} keyval={val.person.id} val={val.person.firstname + ' ' + val.person.lastname} amount={val.amount * (-1)}
-                onChangeText={this.update.bind(this)}/>;
+                onChangeText={this.update.bind(this)} />;
         });
 
         return (
@@ -85,22 +82,22 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 
                 <KeyboardAvoidingView>
                     <View>
-                        <Text>Payers</Text>
-                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{height: height * 0.2}}/>
-                        <ScrollView style={{height: height * 0.2}}>
+                        <Text style={{ fontWeight: 'bold' }}>Payers</Text>
+                        <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{ height: height * 0.2 }} />
+                        <ScrollView style={{ height: height * 0.2 }}>
                             {this.state.payerNodes}
                         </ScrollView>
                     </View>
                     <View>
-                        <Text>Receivers</Text>
-                        <ScrollView style={{height: height * 0.2}}>
+                        <Text style={{ fontWeight: 'bold' }}>Receivers</Text>
+                        <ScrollView style={{ height: height * 0.2 }}>
                             {splitter}
                         </ScrollView>
                     </View>
                 </KeyboardAvoidingView>
 
                 <View style={styles.flexCenter}>
-                    <Text style={{fontWeight: 'bold', fontSize: 16}}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
                 </View>
 
                 <View style={styles.rowContainer}>
@@ -238,6 +235,8 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
     }
 }
 
+export default AmountSplit;
+
 const styles = StyleSheet.create({
     flex: {
         flex: 1
@@ -260,10 +259,5 @@ const styles = StyleSheet.create({
         color: '#287E6F',
         fontWeight: 'bold',
         textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
     }
 });
-
-export default AmountSplit;

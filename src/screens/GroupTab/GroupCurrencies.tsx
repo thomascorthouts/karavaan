@@ -47,9 +47,11 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
+                
                 <ScrollView style={styles.ScrollContainer}>
                     {currencies}
                 </ScrollView>
+
                 <GreenButton
                     buttonStyle={{ marginBottom: 0 }}
                     buttonText={'SAVE'}

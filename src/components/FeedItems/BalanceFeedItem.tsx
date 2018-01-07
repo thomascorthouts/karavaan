@@ -10,6 +10,7 @@ interface IProps {
 }
 
 export class BalanceFeedItem extends React.Component<IProps, {}> {
+
     constructor(props: IProps) {
         super(props);
     }
@@ -17,12 +18,12 @@ export class BalanceFeedItem extends React.Component<IProps, {}> {
     render() {
         return (
             <View key={this.props.keyval} style={styles.item} >
-                    <View>
-                        <Text style={styles.detailText}>{this.props.person.firstname} {this.props.person.lastname}</Text>
-                    </View>
-                    <View style={styles.expense}>
-                        <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currencySymbol} {(this.props.rate) ? (this.props.rate * this.props.balance).toFixed(2) : this.props.balance.toFixed(2)}</Text>
-                    </View>
+                <View>
+                    <Text style={styles.detailText}>{this.props.person.firstname} {this.props.person.lastname}</Text>
+                </View>
+                <View style={styles.expense}>
+                    <Text style={(this.props.balance > 0) ? styles.green : styles.red}>{this.props.currencySymbol} {(this.props.rate) ? (this.props.rate * this.props.balance).toFixed(2) : this.props.balance.toFixed(2)}</Text>
+                </View>
             </View>
         );
     }
@@ -41,13 +42,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         borderLeftWidth: 10,
         borderLeftColor: '#4B9382',
-        flexWrap: 'wrap'
-    },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12,
         flexWrap: 'wrap'
     },
     expense: {

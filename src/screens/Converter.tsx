@@ -20,6 +20,7 @@ interface IState {
 }
 
 class Converter extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 

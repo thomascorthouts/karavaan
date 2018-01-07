@@ -8,6 +8,7 @@ interface IProps {
 }
 
 export class CurrencyPicker extends Component<IProps, {}> {
+
     constructor(props: IProps) {
         super(props);
     }
@@ -22,7 +23,7 @@ export class CurrencyPicker extends Component<IProps, {}> {
 
         return (
             <View>
-                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.currencies[this.props.selectedValue.tag]} style={{height: 40}}>
+                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.currencies[this.props.selectedValue.tag]} style={{ height: 40 }}>
                     {currenciesItems}
                 </Picker>
             </View>

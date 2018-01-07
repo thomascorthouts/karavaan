@@ -3,6 +3,7 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { buttonStyles } from './styles';
 
 export class GreenButton extends React.Component<IPropsGreenButton, {}> {
+
     constructor(props: IPropsGreenButton) {
         super(props);
     }

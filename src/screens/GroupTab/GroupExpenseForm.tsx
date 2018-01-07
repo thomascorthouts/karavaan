@@ -14,13 +14,14 @@ interface IState {
     group: Group;
     currency: Currency;
     amount: number;
+    amountString: string;
     splitMode: string;
     category: string;
     date: string;
     image: any;
 }
 
-class GroupExpense extends Component<IDefaultNavProps, IState> {
+class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -31,6 +32,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
             group: this.props.navigation.state.params.group,
             currency: this.props.navigation.state.params.group.defaultCurrency,
             amount: 0,
+            amountString: '0',
             splitMode: 'trans',
             category: 'Entertainment',
             date: date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2),
@@ -63,7 +65,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
                         <View style={styles.inputAmount}>
                             <InputWithoutLabel
                                 onChangeText={(amount: string) => this.updateAmount(amount)}
-                                value={this.state.amount.toString()}
+                                value={this.state.amountString}
                                 returnKeyType={'done'}
                                 keyboardType={'numeric'}
                                 inputref={(input: any) => { (this as any).amount = input; }}
@@ -134,7 +136,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
 
     updateAmount(value: string) {
         let amount = parseMoney(value);
-        this.setState({ amount: parseFloat(amount) });
+        this.setState({ amount: parseFloat(amount), amountString: amount.toString() });
     }
 
     updateCategory(cat: string) {
@@ -183,7 +185,7 @@ class GroupExpense extends Component<IDefaultNavProps, IState> {
     }
 }
 
-export default GroupExpense;
+export default GroupExpenseForm;
 
 const styles = StyleSheet.create({
     flex: {

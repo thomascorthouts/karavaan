@@ -5,6 +5,7 @@ import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
+
     constructor(props: IDefaultNavProps) {
         super(props);
     }
@@ -14,7 +15,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
+                <StatusBar hidden={true} />
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
@@ -39,7 +40,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             onSubmitEditing={() => this.login(dispatch)}
                         />
 
-                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)}/>
+                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)} />
                     </View>
                 </KeyboardAvoidingView>
             </View>

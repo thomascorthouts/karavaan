@@ -8,6 +8,7 @@ interface IState {
 }
 
 class ImageSelector extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
@@ -36,6 +37,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
                         onPress={this.takeImage}
                     />
                 </View>
+
                 {image &&
                     <View style={styles.flex}>
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.5, resizeMode: 'contain' }} />
@@ -54,7 +56,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         this.props.navigation.state.params.updateImage(this.state.image);
     }
 
-    async pickImage() {
+    pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true
         });
@@ -85,9 +87,5 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 20
     }
 });
