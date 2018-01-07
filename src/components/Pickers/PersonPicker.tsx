@@ -14,6 +14,13 @@ interface IState {
     options: ReactNode[];
 }
 
+interface IPersonSimilarity {
+    person: Person;
+    similarity: number;
+}
+
+interface IPersonSimilarities extends Array<IPersonSimilarity> {}
+
 class PersonPicker extends Component<IProps, IState> {
 
     constructor(props: IProps, state: IState) {
@@ -38,14 +45,26 @@ class PersonPicker extends Component<IProps, IState> {
         let options = [] as ReactNode[];
         let name;
         let len = 0;
-        this.props.persons.map((person: Person) => {
+        let similarities = this.props.persons.map((person: Person) => {
             name = person.firstname + ' ' + person.lastname;
-            if (StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3 && len < 2) {
-                len++;
-                options.push(<TouchableOpacity style={styles.item} onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
+
+            return {person: person, similarity: StringSimilarity.compareTwoStrings(name, this.state.input)};
+            });
+
+        console.log(similarities);
+        similarities = similarities.sort((a, b) => {
+            // Inverted sort on number, because biggest similarity must come first in array
+            return (a.similarity < b.similarity) ? 1 : (a.similarity > b.similarity) ? -1 : 0;
+        });
+        console.log(similarities);
+
+        similarities.forEach((val, index) => {
+            if (index < 2) {
+                options.push(<TouchableOpacity style={styles.item}
+                                               onPress={() => this.choose(val.person.id)}
+                                               key={val.person.id + 'payer'}><Text>{val.person.firstname} {val.person.lastname}</Text></TouchableOpacity>);
             }
         });
-
         this.setState({ options: options });
     }
 

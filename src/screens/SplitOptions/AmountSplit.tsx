@@ -133,7 +133,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
             chosen.push({ person: p, amount: 0 });
-            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.id} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
             this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
