@@ -36,9 +36,18 @@ class PersonPicker extends Component<IProps, IState> {
     render() {
         return (
             <View>
-                <OptionPicker inputLabel={''} placeholder={'Firstname Lastname'} onChangeText={(text: any) => {
-                    this.setState({ input: text }, () => this.updateOptions());
-                }} textInput={this.state.input} options={this.state.options} scrollHeight={this.state.scrollHeight} />
+                <OptionPicker
+                    inputLabel={''}
+                    placeholder={'Firstname Lastname'}
+                    onChangeText={(text: any) => {
+                        this.setState({ input: text }, () => this.updateOptions());
+                    }}
+                    textInput={this.state.input}
+                    options={this.state.options}
+                    scrollHeight={this.state.scrollHeight}
+                    onFocus={() => this.setState({ scrollHeight: 0.2 })}
+                    onBlur={() => this.setState({ scrollHeight: 0 })}
+                />
             </View>
         );
     }
@@ -75,23 +84,8 @@ class PersonPicker extends Component<IProps, IState> {
         this.props.choose(id);
     }
 
-    _keyboardDidShow(event: any) {
-        this.setState({ scrollHeight: 0.2 });
-    }
-
-    _keyboardDidHide(event: any) {
-        this.setState({ scrollHeight: 0 });
-    }
-
     componentDidMount() {
         this.updateOptions();
-        Keyboard.addListener('keyboardDidShow', (e) => this._keyboardDidShow(e));
-        Keyboard.addListener('keyboardDidHide', (e) => this._keyboardDidHide(e));
-    }
-
-    componentWillUnmount() {
-        Keyboard.removeAllListeners('KeyboardDidShow');
-        Keyboard.removeAllListeners('KeyboardDidHide');
     }
 }
 
