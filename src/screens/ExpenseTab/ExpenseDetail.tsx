@@ -12,6 +12,7 @@ interface IState {
     balances: ReactNode[];
     failed: boolean;
     group: Group;
+    updatedConversion: boolean;
 }
 
 class ExpenseDetail extends Component<IDefaultNavProps, IState> {
@@ -27,7 +28,8 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             expenseArrayId: navParams.expenseArrayId,
             balances: [],
             group: navParams.group,
-            failed: false
+            failed: false,
+            updatedConversion: false
         };
     }
 
@@ -61,7 +63,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 
                 <View style={styles.rowContainer}>
                     <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => this.returnToFeed(goBack, dispatch)} />
                     </View>
                     <View style={styles.flex}>
                         <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
@@ -70,6 +72,18 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 
             </View>
         );
+    }
+
+    returnToFeed(goBack: any, dispatch: any) {
+        if (this.state.updatedConversion) {
+            if (this.state.expenseArrayId === 'expenses') {
+                resetState('ExpenseFeed', dispatch);
+            } else {
+                resetGroupState(this.state.group, this.state.expenseArray, dispatch);
+            }
+        } else {
+            goBack();
+        }
     }
 
     deleteExpense(dispatch: any) {
@@ -101,10 +115,9 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                     expense.currency.rate = data.rates[current];
                     const expenseArray = [...this.state.expenseArray];
                     expenseArray[this.state.key] = expense;
-                    this.setState({ expense, expenseArray }, () => {
+                    this.setState({ expense, expenseArray, updatedConversion: true }, () => {
                         AsyncStorage.setItem(this.state.expenseArrayId, JSON.stringify(this.state.expenseArray));
                         this.createBalances(expense, base, data.rates[current], true);
-                        this.props.navigation.state.params.updateFeedState({ expenseArray: this.state.expenseArray });
                     });
                 } else {
                     this.createBalances(expense, base, 0, false);
@@ -138,17 +151,18 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         let needConversion = expense.currency.tag !== defaultCurrency.tag && uptodate;
 
         this.state.expense.balances.map((balance: Balance, index: number) => {
+            let name = (balance.person.lastname !== '') ? balance.person.firstname + ' ' + balance.person.lastname : balance.person.firstname;
             let conversion = (needConversion) ? '(=' + defaultCurrency.symbol + Math.abs((balance.amount / rate)).toFixed(2) + ')' : '';
             if (balance.amount > 0) {
                 text.push(
                     <Text key={index}>
-                        {balance.person.firstname} {balance.person.lastname} paid {expense.currency.symbol}{balance.amount} {conversion}
+                        {name} paid {expense.currency.symbol}{balance.amount.toFixed(2)} {conversion}
                     </Text>
                 );
             } else {
                 text.push(
                     <Text key={index}>
-                        {balance.person.firstname} {balance.person.lastname} owes {expense.currency.symbol}{balance.amount * -1} {conversion}
+                        {name} owes {expense.currency.symbol}{(balance.amount * -1).toFixed(2)} {conversion}
                     </Text>
                 );
             }
@@ -182,7 +196,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 20,
+        padding: 15,
         marginTop: 10
     },
     rowContainer: {

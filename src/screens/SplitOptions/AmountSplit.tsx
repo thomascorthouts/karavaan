@@ -5,6 +5,7 @@ import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
+import { showError } from '../../utils/popup';
 
 interface Options {
     splitMode: boolean;
@@ -28,7 +29,6 @@ interface IState {
     chosen: PersonList;
     payers: Balances;
     payerNodes: Array<ReactNode>;
-    error: string;
     splitEven: boolean;
 }
 
@@ -57,7 +57,6 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             personArray: [] as PersonList,
             expenseArray: [] as ExpenseList,
             currencies: options.currencies as Currencies,
-            error: '',
             splitEven: this.props.navigation.state.params.opts.splitMode
         };
     }
@@ -75,25 +74,18 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
             <View style={styles.container}>
                 <StatusBar translucent={false} barStyle='light-content' />
 
-                <View style={styles.flex}>
+                <View style={[styles.flex, { height: height * 0.1 }]}>
                     <Text style={styles.title}>{this.state.options.description}</Text>
                 </View>
-                <ErrorText errorText={this.state.error} />
 
                 <KeyboardAvoidingView>
-                    <View>
-                        <Text style={{ fontWeight: 'bold' }}>Payers</Text>
+                    <ScrollView style={{ height: height * 0.67, borderStyle: 'dashed', borderWidth: 0.5, borderRadius: 1, padding: 5 }} keyboardShouldPersistTaps={'always'} keyboardDismissMode='on-drag'>
+                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Payers</Text>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{ height: height * 0.2 }} />
-                        <ScrollView style={{ height: height * 0.2 }}>
-                            {this.state.payerNodes}
-                        </ScrollView>
-                    </View>
-                    <View>
-                        <Text style={{ fontWeight: 'bold' }}>Receivers</Text>
-                        <ScrollView style={{ height: height * 0.2 }}>
-                            {splitter}
-                        </ScrollView>
-                    </View>
+                        <View style={{ borderTopWidth: 0.5 }}>{this.state.payerNodes}</View>
+                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Receivers</Text>
+                        <View>{splitter}</View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
 
                 <View style={styles.flexCenter}>
@@ -129,15 +121,9 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         let nodes = this.state.payerNodes;
         const p = this.state.personArray.find((val: Person) => { return (val.id === id); });
         if (typeof p !== 'undefined') {
-            const q = chosen.find((val: Balance) => { return (val.person.id === p.id); });
-            if ( typeof q === 'undefined') {
-                chosen.push({person: p, amount: 0});
-                nodes.push(<BillSplitterItem key={p.id} keyval={p.id}
-                                             val={p.firstname + ' ' + p.lastname}
-                                             amount={0}
-                                             onChangeText={this.setPayerAmount.bind(this)}/>);
-                this.setState({payers: chosen, payerNodes: nodes});
-            }
+            chosen.push({ person: p, amount: 0 });
+            nodes.push(<BillSplitterItem key={p.id} keyval={p.id} val={p.firstname + ' ' + p.lastname} amount={0} onChangeText={this.setPayerAmount.bind(this)} />);
+            this.setState({ payers: chosen, payerNodes: nodes });
         }
     }
 
@@ -154,7 +140,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         this.fixBalances()
             .then(() => this.addExpenseToStorage())
             .then(() => resetGroupState(this.state.group, this.state.expenseArray, dispatch))
-            .catch((error: string) => this.setState({ error }));
+            .catch((error: string) => { console.log(error); showError(error); });
     }
 
     async fixBalances() {
@@ -166,7 +152,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
         this.state.payers.map((val: Balance) => sum += val.amount);
 
-        if (sum === 0 || sum < expense.balances.length * 0.01) {
+        if (sum === 0 || Math.abs(sum) < expense.balances.length * 0.01) {
             this.state.payers.map((payerBalance: Balance) => {
                 payer = expense.balances.find((bal: Balance) => {
                     return bal.person.id === payerBalance.person.id;
@@ -178,7 +164,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
                     expense.balances.push(balanceToPush);
                 }
             });
-            this.setState({ expense, error: '' });
+            await this.setState({ expense });
 
         } else throw 'The total balance is not 0.';
     }
@@ -254,7 +240,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 20,
+        padding: 15,
         backgroundColor: '#4B9382'
     },
     rowContainer: {
