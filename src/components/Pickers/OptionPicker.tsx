@@ -26,7 +26,7 @@ export class OptionPicker extends Component<IProps, {}> {
                 <InputWithLabel labelText={this.props.inputLabel} value={this.props.textInput}
                                 onChangeText={this.props.onChangeText} placeholder={this.props.placeholder}/>
                 <ScrollView style={{
-                    height: height * 0.05
+                    height: height * 0.1
                 }}>
                     {this.props.options}
                 </ScrollView>
