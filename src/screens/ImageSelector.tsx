@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImagePicker } from 'expo';
-import { Button, Image, View, Dimensions, StyleSheet } from 'react-native';
+import { Image, View, Dimensions, StyleSheet } from 'react-native';
 import { GreenButton } from '../components/Buttons/GreenButton';
 
 interface IState {
@@ -8,6 +8,7 @@ interface IState {
 }
 
 class ImageSelector extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
@@ -36,6 +37,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
                         onPress={this.takeImage}
                     />
                 </View>
+
                 {image &&
                     <View style={styles.flex}>
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.5, resizeMode: 'contain' }} />
@@ -49,7 +51,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    selectImage = (goBack: any) => {
+    selectImage(goBack: any) {
         goBack();
         this.props.navigation.state.params.updateImage(this.state.image);
     }
@@ -85,9 +87,5 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 20
     }
 });

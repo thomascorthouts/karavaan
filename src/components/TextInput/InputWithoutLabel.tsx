@@ -56,10 +56,11 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
     }
 
     updateSuggestions() {
+        let match = false;
         let suggestions = [] as ReactNode[];
         if (this.props.options && this.state.input.trim() !== '') {
-            this.props.options.map((option: string, index: number) => {
-                if (option !== this.state.input || suggestions.length > 3) {
+            this.props.options.map((option: string) => {
+                if (!match && (option !== this.state.input || suggestions.length > 3)) {
                     if (option.toLocaleLowerCase().includes(this.state.input.toLocaleLowerCase()) || StringSimilarity.compareTwoStrings(option, this.state.input) > 0.3) {
                         suggestions.push(
                             <TouchableOpacity style={textInputStyles.suggestionButton} onPress={() => this.selectSuggestion(option)} key={option}>
@@ -67,16 +68,18 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
                             </TouchableOpacity>
                         );
                     }
-                } else if (option === this.state.input) {
-                    suggestions = [];
-                    return;
-                } else {
-                    return;
+                } else if (option === this.state.input.trim()) {
+                    match = true;
                 }
             });
         } else if (this.state.input.trim() === '') {
             suggestions = [];
         }
+
+        if (match) {
+            suggestions = [];
+        }
+
         this.setState({ suggestions });
     }
 

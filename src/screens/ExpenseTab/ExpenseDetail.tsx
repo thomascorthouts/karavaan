@@ -1,8 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import { ScrollView, Text, View, StatusBar, Alert, AsyncStorage, NetInfo, StyleSheet, Image, Dimensions } from 'react-native';
+import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, StyleSheet, Image, Dimensions } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
-import { NavigationActions } from 'react-navigation';
 import { showError, confirmDelete } from '../../utils/popup';
 
 interface IState {
@@ -16,6 +15,7 @@ interface IState {
 }
 
 class ExpenseDetail extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
@@ -138,7 +138,7 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         let needConversion = expense.currency.tag !== defaultCurrency.tag && uptodate;
 
         this.state.expense.balances.map((balance: Balance, index: number) => {
-            let conversion = (needConversion) ? '(=' + defaultCurrency.symbol + Math.abs((balance.amount * 1 / rate)).toFixed(2) + ')' : '';
+            let conversion = (needConversion) ? '(=' + defaultCurrency.symbol + Math.abs((balance.amount / rate)).toFixed(2) + ')' : '';
             if (balance.amount > 0) {
                 text.push(
                     <Text key={index}>

@@ -1,11 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import {
-    Button, View, ScrollView, StyleSheet,
-    AsyncStorage, Picker
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Picker } from 'react-native';
 import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
-import { _currencies } from '../../config/Data';
 import { getRate } from '../../utils/getRate';
 
 interface IState {
@@ -23,7 +19,7 @@ interface IState {
 export default class ExpensesPerPerson extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
-        const { state, navigate } = navigation;
+        const { state } = navigation;
         if (state.params && 'group' in state.params) {
             return {
                 headerTitle: `${state.params.group.name} Summaries`
@@ -53,8 +49,6 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     }
 
     render() {
-        let { navigate } = this.props.navigation;
-
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.ScrollContainer}>
@@ -79,7 +73,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         this.setState({ person }, this.updateView);
     }
 
-    updateState = (data: any) => {
+    updateState(data: any) {
         this.setState(data, () => this.updateView());
     }
 

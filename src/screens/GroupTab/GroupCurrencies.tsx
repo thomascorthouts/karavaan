@@ -1,9 +1,6 @@
 import React, { Component, ReactNode } from 'react';
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Alert, StatusBar, AsyncStorage, Button } from 'react-native';
-import { TabNavigator } from 'react-navigation';
-import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
+import { StyleSheet, Text, View, ScrollView, StatusBar} from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import { _currencies } from '../../config/Data';
 
 interface IState {
     currencies: Currencies;
@@ -13,7 +10,7 @@ interface IState {
 
 class GroupCurrencies extends Component<IDefaultNavProps, IState> {
 
-    static navigationOptions = ({ navigation }: { navigation: any }) => {
+    static navigationOptions = () => {
         return {
             headerTitle: 'Select Currencies'
         };
@@ -33,7 +30,7 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
     render() {
         const { goBack } = this.props.navigation;
 
-        let currencies: ReactNode[] = new Array();
+        let currencies: ReactNode[] = [];
         for (let key in this.state.currencies) {
             let currency = this.state.currencies[key];
             if (currency.tag !== this.state.default.tag) {
@@ -50,9 +47,11 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
+                
                 <ScrollView style={styles.ScrollContainer}>
                     {currencies}
                 </ScrollView>
+
                 <GreenButton
                     buttonStyle={{ marginBottom: 0 }}
                     buttonText={'SAVE'}

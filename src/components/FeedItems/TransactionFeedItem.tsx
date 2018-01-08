@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface IProps {
     keyval: any;
@@ -9,13 +9,13 @@ interface IProps {
 }
 
 interface Transaction {
-
     from: Person;
     to: Person;
     amount: number;
 }
 
 export class TransactionFeedItem extends React.Component<IProps, {}> {
+
     constructor(props: IProps) {
         super(props);
     }
@@ -50,13 +50,6 @@ const styles = StyleSheet.create({
         borderLeftColor: '#4B9382',
         flexWrap: 'wrap'
     },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12,
-        flexWrap: 'wrap'
-    },
     expense: {
         position: 'absolute',
         justifyContent: 'center',
@@ -65,11 +58,5 @@ const styles = StyleSheet.create({
         top: 10,
         bottom: 10,
         right: 10
-    },
-    green: {
-        color: '#00ff00'
-    },
-    red: {
-        color: '#ff0000'
     }
 });

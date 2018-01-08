@@ -4,6 +4,7 @@ import { InputWithoutLabel } from './InputWithoutLabel';
 import { textInputStyles } from './styles';
 
 export class InputWithLabel extends React.Component<IPropsWithLabel, {}> {
+
     constructor(props: IPropsWithLabel) {
         super(props);
     }
@@ -15,7 +16,7 @@ export class InputWithLabel extends React.Component<IPropsWithLabel, {}> {
             <View>
                 <Text style={combinedStyle}>{this.props.labelText}</Text>
                 <InputWithoutLabel
-                {...this.props}
+                    {...this.props}
                 />
             </View>
         );

@@ -1,17 +1,26 @@
 import React, { Component, ReactNode } from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OptionPicker } from './OptionPicker';
 import * as StringSimilarity from '../../utils/similarity';
 
 interface IProps {
     persons: PersonList;
     choose: any;
+    style?: any;
 }
 
 interface IState {
     input: string;
     options: ReactNode[];
+    scrollHeight: number;
 }
+
+interface IPersonSimilarity {
+    person: Person;
+    similarity: number;
+}
+
+interface IPersonSimilarities extends Array<IPersonSimilarity> { }
 
 class PersonPicker extends Component<IProps, IState> {
 
@@ -19,6 +28,7 @@ class PersonPicker extends Component<IProps, IState> {
         super(props, state);
         this.state = {
             options: [] as ReactNode[],
+            scrollHeight: 0,
             input: ''
         };
     }
@@ -26,9 +36,18 @@ class PersonPicker extends Component<IProps, IState> {
     render() {
         return (
             <View>
-                <OptionPicker inputLabel={''} placeholder={'Firstname Lastname'} onChangeText={(text: any) => {
-                    this.setState({ input: text }, () => this.updateOptions());
-                }} textInput={this.state.input} options={this.state.options} />
+                <OptionPicker
+                    inputLabel={''}
+                    placeholder={'Firstname Lastname'}
+                    onChangeText={(text: any) => {
+                        this.setState({ input: text }, () => this.updateOptions());
+                    }}
+                    textInput={this.state.input}
+                    options={this.state.options}
+                    scrollHeight={this.state.scrollHeight}
+                    onFocus={() => this.setState({ scrollHeight: 0.1 })}
+                    onBlur={() => this.setState({ scrollHeight: 0 })}
+                />
             </View>
         );
     }
@@ -36,10 +55,26 @@ class PersonPicker extends Component<IProps, IState> {
     updateOptions() {
         let options = [] as ReactNode[];
         let name;
-        this.props.persons.map((person: Person, index: number) => {
+        let similarities = this.props.persons.map((person: Person) => {
             name = person.firstname + ' ' + person.lastname;
-            if (name.toLowerCase().includes(this.state.input.toLocaleLowerCase()) || StringSimilarity.compareTwoStrings(name, this.state.input) > 0.3) {
-                options.push(<TouchableOpacity style={styles.item} onPress={() => this.choose(person.id)} key={person.id}><Text>{person.firstname} {person.lastname}</Text></TouchableOpacity>);
+
+            return {person: person, similarity: StringSimilarity.compareTwoStrings(name, this.state.input)};
+            }) as IPersonSimilarities;
+
+        similarities = similarities.sort((a: IPersonSimilarity, b: IPersonSimilarity) => {
+
+            // Inverted sort on number, because biggest similarity must come first in array
+            return (a.similarity < b.similarity) ? 1 : (a.similarity > b.similarity) ? -1 : 0;
+        });
+
+        similarities.forEach((val, index) => {
+            if (index < 2) {
+                options.push(
+                    <TouchableOpacity style={styles.item}
+                                      onPress={() => this.choose(val.person.id)} key={val.person.id + 'payer'}>
+                        <Text>{val.person.firstname} {val.person.lastname}</Text>
+                    </TouchableOpacity>
+                );
             }
         });
 
@@ -50,7 +85,7 @@ class PersonPicker extends Component<IProps, IState> {
         this.props.choose(id);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.updateOptions();
     }
 }
@@ -64,27 +99,5 @@ const styles = StyleSheet.create({
         paddingRight: 100,
         borderBottomWidth: 0.5,
         borderBottomColor: '#111'
-    },
-    detailText: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        flexWrap: 'wrap'
-    },
-    detailTextSmall: {
-        paddingLeft: 20,
-        borderLeftWidth: 10,
-        borderLeftColor: '#4B9382',
-        fontSize: 12,
-        flexWrap: 'wrap'
-    },
-    expense: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        top: 10,
-        bottom: 10,
-        right: 10
     }
 });

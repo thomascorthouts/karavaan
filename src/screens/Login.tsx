@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TextInput, StatusBar, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Image, StatusBar, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
-import { textInputStyles } from '../components/TextInput/styles';
 import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
+
     constructor(props: IDefaultNavProps) {
         super(props);
     }
@@ -15,7 +15,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
+                <StatusBar hidden={true} />
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
@@ -40,7 +40,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
                             onSubmitEditing={() => this.login(dispatch)}
                         />
 
-                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)}/>
+                        <GreenButton buttonText={'LOGIN'} onPress={() => this.login(dispatch)} />
                     </View>
                 </KeyboardAvoidingView>
             </View>

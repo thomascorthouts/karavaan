@@ -1,5 +1,5 @@
-import React, { Component, ReactNode } from 'react';
-import { View, Text, StatusBar, StyleSheet, AsyncStorage, Alert, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
+import React, { ReactNode } from 'react';
+import { View, Text, StatusBar, StyleSheet, AsyncStorage, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import { showError, confirmDelete } from '../../utils/popup';
@@ -10,7 +10,7 @@ interface IState {
 
 class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
 
-    static navigationOptions = ({ navigation }: { navigation: any }) => {
+    static navigationOptions = () => {
         return {
             headerTitle: 'Settings',
             headerStyle: { 'backgroundColor': '#4B9382' }
@@ -26,7 +26,7 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
     }
 
     render() {
-        let members: ReactNode[] = new Array();
+        let members: ReactNode[] = [];
         let personArray = this.state.personArray;
 
         personArray.map((person: Person, key: any) => {
@@ -97,13 +97,12 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
     createPerson(text: string) {
         let firstname = text.split(' ')[0].trim();
         let lastname = text.split(' ').slice(1).join(' ').trim() || '';
-        let person = {
+        return {
             firstname: firstname,
             lastname: lastname,
             id: firstname + lastname,
             balance: 0
         } as Person;
-        return person;
     }
 
     deletePerson(key: any) {

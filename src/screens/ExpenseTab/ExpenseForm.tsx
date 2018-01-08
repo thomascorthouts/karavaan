@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, KeyboardAvoidingView, AsyncStorage, StatusBar, Dimensions } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
-import { ErrorText } from '../../components/Text/ErrorText';
 import { _currencies } from '../../config/Data';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { parseMoney } from '../../utils/parsemoney';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
-import * as StringSimilarity from '../../utils/similarity';
 import { showError } from '../../utils/popup';
 import { resetState } from '../../utils/navigationactions';
 
@@ -23,7 +21,7 @@ interface IState {
     receiver: Person;
 }
 
-export class AddExpense extends Component<IDefaultNavProps, IState> {
+export class ExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -175,7 +173,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    updateImage = (image: any) => {
+    updateImage (image: any) {
         const expense = Object.assign({}, this.state.expense, { image: image });
         this.setState({ expense });
     }
@@ -201,13 +199,12 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     createPerson(text: string) {
         let firstname = text.split(' ')[0].trim();
         let lastname = text.split(' ').slice(1).join(' ').trim() || '';
-        let person = {
+        return {
             firstname: firstname,
             lastname: lastname,
             id: firstname + lastname,
             balance: 0
         } as Person;
-        return person;
     }
 
     // Category
@@ -324,7 +321,7 @@ export class AddExpense extends Component<IDefaultNavProps, IState> {
     }
 }
 
-export default AddExpense;
+export default ExpenseForm;
 
 const styles = StyleSheet.create({
     flex: {

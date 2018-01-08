@@ -1,8 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, AsyncStorage, Picker, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, Picker, StyleSheet } from 'react-native';
 import { TransactionFeedItem } from '../../components/FeedItems/TransactionFeedItem';
 import { getRate } from '../../utils/getRate';
-import { _currencies } from '../../config/Data';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 
 interface Transaction {
@@ -27,7 +26,7 @@ interface IState {
 export default class TransactionsSummary extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
-        const { state, navigate } = navigation;
+        const { state } = navigation;
         if (state.params && 'group' in state.params) {
             return {
                 headerTitle: `${state.params.group.name} Summaries`
@@ -60,11 +59,13 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
             if (this.state.pickerOpt === 'all') return true;
             else return val.from.id === this.state.pickerOpt || val.to.id === this.state.pickerOpt;
         }).map((val: Transaction) => {
-            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} rate={this.state.currency.rate} currencySymbol={this.state.currency.symbol} />);
+            return (<TransactionFeedItem key={val.from.id + val.to.id} keyval={val.from.id + val.to.id} transaction={val} rate={getRate(this.state.defaultCurrency.tag, this.state.currency.tag, this.state.currencies)} currencySymbol={this.state.currency.symbol} />);
         });
+
         if (Object.getOwnPropertyNames(trans).length === 0) {
             trans = [];
         }
+
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.ScrollContainer}>
@@ -102,7 +103,6 @@ export default class TransactionsSummary extends Component<IDefaultNavProps, ISt
     }
 
     backtracking(froms: Balances, tos: Balances, transactions: Array<Transaction>) {
-
         // Filter out the balances with amount 0, because that would be useless iterations.
         froms = froms.filter((val: Balance) => { return val.amount !== 0; });
         tos = tos.filter((val: Balance) => { return val.amount !== 0; });

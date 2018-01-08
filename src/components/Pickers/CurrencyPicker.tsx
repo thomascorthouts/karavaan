@@ -8,13 +8,14 @@ interface IProps {
 }
 
 export class CurrencyPicker extends Component<IProps, {}> {
+
     constructor(props: IProps) {
         super(props);
     }
 
     render() {
         let current;
-        let currenciesItems: ReactNode[] = new Array();
+        let currenciesItems: ReactNode[] = [];
         for (let currency in this.props.currencies) {
             current = this.props.currencies[currency];
             currenciesItems.push(<Picker.Item label={current.tag + ' - ' + current.name} value={current} key={current.tag} />);
@@ -22,7 +23,7 @@ export class CurrencyPicker extends Component<IProps, {}> {
 
         return (
             <View>
-                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.currencies[this.props.selectedValue.tag]} style={{height: 40}}>
+                <Picker onValueChange={this.props.onValueChange} selectedValue={this.props.currencies[this.props.selectedValue.tag]} style={{ height: 40 }}>
                     {currenciesItems}
                 </Picker>
             </View>

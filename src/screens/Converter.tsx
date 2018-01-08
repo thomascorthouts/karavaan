@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, Alert, NetInfo } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, NetInfo } from 'react-native';
 import { _currencies } from '../config/Data';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
 import { GreenButton } from '../components/Buttons/GreenButton';
-import { InputWithLabel } from '../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
@@ -18,9 +17,10 @@ interface IState {
     date: string;
     latest: string;
     isLoading: boolean;
-};
+}
 
 class Converter extends Component<IDefaultNavProps, IState> {
+
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
 
@@ -135,7 +135,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
         }
     }
 
-    validate = () => {
+    validate() {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected && this.state.latest !== this.state.date.trim()) {
                 this.setState({ isLoading: true }, () => this.getExchangeRate(this.state.date.trim()));
@@ -148,7 +148,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
         });
     }
 
-    convert = (amount: number, from: string, to: string) => {
+    convert(amount: number, from: string, to: string) {
         let conversion = amount * getRate(from, to, this.state.currencies);
         return (isNaN(conversion)) ? 0 : conversion;
     }

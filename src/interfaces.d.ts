@@ -75,6 +75,5 @@ interface Balance {
 interface Balances extends Array<Balance> { }
 
 // ignore errors for javascript only packages
-declare module 'react-native-table-component-pro'
 declare module 'react-native-datepicker'
 declare module 'expo'
