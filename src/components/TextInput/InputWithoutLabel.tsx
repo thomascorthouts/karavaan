@@ -12,6 +12,7 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
 
     constructor(props: ITextInputProps, state: IState) {
         super(props, state);
+
         this.state = {
             input: this.props.value || '',
             suggestions: [] as ReactNode[]
@@ -44,6 +45,9 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
                     onBlur={() => {
                         if (this.props.onBlur) {
                             this.props.onBlur();
+                        }
+                        if (this.props.clearOnBlur) {
+                            this.setState({ input: '' });
                         }
                         if (this.props.options) {
                             this.setState({ suggestions: [] });
@@ -85,12 +89,25 @@ export class InputWithoutLabel extends Component<ITextInputProps, IState> {
 
     selectSuggestion(option: string) {
         this.setState({ input: option, suggestions: [] });
+
         if (this.props.selectOption) {
             this.props.selectOption(option);
         }
     }
 
+    componentDidMount() {
+        if ('inputref' in this.props) {
+            this.props.inputref(this);
+        }
+    }
+
     componentWillMount() {
         this.updateSuggestions();
+    }
+
+    componentWillUnmount() {
+        if ('inputref' in this.props) {
+            this.props.inputref(undefined);
+        }
     }
 }

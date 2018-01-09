@@ -38,17 +38,15 @@ class Groups extends Component<IProps, IState> {
                     {groups}
                 </ScrollView>
 
-                <GreenButton onPress={() => this.addGroup(navigate)} buttonText='New Group' buttonStyle={{ marginBottom: 3, marginHorizontal: 2 }} />
+                <View style={styles.buttonContainer}>
+                    <GreenButton onPress={() => this.addGroup(navigate)} buttonText='New Group' buttonStyle={{ marginBottom: 3, marginHorizontal: 2 }} />
+                </View>
             </View>
         );
     }
 
-    updateState(data: any) {
-        this.setState(data);
-    }
-
     addGroup(navigate: any) {
-        navigate('GroupForm', { groupArray: this.state.groupArray, updateFeedState: this.updateState, update: false });
+        navigate('GroupForm', { groupArray: this.state.groupArray, update: false });
     }
 
     async viewExpenses(group: Group, navigate: any) {
@@ -87,5 +85,10 @@ const styles = StyleSheet.create({
     },
     ScrollContainer: {
         flex: 1
+    },
+    buttonContainer: {
+        paddingTop: 3,
+        borderTopWidth: 0.5,
+        borderTopColor: '#111'
     }
 });

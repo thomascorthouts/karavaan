@@ -45,7 +45,7 @@ class PersonPicker extends Component<IProps, IState> {
                     textInput={this.state.input}
                     options={this.state.options}
                     scrollHeight={this.state.scrollHeight}
-                    onFocus={() => this.setState({ scrollHeight: 0.1 })}
+                    onFocus={() => this.setState({ scrollHeight: 0.08 })}
                     onBlur={() => this.setState({ scrollHeight: 0 })}
                 />
             </View>
@@ -69,8 +69,9 @@ class PersonPicker extends Component<IProps, IState> {
 
         similarities.forEach((val, index) => {
             if (index < 2) {
+                let style = (index === 1 ? styles.itemLast : styles.item);
                 options.push(
-                    <TouchableOpacity style={styles.item}
+                    <TouchableOpacity style={style}
                                       onPress={() => this.choose(val.person.id)} key={val.person.id + 'payer'}>
                         <Text>{val.person.firstname} {val.person.lastname}</Text>
                     </TouchableOpacity>
@@ -99,5 +100,10 @@ const styles = StyleSheet.create({
         paddingRight: 100,
         borderBottomWidth: 0.5,
         borderBottomColor: '#111'
+    },
+    itemLast: {
+        flex: 1,
+        position: 'relative',
+        paddingRight: 100
     }
 });

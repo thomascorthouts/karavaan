@@ -73,10 +73,6 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
         this.setState({ person }, this.updateView);
     }
 
-    updateState(data: any) {
-        this.setState(data, () => this.updateView());
-    }
-
     updateRate(curr: Currency) {
         this.setState({ currency: curr }, this.updateView);
     }
@@ -102,7 +98,7 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = ('group' in this.props.navigation.state.params) ? 'GroupExpenseDetail' : 'ExpenseDetail';
-        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState });
+        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId });
     }
 
     componentWillMount() {
@@ -140,6 +136,9 @@ const styles = StyleSheet.create({
         flex: 1
     },
     rowContainer: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        paddingTop: 3,
+        borderTopWidth: 0.5,
+        borderTopColor: '#111'
     }
 });

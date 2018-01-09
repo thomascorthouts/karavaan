@@ -104,6 +104,9 @@ const styles = StyleSheet.create({
         flex: 1
     },
     rowContainer: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        paddingTop: 3,
+        borderTopWidth: 0.5,
+        borderTopColor: '#111'
     }
 });

@@ -25,7 +25,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         if (state.params) {
             const title = state.params.group.name;
             const width = Dimensions.get('window').width;
-            const headerRight = <GreenButton buttonStyle={{margin: 10, width: width * 0.2, borderRadius: 10 }} buttonText={'Edit'} onPress={() =>
+            const headerRight = <GreenButton buttonStyle={{ margin: 10, width: width * 0.2, borderRadius: 10 }} buttonText={'Edit'} onPress={() =>
                 navigate('GroupForm', { group: state.params.group, groupArray: state.params.groupArray, update: true })
             } />;
             return {
@@ -63,7 +63,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                     otherOptions={otherPickerOptions}
                 />
 
-                <ScrollView style={[styles.flex, {borderTopWidth: 0.5, borderTopColor: '#111'}]}>
+                <ScrollView style={[styles.flex, { borderTopWidth: 0.5, borderTopColor: '#111' }]}>
                     {this.state.feed}
                 </ScrollView>
 
@@ -79,13 +79,9 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         );
     }
 
-    updateState(data: any) {
-        this.setState(data);
-    }
-
     addExpense(navigate: any) {
         let screen = this.state.expenseArrayId === 'expenses' ? 'AddExpense' : 'GroupAddExpense';
-        navigate(screen, { expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState, group: this.state.group });
+        navigate(screen, { expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, group: this.state.group });
     }
 
     async viewSummaries(navigate: any) {
@@ -123,7 +119,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                 });
             } else {
                 navigate('GroupSummaries', {
-                    currency: this.state.group.defaultCurrency, defaultCurrency: this.state.group.defaultCurrency, currencies: currencies,
+                    currency: this.state.group.defaultCurrency, defaultCurrency: this.state.group.defaultCurrency, currencies: this.state.group.currencies,
                     group: this.state.group, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, personArray: personArray
                 });
             }
@@ -133,7 +129,7 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
         let screen = this.state.expenseArrayId === 'expenses' ? 'ExpenseDetail' : 'GroupExpenseDetail';
-        navigate(screen, { key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, updateFeedState: this.updateState });
+        navigate(screen, { key: key, group: this.state.group, expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId });
     }
 
     updateView() {
@@ -181,6 +177,9 @@ const styles = StyleSheet.create({
     },
     rowContainer: {
         flexDirection: 'row',
-        marginBottom: -7
+        marginBottom: -7,
+        paddingTop: 3,
+        borderTopWidth: 0.5,
+        borderTopColor: '#111'
     }
 });

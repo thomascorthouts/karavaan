@@ -32,6 +32,7 @@ interface ITextInputProps {
     value?: string;
     options?: string[];
     selectOption?: any;
+    clearOnBlur?: boolean;
 }
 
 interface IPropsWithLabel extends ITextInputProps {

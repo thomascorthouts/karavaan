@@ -112,12 +112,13 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
                     <Text> Add Members: </Text>
                     <InputWithoutLabel
-                        inputref={(input: any) => { (this as any).newMember = input; }}
+                        inputref={(input: any) => (this as any).newMember = input}
                         placeholder={'Firstname Lastname'}
                         returnKeyType={'done'}
                         autoCapitalize={'words'}
                         options={this.state.allPersonsArray.map(a => a.firstname + ' ' + a.lastname)}
                         onSubmitEditing={(text: any) => this.addPerson(text.nativeEvent.text)}
+                        clearOnBlur={true}
                     />
 
                     <Text> Default Currency: </Text>
@@ -183,9 +184,6 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         this.updateStorage(id)
             .then(() => {
                 resetState('GroupFeed', dispatch);
-                if (!this.state.update) {
-                    this.props.navigation.state.params.updateFeedState({ groupArray: this.state.groupArray });
-                }
             });
     }
 
@@ -276,20 +274,24 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         try {
             await AsyncStorage.setItem('groups', JSON.stringify(this.state.groupArray));
             await AsyncStorage.removeItem('persons-' + id);
+            await AsyncStorage.removeItem('expenses-' + id);
         } catch (error) {
             showError(error);
         }
     }
 
     async componentDidMount() {
-        let group = await AsyncStorage.getItem('defaultCurrency')
-            .then((value) => {
-                if (value) {
-                    return Object.assign({}, this.state.group, { defaultCurrency: JSON.parse(value) });
-                } else {
-                    return this.state.group;
-                }
-            });
+        let group = this.state.group;
+        if (!this.state.update) {
+            group = await AsyncStorage.getItem('defaultCurrency')
+                .then((value) => {
+                    if (value) {
+                        return Object.assign({}, this.state.group, { defaultCurrency: JSON.parse(value) });
+                    } else {
+                        return this.state.group;
+                    }
+                });
+        }
 
         let allPersonsArray = await AsyncStorage.getItem('persons')
             .then((value) => {
@@ -324,7 +326,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 20,
+        padding: 15,
         backgroundColor: '#4B9382'
     },
     rowContainer: {
