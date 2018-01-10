@@ -1,27 +1,11 @@
 # Karavaan
 
-## Features
+## Setup of the project
 
-https://ucll-mobile.wikispaces.com/Features
+This mobile application is the result of a course Mobile Development from the UC Leuven-Limburg, it's a React-Native app supported by TypeScript, which is created to run in the open-source toolchain [Expo.io](https://expo.io) that can run on Android and IOS.
 
-## When starting working on new issue
 
-When all your changes are merged to master, always in master folder on pc: 
-```
-git pull
-git checkout <name>
-git merge master
-npm install
-```
 
-## Error/bug fixes
-When you have an error like 
-```
-ReactComponentTreeHook.purgeUnmountedComponents is not a function
-```
+## License
 
---> 
-```
-npm install react@16.0.0-alpha.12
-```
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
