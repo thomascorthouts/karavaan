@@ -31,7 +31,7 @@ export default class App extends Component {
     }
 
     componentDidMount() {
-        // console.disableYellowBox = true;
+        console.disableYellowBox = true;
         Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
         BackHandler.addEventListener('hardwareBackPress', this.onBackPress);

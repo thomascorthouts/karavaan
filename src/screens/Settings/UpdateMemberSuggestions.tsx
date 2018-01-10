@@ -3,7 +3,7 @@ import { View, Text, StatusBar, AsyncStorage, ScrollView, Dimensions, KeyboardAv
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import { showError, confirmDelete } from '../../utils/popup';
-import {specificStyles, standardStyles} from '../screenStyles';
+import { specificStyles, standardStyles, backgroundColorStyles } from '../screenStyles';
 
 interface IState {
     personArray: PersonList;
@@ -32,8 +32,8 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
 
         personArray.map((person: Person, key: any) => {
             members.push(
-                <View key={person.id} style={ standardStyles.rowContainer }>
-                    <View style={ standardStyles.tripleFlex }>
+                <View key={person.id} style={standardStyles.rowContainer}>
+                    <View style={standardStyles.tripleFlex}>
                         <InputWithoutLabel
                             returnKeyType={'done'}
                             autoCapitalize={'words'}
@@ -41,10 +41,10 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
                             editable={false}
                         />
                     </View>
-                    <View style={ standardStyles.flex }>
+                    <View style={standardStyles.flex}>
                         <DeleteButton
                             buttonText={'X'}
-                            buttonStyle={ specificStyles.deleteButton }
+                            buttonStyle={specificStyles.deleteButton}
                             onPress={() =>
                                 confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
                             } />
@@ -56,10 +56,10 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
         let height = Dimensions.get('window').height;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={specificStyles.container}>
                 <StatusBar hidden={true} />
-                <View style={ standardStyles.flex }>
-                    <Text style={ specificStyles.title }>Update Member Suggestions</Text>
+                <View style={standardStyles.flex}>
+                    <Text style={specificStyles.title}>Update Member Suggestions</Text>
                 </View>
                 <KeyboardAvoidingView>
                     <Text> Add Suggestions: </Text>
