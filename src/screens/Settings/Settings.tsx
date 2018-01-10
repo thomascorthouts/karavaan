@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, StatusBar, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { _currencies } from '../../config/Data';
 import { NavigationActions } from 'react-navigation';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -27,12 +28,12 @@ class Settings extends Component<IDefaultNavProps, IState> {
         const { navigate, dispatch, goBack } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={ specificStyles.container }>
                 <StatusBar hidden={true} />
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Settings</Text>
+                <View style={ standardStyles.flex }>
+                    <Text style={ specificStyles.title }>Settings</Text>
                 </View>
-                <View style={styles.flex}>
+                <View style={ standardStyles.flex }>
                     <Text>Default Currency:</Text>
 
                     <CurrencyPicker
@@ -42,7 +43,7 @@ class Settings extends Component<IDefaultNavProps, IState> {
                     />
 
                     <Text> </Text>
-                    <Text style={styles.textCenter}> - - - </Text>
+                    <Text style={ standardStyles.textCenter }> - - - </Text>
                     <Text> </Text>
 
                     <GreenButton buttonText={'Update Member Suggestions'} onPress={() => {
@@ -75,23 +76,3 @@ class Settings extends Component<IDefaultNavProps, IState> {
 }
 
 export default Settings;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    textCenter: {
-        textAlign: 'center'
-    }
-});

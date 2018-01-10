@@ -3,6 +3,7 @@ import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, StyleSheet, I
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { showError, confirmDelete } from '../../utils/popup';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     key: number;
@@ -39,16 +40,16 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         const { dispatch, goBack } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={ specificStyles.container }>
                 <StatusBar hidden={true} />
 
-                <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.expense.description}</Text>
+                <View style={ standardStyles.flex}>
+                    <Text style={ specificStyles.title }>{this.state.expense.description}</Text>
                     <Text> </Text>
-                    <Text style={styles.textCenter}>Date: {this.state.expense.date}</Text>
-                    <Text style={styles.textCenter}>Currency used: {this.state.expense.currency.name}</Text>
+                    <Text style={ standardStyles.flexCenter }>Date: {this.state.expense.date}</Text>
+                    <Text style={ standardStyles.flexCenter }>Currency used: {this.state.expense.currency.name}</Text>
                     <Text> </Text>
-                    <Text style={styles.textCenter}> - - - </Text>
+                    <Text style={ standardStyles.flexCenter }> - - - </Text>
                     <Text> </Text>
 
                     <ScrollView>
@@ -57,16 +58,16 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
                 </View>
 
                 {image &&
-                    <View style={styles.flex}>
+                    <View style={ standardStyles.flex }>
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.2, resizeMode: 'contain' }} />
                     </View>}
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => this.returnToFeed(goBack, dispatch)} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => this.returnToFeed(goBack, dispatch)} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
                     </View>
                 </View>
 
@@ -189,26 +190,3 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 }
 
 export default ExpenseDetail;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        marginTop: 10
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 30,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    textCenter: {
-        textAlign: 'center'
-    }
-});

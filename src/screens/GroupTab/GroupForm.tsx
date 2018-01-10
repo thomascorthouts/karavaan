@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, AsyncStorage, Dimensions, StatusBar } from 'react-native';
+import { Text, View, ScrollView, KeyboardAvoidingView, AsyncStorage, Dimensions, StatusBar } from 'react-native';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { _currencies } from '../../config/Data';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
@@ -7,6 +7,7 @@ import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState } from '../../utils/navigationactions';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import { showError, confirmDelete } from '../../utils/popup';
+import { backgroundColorStyles, specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     group: Group;
@@ -25,7 +26,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
             return {
                 tabBarVisible: false,
                 headerTitle: `Update ${navigation.state.params.group.name}`,
-                headerStyle: { 'backgroundColor': '#4B9382' }
+                headerStyle: backgroundColorStyles.lightGreen
             };
         } else {
             return {
@@ -64,8 +65,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
         personArray.map((person: Person, key: any) => {
             members.push(
-                <View key={person.id} style={styles.rowContainer}>
-                    <View style={styles.currentMembers}>
+                <View key={person.id} style={standardStyles.rowContainer}>
+                    <View style={standardStyles.tripleFlex}>
                         <InputWithoutLabel
                             returnKeyType={'done'}
                             autoCapitalize={'words'}
@@ -73,10 +74,10 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             editable={false}
                         />
                     </View>
-                    <View style={styles.flex}>
+                    <View style={standardStyles.flex}>
                         <DeleteButton
                             buttonText={'X'}
-                            buttonStyle={styles.deleteButton}
+                            buttonStyle={specificStyles.deleteButton}
                             onPress={() =>
                                 confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
                             } />
@@ -86,10 +87,10 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         });
 
         return (
-            <View style={styles.container}>
+            <View style={specificStyles.container}>
                 <StatusBar hidden={true} />
-                <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.update ? '' : 'New Group'}</Text>
+                <View style={standardStyles.flex}>
+                    <Text style={specificStyles.title}>{this.state.update ? '' : 'New Group'}</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior='padding'>
@@ -141,9 +142,9 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                     });
                 }} />
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={this.state.update ? 'DELETE' : 'BACK'} onPress={() => {
                             if (this.state.update) {
                                 confirmDelete('this group', () => this.deleteGroup(dispatch));
                             } else {
@@ -151,8 +152,8 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             }
                         }} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
+                    <View style={standardStyles.flex}>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
                     </View>
                 </View>
             </View>
@@ -319,30 +320,3 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
 }
 
 export default GroupForm;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    currentMembers: {
-        flex: 3
-    },
-    deleteButton: {
-        height: 40,
-        paddingVertical: 10
-    }
-});

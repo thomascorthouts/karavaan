@@ -8,6 +8,7 @@ import DatePicker from 'react-native-datepicker';
 import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
 import { getRate } from '../utils/getRate';
+import { standardStyles, specificStyles } from './screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -48,22 +49,22 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         if (this.state.isLoading) {
             return (
-                <View style={styles.flexCenter}>
+                <View style={ standardStyles.flexCenter }>
                     <ActivityIndicator />
                 </View>
             );
         } else {
             return (
-                <View style={styles.container}>
+                <View style={ specificStyles.container }>
                     <StatusBar hidden={true} />
 
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Currency Converter</Text>
+                    <View style={ [standardStyles.flex, { paddingBottom: 80 }] }>
+                        <Text style={ specificStyles.title }>Currency Converter</Text>
                     </View>
 
                     <KeyboardAvoidingView behavior={'padding'} style={{ height: height * 0.6 }}>
-                        <View style={styles.rowContainer}>
-                            <View style={styles.inputAmount}>
+                        <View style={ standardStyles.rowContainer }>
+                            <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
                                     onChangeText={(value: any) => this.setState({ value })}
                                     value={this.state.value}
@@ -71,7 +72,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                                     keyboardType={'numeric'}
                                 />
                             </View>
-                            <View style={styles.flex}>
+                            <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
                                     onValueChange={(currency1: any) => this.setState({ currency1 })}
@@ -80,15 +81,15 @@ class Converter extends Component<IDefaultNavProps, IState> {
                             </View>
                         </View>
 
-                        <View style={styles.rowContainer}>
-                            <View style={styles.inputAmount}>
+                        <View style={ standardStyles.rowContainer }>
+                            <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
                                     onChangeText={(value: string) => this.setState({ value })}
                                     value={this.convert(parseFloat(this.state.value), this.state.currency1.tag, this.state.currency2.tag).toString()}
                                     editable={false}
                                 />
                             </View>
-                            <View style={styles.flex}>
+                            <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
                                     onValueChange={(currency2: Currency) => this.setState({ currency2 })}
@@ -122,12 +123,12 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         />
                     </KeyboardAvoidingView>
 
-                    <View style={styles.rowContainer}>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'CLOSE'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
+                    <View style={ standardStyles.rowContainer }>
+                        <View style={ standardStyles.flex }>
+                            <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'CLOSE'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
                         </View>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
+                        <View style={ standardStyles.flex }>
+                            <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
                         </View>
                     </View>
                 </View>
@@ -207,35 +208,3 @@ class Converter extends Component<IDefaultNavProps, IState> {
 }
 
 export default Converter;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    titleContainer: {
-        flex: 1,
-        paddingBottom: 80
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
-    }
-});

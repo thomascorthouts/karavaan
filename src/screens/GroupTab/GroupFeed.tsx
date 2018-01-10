@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, AsyncStorage, StatusBar } from 'react-native';
+import { View, ScrollView, AsyncStorage, StatusBar } from 'react-native';
 import { GroupItem } from '../../components/FeedItems/GroupFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface IProps {
     navigation: any;
@@ -32,13 +33,13 @@ class Groups extends Component<IProps, IState> {
         });
 
         return (
-            <View style={styles.container}>
+            <View style={ standardStyles.flex }>
                 <StatusBar hidden={true} />
-                <ScrollView style={styles.ScrollContainer}>
+                <ScrollView style={ standardStyles.flex }>
                     {groups}
                 </ScrollView>
 
-                <View style={styles.buttonContainer}>
+                <View style={ specificStyles.buttonContainer }>
                     <GreenButton onPress={() => this.addGroup(navigate)} buttonText='New Group' buttonStyle={{ marginBottom: 3, marginHorizontal: 2 }} />
                 </View>
             </View>
@@ -78,17 +79,3 @@ class Groups extends Component<IProps, IState> {
 }
 
 export default Groups;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    ScrollContainer: {
-        flex: 1
-    },
-    buttonContainer: {
-        paddingTop: 3,
-        borderTopWidth: 0.5,
-        borderTopColor: '#111'
-    }
-});

@@ -53,7 +53,7 @@ function editDistance(s1: string, s2: string) {
     s1 = s1.toLowerCase();
     s2 = s2.toLowerCase();
 
-    let costs = new Array();
+    let costs = [];
     for (let i = 0; i <= s1.length; i++) {
         let lastValue = i;
         for (let j = 0; j <= s2.length; j++) {

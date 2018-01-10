@@ -6,6 +6,7 @@ import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
 import { showError } from '../../utils/popup';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -71,33 +72,33 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
 
         return (
-            <View style={styles.container}>
+            <View style={ specificStyles.container }>
                 <StatusBar translucent={false} barStyle='light-content' />
 
-                <View style={[styles.flex, { height: height * 0.1 }]}>
-                    <Text style={styles.title}>{this.state.options.description}</Text>
+                <View style={ [standardStyles.flex, { height: height * 0.1 }] }>
+                    <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 </View>
 
                 <KeyboardAvoidingView>
                     <ScrollView style={{ height: height * 0.67, borderStyle: 'dashed', borderWidth: 0.5, borderRadius: 1, padding: 5 }} keyboardShouldPersistTaps={'always'} keyboardDismissMode='on-drag'>
-                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Payers</Text>
+                        <Text style={ [ standardStyles.boldText, { borderBottomWidth: 1 }] }>Payers</Text>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{ height: height * 0.2 }} />
                         <View style={{ borderTopWidth: 0.5 }}>{this.state.payerNodes}</View>
-                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Receivers</Text>
+                        <Text style={ [ standardStyles.boldText, { borderBottomWidth: 1 }] }>Receivers</Text>
                         <View>{splitter}</View>
                     </ScrollView>
                 </KeyboardAvoidingView>
 
-                <View style={styles.flexCenter}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                <View style={ standardStyles.flexCenter }>
+                    <Text style={ [standardStyles.boldText, { fontSize: 16 }]}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
                 </View>
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -213,8 +214,10 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         if (personArray) {
             let amounts = [] as Balances;
             const avg = (this.state.options.splitMode) ? parseFloat(((this.state.options.amount / personArray.length) * (-1)).toFixed(2)) : 0;
+            let diff = (personArray.length * avg) - this.state.options.amount;
+            let bool = (diff > 0);
             personArray.map((val: Person) => {
-                amounts.push({ person: val, amount: avg });
+                amounts.push({ person: val, amount: (bool) ? avg + 0.01 : avg });
             });
             expense = Object.assign({}, this.state.expense, { balances: amounts });
         }

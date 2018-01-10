@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { ImagePicker } from 'expo';
-import { Image, View, Dimensions, StyleSheet } from 'react-native';
+import { Image, View, Dimensions } from 'react-native';
 import { GreenButton } from '../components/Buttons/GreenButton';
+import { specificStyles, standardStyles } from './screenStyles';
 
 interface IState {
     image: any;
@@ -24,23 +25,23 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         let width = Dimensions.get('window').width;
 
         return (
-            <View style={styles.flexCenter}>
-                <View style={styles.flexCenter}>
+            <View style={ standardStyles.flexCenter }>
+                <View style={ standardStyles.flexCenter }>
                     <GreenButton
                         buttonText='Pick an image from the camera roll'
-                        buttonStyle={{ paddingHorizontal: 10 }}
+                        buttonStyle={ specificStyles.leftButton }
                         onPress={this.pickImage}
                     />
                     <GreenButton
                         buttonText='Take an image with the camera'
-                        buttonStyle={{ paddingHorizontal: 10 }}
+                        buttonStyle={ specificStyles.rightButton }
                         onPress={this.takeImage}
                     />
                 </View>
 
                 {image &&
-                    <View style={styles.flex}>
-                        <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.5, resizeMode: 'contain' }} />
+                    <View style={standardStyles.flex}>
+                        <Image source={{ uri: image }} style={[standardStyles.flex, {width: width - 40, height: height * 0.5, resizeMode: 'contain' }]} />
                         <GreenButton
                             buttonText='Select Image'
                             onPress={() => this.selectImage(goBack)}
@@ -78,14 +79,3 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
 }
 
 export default ImageSelector;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-});

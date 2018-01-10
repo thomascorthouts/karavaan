@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Picker, KeyboardAvoidingView, StatusBar, StyleSheet, Dimensions, Text } from 'react-native';
+import { View, Picker, KeyboardAvoidingView, StatusBar, Dimensions, Text } from 'react-native';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { parseMoney } from '../../utils/parsemoney';
@@ -8,6 +8,7 @@ import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { showError } from '../../utils/popup';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     description: string;
@@ -45,11 +46,11 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
         const { goBack, navigate } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={ specificStyles.container }>
                 <StatusBar hidden={true} />
 
-                <View style={styles.flex}>
-                    <Text style={styles.title}>New Expense</Text>
+                <View style={ standardStyles.flex }>
+                    <Text style={ specificStyles.title }>New Expense</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior={'padding'}>
@@ -61,8 +62,8 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
                         autoCapitalize={'sentences'}
                     />
 
-                    <View style={styles.rowContainer}>
-                        <View style={styles.inputAmount}>
+                    <View style={ standardStyles.rowContainer }>
+                        <View style={ standardStyles.doubleFlex }>
                             <InputWithoutLabel
                                 onChangeText={(amount: string) => this.updateAmount(amount)}
                                 value={this.state.amountString}
@@ -71,7 +72,7 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
                                 inputref={(input: any) => { (this as any).amount = input; }}
                             />
                         </View>
-                        <View style={styles.flex}>
+                        <View style={ standardStyles.flex }>
                             <CurrencyPicker
                                 currencies={this.state.group.currencies}
                                 onValueChange={(currency: any) => this.setState({ currency })}
@@ -118,12 +119,12 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
 
                 <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.image, updateImage: this.updateImage })} />
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.validate(navigate)} buttonText={'NEXT'} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.validate(navigate)} buttonText={'NEXT'} />
                     </View>
                 </View>
             </View>
@@ -186,26 +187,3 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
 }
 
 export default GroupExpenseForm;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
-    }
-});
