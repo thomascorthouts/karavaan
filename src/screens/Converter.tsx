@@ -10,6 +10,7 @@ import { showError } from '../utils/popup';
 import { parseMoney } from '../utils/parsemoney';
 import { getRate } from '../utils/getRate';
 import {standardStyles, specificStyles, backgroundColorStyles} from './screenStyles';
+import {InputWithLabel} from '../components/TextInput/InputWithLabel';
 
 interface IState {
     currencies: Currencies;
@@ -19,6 +20,7 @@ interface IState {
     date: string;
     latest: string;
     isLoading: boolean;
+    rate: string;
 }
 
 class Converter extends Component<IDefaultNavProps, IState> {
@@ -30,6 +32,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
         this.state = {
             currencies: _currencies,
             value: '0',
+            rate: '1',
             currency1: {
                 name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
             } as Currency,
@@ -67,7 +70,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         <View style={ standardStyles.rowContainer }>
                             <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
-                                    onChangeText={(value: any) => this.setState({ value })}
+                                    onChangeText={(value: any) => this.setState({ value: parseMoney(value) })}
                                     value={this.state.value}
                                     returnKeyType={'done'}
                                     keyboardType={'numeric'}
@@ -76,7 +79,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                             <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
-                                    onValueChange={(currency1: any) => this.setState({ currency1 })}
+                                    onValueChange={(currency1: any) => this.setState({ currency1 }, () => this.updateRate())}
                                     selectedValue={this.state.currency1}
                                 />
                             </View>
@@ -86,19 +89,21 @@ class Converter extends Component<IDefaultNavProps, IState> {
                             <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
                                     onChangeText={(value: string) => this.setState({ value })}
-                                    value={this.convert(parseFloat(parseMoney(this.state.value)), this.state.currency1.tag, this.state.currency2.tag).toString()}
+                                    value={(parseFloat(this.state.rate) * parseFloat(this.state.value)).toFixed(2)}
                                     editable={false}
                                 />
                             </View>
                             <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
-                                    onValueChange={(currency2: Currency) => this.setState({ currency2 })}
+                                    onValueChange={(currency2: Currency) => this.setState({ currency2 }, () => this.updateRate())}
                                     selectedValue={this.state.currency2}
                                 />
                             </View>
                         </View>
-
+                        <View>
+                            <InputWithLabel labelText={'Rate:'} value={this.state.rate} onChangeText={(text: string) => this.setState({rate: parseMoney(text)})}/>
+                        </View>
                         <DatePicker
                             style={{ width: width - 40 }}
                             date={this.state.date}
@@ -135,6 +140,11 @@ class Converter extends Component<IDefaultNavProps, IState> {
                 </View>
             );
         }
+    }
+
+    updateRate() {
+        let rate = getRate(this.state.currency1.tag, this.state.currency2.tag, this.state.currencies);
+        this.setState({rate: rate.toString()});
     }
 
     validate() {
@@ -202,7 +212,8 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         if (currencies) {
             this.setState({
-                currency1: currency, currency2: currency, currencies: currencies.rates, latest: currencies.latest, isLoading: false
+                currency1: currency, currency2: currency, currencies: currencies.rates, latest: currencies.latest,
+                isLoading: false
             });
         }
     }
