@@ -4,7 +4,7 @@ import { GreenButton } from '../../components/Buttons/GreenButton';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { _currencies } from '../../config/Data';
 import { NavigationActions } from 'react-navigation';
-import {specificStyles, standardStyles} from '../screenStyles';
+import { specificStyles, standardStyles, backgroundColorStyles } from '../screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -28,12 +28,12 @@ class Settings extends Component<IDefaultNavProps, IState> {
         const { navigate, dispatch, goBack } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={[specificStyles.container, backgroundColorStyles.lightGreen]}>
                 <StatusBar hidden={true} />
-                <View style={ standardStyles.flex }>
-                    <Text style={ specificStyles.title }>Settings</Text>
+                <View style={standardStyles.flex}>
+                    <Text style={specificStyles.title}>Settings</Text>
                 </View>
-                <View style={ standardStyles.flex }>
+                <View style={standardStyles.flex}>
                     <Text>Default Currency:</Text>
 
                     <CurrencyPicker
@@ -43,7 +43,7 @@ class Settings extends Component<IDefaultNavProps, IState> {
                     />
 
                     <Text> </Text>
-                    <Text style={ standardStyles.textCenter }> - - - </Text>
+                    <Text style={standardStyles.textCenter}> - - - </Text>
                     <Text> </Text>
 
                     <GreenButton buttonText={'Update Member Suggestions'} onPress={() => {
@@ -52,7 +52,7 @@ class Settings extends Component<IDefaultNavProps, IState> {
                 </View>
 
                 <GreenButton buttonText={'Done'} onPress={() =>
-                    dispatch(NavigationActions.navigate({routeName: 'Home'}))
+                    dispatch(NavigationActions.navigate({ routeName: 'Home' }))
                 } />
             </View>
         );
