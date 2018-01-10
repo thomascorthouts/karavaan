@@ -1,12 +1,11 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Dimensions } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
-import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
 import { showError } from '../../utils/popup';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -72,7 +71,7 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar translucent={false} barStyle='light-content' />
 
                 <View style={ [standardStyles.flex, { height: height * 0.1 }] }>
@@ -105,13 +104,13 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         );
     }
 
-    update(text: string, id: string) {
+    update(amount: number, id: string) {
         let balances = this.state.expense.balances;
         let balance = balances.find((val: Balance) => {
             return (val.person.id === id);
         });
         if (typeof balance !== 'undefined') {
-            balance.amount = parseFloat(text) * (-1); // 'Received' money gives a negative balance
+            balance.amount = amount * (-1); // 'Received' money gives a negative balance
             let expense = Object.assign({}, this.state.expense, { balances: balances });
             this.setState({ expense });
         }
@@ -231,28 +230,3 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
 }
 
 export default AmountSplit;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    }
-});

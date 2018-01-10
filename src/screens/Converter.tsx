@@ -7,8 +7,9 @@ import { GreenButton } from '../components/Buttons/GreenButton';
 import DatePicker from 'react-native-datepicker';
 import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
+import { parseMoney } from '../utils/parsemoney';
 import { getRate } from '../utils/getRate';
-import { standardStyles, specificStyles } from './screenStyles';
+import {standardStyles, specificStyles, backgroundColorStyles} from './screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -55,7 +56,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
             );
         } else {
             return (
-                <View style={ specificStyles.container }>
+                <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                     <StatusBar hidden={true} />
 
                     <View style={ [standardStyles.flex, { paddingBottom: 80 }] }>
@@ -85,7 +86,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                             <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
                                     onChangeText={(value: string) => this.setState({ value })}
-                                    value={this.convert(parseFloat(this.state.value), this.state.currency1.tag, this.state.currency2.tag).toString()}
+                                    value={this.convert(parseFloat(parseMoney(this.state.value)), this.state.currency1.tag, this.state.currency2.tag).toString()}
                                     editable={false}
                                 />
                             </View>

@@ -87,10 +87,10 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         });
 
         return (
-            <View style={specificStyles.container}>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
-                <View style={standardStyles.flex}>
-                    <Text style={specificStyles.title}>{this.state.update ? '' : 'New Group'}</Text>
+                <View style={ standardStyles.flex }>
+                    <Text style={ specificStyles.title }>{this.state.update ? '' : 'New Group'}</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior='padding'>
@@ -152,7 +152,7 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
                             }
                         }} />
                     </View>
-                    <View style={standardStyles.flex}>
+                    <View style={ standardStyles.flex }>
                         <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'SAVE'} onPress={() => this.validateGroup(dispatch)} />
                     </View>
                 </View>

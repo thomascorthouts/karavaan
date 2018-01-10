@@ -5,7 +5,7 @@ import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -66,7 +66,7 @@ class BillSplit extends Component<IProps, IState> {
         const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 <ErrorText errorText={this.state.error} />
                 <View style={ standardStyles.flex }>
@@ -167,11 +167,7 @@ class BillSplit extends Component<IProps, IState> {
         this.state.payers.map((val: Balance) => sumPayers += val.amount);
         this.state.dishes.map((item: Dish) => sumItems += item.amount);
 
-        if (sumPayers !== this.state.options.amount) {
-            throw 'The total balance is not equal to the total amount (=' + this.state.options.amount + ')';
-        }
-
-        if (sumPayers !== sumItems) {
+        if (sumPayers === sumItems) {
             this.state.dishes.map((item: Dish) => {
                 avg = item.amount / item.users.length;
                 item.users.map((val: Person) => {
@@ -186,7 +182,7 @@ class BillSplit extends Component<IProps, IState> {
                 });
             });
 
-            let expense = Object.assign({}, this.state.expense, { balances: balances });
+            let expense = Object.assign({}, this.state.expense, { balances: balances, amount: sumPayers });
             this.setState({ expense, error: '' });
         } else throw 'The total balance is not 0.';
     }

@@ -3,7 +3,7 @@ import { View, Image, StatusBar, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
-import { specificStyles, standardStyles } from './screenStyles';
+import { specificStyles, standardStyles, backgroundColorStyles } from './screenStyles';
 
 class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
@@ -15,7 +15,7 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
         const { dispatch } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
                 <View style={ [standardStyles.center, { flexGrow: 1 } ]}>
                     <Image style={specificStyles.logo} source={require('../../../images/Karavaan.png')} />

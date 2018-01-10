@@ -3,7 +3,7 @@ import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, StyleSheet, I
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { showError, confirmDelete } from '../../utils/popup';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     key: number;
@@ -40,16 +40,16 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         const { dispatch, goBack } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
 
                 <View style={ standardStyles.flex}>
                     <Text style={ specificStyles.title }>{this.state.expense.description}</Text>
                     <Text> </Text>
-                    <Text style={ standardStyles.flexCenter }>Date: {this.state.expense.date}</Text>
-                    <Text style={ standardStyles.flexCenter }>Currency used: {this.state.expense.currency.name}</Text>
+                    <Text style={ standardStyles.textCenter }>Date: {this.state.expense.date}</Text>
+                    <Text style={ standardStyles.textCenter }>Currency used: {this.state.expense.currency.name}</Text>
                     <Text> </Text>
-                    <Text style={ standardStyles.flexCenter }> - - - </Text>
+                    <Text style={ standardStyles.textCenter }> - - - </Text>
                     <Text> </Text>
 
                     <ScrollView>

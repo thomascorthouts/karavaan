@@ -10,7 +10,7 @@ import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import { showError } from '../../utils/popup';
 import { resetState } from '../../utils/navigationactions';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     persons: PersonList;
@@ -58,7 +58,7 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
         const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
                 <View style={ standardStyles.flex }>
                     <Text style={ specificStyles.title }>New Expense</Text>
@@ -159,7 +159,7 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
                     />
                 </KeyboardAvoidingView>
 
-                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateImage })} />
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateImage.bind(this) })} />
 
                 <View style={ standardStyles.rowContainer }>
                     <View style={ standardStyles.flex }>

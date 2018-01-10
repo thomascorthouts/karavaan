@@ -8,7 +8,7 @@ import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { showError } from '../../utils/popup';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     description: string;
@@ -46,7 +46,7 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
         const { goBack, navigate } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
 
                 <View style={ standardStyles.flex }>

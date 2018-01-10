@@ -29,9 +29,9 @@ export class ExpenseItem extends React.Component<IProps, {}> {
                     <TouchableOpacity style={styles.item} onPress={this.props.viewDetails}>
                         <View>
                             <Text
-                                style={styles.detailText}>{this.props.val.balances[1].person.firstname} {this.props.val.balances[1].person.lastname}</Text>
+                                style={styles.detailText}>{this.props.val.balances[0].person.firstname} {this.props.val.balances[0].person.lastname}</Text>
                             <Text
-                                style={styles.detailText}>⇨ {this.props.val.balances[0].person.firstname} {this.props.val.balances[0].person.lastname}</Text>
+                                style={styles.detailText}>⇨ {this.props.val.balances[1].person.firstname} {this.props.val.balances[1].person.lastname}</Text>
                             <Text
                                 style={styles.detailTextSmall}>{this.props.val.category} - {this.props.val.description}</Text>
                         </View>

@@ -98,8 +98,11 @@ export default class ExpensesPerPerson extends Component<IDefaultNavProps, IStat
 
     viewDetails(key: number, navigate: any) {
         let expense = this.state.expenseArray[key];
-        let screen = ('group' in this.props.navigation.state.params) ? 'GroupExpenseDetail' : 'ExpenseDetail';
-        navigate(screen, { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId });
+        if ('group' in this.props.navigation.state.params) {
+            navigate('GroupExpenseDetail', { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId, group: this.props.navigation.state.params.group });
+        } else {
+            navigate('ExpenseDetail', { expense: expense, expenseArray: this.state.expenseArray, expenseArrayId: this.state.expenseArrayId });
+        }
     }
 
     componentWillMount() {

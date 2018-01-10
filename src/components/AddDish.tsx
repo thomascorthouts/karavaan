@@ -1,9 +1,10 @@
 import React, { Component, ReactNode } from 'react';
-import {View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet } from 'react-native';
 import { InputWithLabel } from './TextInput/InputWithLabel';
 import PersonPicker from './Pickers/PersonPicker';
 import { ErrorText } from './Text/ErrorText';
 import { GreenButton } from './Buttons/GreenButton';
+import { parseMoney } from '../utils/parsemoney';
 
 interface Options {
     navigation: any;
@@ -54,7 +55,8 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
                     <InputWithLabel
                         labelText={'amount'}
                         value={this.state.amount.toString()}
-                        onChangeText={(amount: string) => this.setState({ amount: parseFloat(amount) })}
+                        keyboardType={'numeric'}
+                        onChangeText={(amount: string) => this.setState({ amount: parseFloat(parseMoney(amount)) })}
                     />
                     <View style={{ flex: 0.2 }}>
                         <Text>Between who should the item be split?</Text>

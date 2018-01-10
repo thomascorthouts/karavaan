@@ -7,7 +7,7 @@ import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { showError } from '../../utils/popup';
-import {specificStyles, standardStyles} from '../screenStyles';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -66,7 +66,7 @@ class TransSplit extends Component<IProps, IState> {
         const { goBack, dispatch } = this.props.navigation;
 
         return (
-            <View style={ specificStyles.container }>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <View style={ standardStyles.flex }>
                     <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 </View>

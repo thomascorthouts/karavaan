@@ -68,12 +68,12 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
                     {this.state.feed}
                 </ScrollView>
 
-                <View style={ standardStyles.rowContainer }>
+                <View style={ [specificStyles.buttonContainer, standardStyles.rowContainer, { marginBottom: -7 }] }>
                     <View style={ standardStyles.flex }>
-                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'Summaries'} onPress={() => this.viewSummaries(navigate)} />
+                        <GreenButton buttonStyle={ [specificStyles.leftButton, { marginLeft: 2 }] } buttonText={'Summaries'} onPress={() => this.viewSummaries(navigate)} />
                     </View>
                     <View style={ standardStyles.flex }>
-                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
+                        <GreenButton buttonStyle={ [specificStyles.rightButton, { marginRight: 2 }] } onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
                     </View>
                 </View>
             </View>

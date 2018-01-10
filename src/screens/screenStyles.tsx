@@ -127,8 +127,7 @@ const specificStyles = EStyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 15,
-        backgroundColor: '$lightGreen'
+        padding: 15
     },
     leftButton: {
         marginRight: 5
