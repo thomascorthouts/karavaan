@@ -1,6 +1,4 @@
-interface ITextProps {
-
-}
+interface ITextProps {}
 
 interface IPropsTextError extends ITextProps {
     errorStyle?: any;

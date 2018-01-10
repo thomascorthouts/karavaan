@@ -1,9 +1,9 @@
 import React, { Component, ReactNode } from 'react';
-import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, StyleSheet, Image, Dimensions } from 'react-native';
+import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, Image, Dimensions } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { showError, confirmDelete } from '../../utils/popup';
-import { backgroundColorStyles, specificStyles, standardStyles } from '../screenStyles';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     key: number;
@@ -16,7 +16,7 @@ interface IState {
     updatedConversion: boolean;
 }
 
-class ExpenseDetail extends Component<IDefaultNavProps, IState> {
+export default class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -188,5 +188,3 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             });
     }
 }
-
-export default ExpenseDetail;

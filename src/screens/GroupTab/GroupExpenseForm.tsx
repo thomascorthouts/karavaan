@@ -8,7 +8,7 @@ import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import DatePicker from 'react-native-datepicker';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { showError } from '../../utils/popup';
-import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
+import { backgroundColorStyles, specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     description: string;
@@ -22,7 +22,7 @@ interface IState {
     image: any;
 }
 
-class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
+export default class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -185,5 +185,3 @@ class GroupExpenseForm extends Component<IDefaultNavProps, IState> {
         }
     }
 }
-
-export default GroupExpenseForm;

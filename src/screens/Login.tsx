@@ -5,7 +5,7 @@ import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
 import { specificStyles, standardStyles, backgroundColorStyles } from './screenStyles';
 
-class LoginScreen extends React.Component<IDefaultNavProps, {}> {
+export default class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
     constructor(props: IDefaultNavProps) {
         super(props);
@@ -52,5 +52,3 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
         resetState('Home', dispatch);
     }
 }
-
-export default LoginScreen;

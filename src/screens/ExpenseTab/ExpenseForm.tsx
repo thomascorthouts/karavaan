@@ -22,7 +22,7 @@ interface IState {
     receiver: Person;
 }
 
-export class ExpenseForm extends Component<IDefaultNavProps, IState> {
+export default class ExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -320,5 +320,3 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
         this.setState({ expense, currencies, persons });
     }
 }
-
-export default ExpenseForm;

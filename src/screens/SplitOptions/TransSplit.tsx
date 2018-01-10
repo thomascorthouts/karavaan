@@ -36,7 +36,7 @@ interface IState {
     amountString: string;
 }
 
-class TransSplit extends Component<IProps, IState> {
+export default class TransSplit extends Component<IProps, IState> {
     constructor(props: IProps, state: IState) {
         super(props, state);
 
@@ -240,5 +240,3 @@ class TransSplit extends Component<IProps, IState> {
         this.setState({ personArray, expenseArray });
     }
 }
-
-export default TransSplit;

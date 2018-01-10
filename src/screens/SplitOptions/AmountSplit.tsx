@@ -32,7 +32,7 @@ interface IState {
     splitEven: boolean;
 }
 
-class AmountSplit extends Component<IDefaultNavProps, IState> {
+export default class AmountSplit extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -228,5 +228,3 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         }
     }
 }
-
-export default AmountSplit;

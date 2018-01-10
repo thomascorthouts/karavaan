@@ -3,13 +3,13 @@ import { View, Text, StatusBar, AsyncStorage, ScrollView, Dimensions, KeyboardAv
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import { showError, confirmDelete } from '../../utils/popup';
-import { specificStyles, standardStyles, backgroundColorStyles } from '../screenStyles';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     personArray: PersonList;
 }
 
-class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
+export default class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
 
     static navigationOptions = () => {
         return {
@@ -134,5 +134,3 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
             });
     }
 }
-
-export default UpdateMemberSuggestions;

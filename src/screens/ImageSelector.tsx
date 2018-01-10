@@ -8,7 +8,7 @@ interface IState {
     image: any;
 }
 
-class ImageSelector extends Component<IDefaultNavProps, IState> {
+export default class ImageSelector extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -19,34 +19,38 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        let { image } = this.state;
-        let { goBack } = this.props.navigation;
+        let {image} = this.state;
+        let {goBack} = this.props.navigation;
         let height = Dimensions.get('window').height;
         let width = Dimensions.get('window').width;
 
         return (
-            <View style={ standardStyles.flexCenter }>
-                <View style={ standardStyles.flexCenter }>
+            <View style={standardStyles.flexCenter}>
+                <View style={standardStyles.flexCenter}>
                     <GreenButton
                         buttonText='Pick an image from the camera roll'
-                        buttonStyle={ specificStyles.leftButton }
+                        buttonStyle={specificStyles.leftButton}
                         onPress={this.pickImage}
                     />
                     <GreenButton
                         buttonText='Take an image with the camera'
-                        buttonStyle={ specificStyles.rightButton }
+                        buttonStyle={specificStyles.rightButton}
                         onPress={this.takeImage}
                     />
                 </View>
 
                 {image &&
-                    <View style={standardStyles.flex}>
-                        <Image source={{ uri: image }} style={[standardStyles.flex, {width: width - 40, height: height * 0.5, resizeMode: 'contain' }]} />
-                        <GreenButton
-                            buttonText='Select Image'
-                            onPress={() => this.selectImage(goBack)}
-                        />
-                    </View>
+                <View style={standardStyles.flex}>
+                    <Image source={{uri: image}} style={[standardStyles.flex, {
+                        width: width - 40,
+                        height: height * 0.5,
+                        resizeMode: 'contain'
+                    }]}/>
+                    <GreenButton
+                        buttonText='Select Image'
+                        onPress={() => this.selectImage(goBack)}
+                    />
+                </View>
                 }
             </View>
         );
@@ -63,7 +67,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         });
 
         if (!result.cancelled) {
-            this.setState({ image: result.uri });
+            this.setState({image: result.uri});
         }
     };
 
@@ -73,9 +77,7 @@ class ImageSelector extends Component<IDefaultNavProps, IState> {
         });
 
         if (!result.cancelled) {
-            this.setState({ image: result.uri });
+            this.setState({image: result.uri});
         }
     };
 }
-
-export default ImageSelector;

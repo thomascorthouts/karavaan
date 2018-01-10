@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar} from 'react-native';
+import { Text, View, ScrollView, StatusBar } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import {specificStyles, standardStyles} from '../screenStyles';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -9,7 +9,7 @@ interface IState {
     default: Currency;
 }
 
-class GroupCurrencies extends Component<IDefaultNavProps, IState> {
+export default class GroupCurrencies extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = () => {
         return {
@@ -82,5 +82,3 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         this.setState({ selected });
     }
 }
-
-export default GroupCurrencies;

@@ -12,43 +12,6 @@ export const compareTwoStrings = (s1: string, s2: string) => {
     return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength.toString());
 };
 
-export const findBestMatch = (current: string, list: string[]) => {
-    if (list.length <= 0 || current === '') {
-        return '';
-    }
-
-    let bestScore = 0.2;
-    let bestMatch;
-
-    for (let item of list) {
-        let score = compareTwoStrings(item, current);
-        if (score > bestScore) {
-            bestScore = score;
-            bestMatch = item;
-        }
-    }
-
-    return (bestScore < 1 && bestMatch) ? bestMatch : '';
-};
-
-export const findBestMatches = (current: string, list: string[]) => {
-    if (list.length <= 0 || current === '') {
-        return [];
-    }
-
-    let minScore = 0.2;
-    let bestMatches = [];
-
-    for (let item of list) {
-        let score = compareTwoStrings(item, current);
-        if (score > minScore) {
-            bestMatches.push(item);
-        }
-    }
-
-    return bestMatches;
-};
-
 function editDistance(s1: string, s2: string) {
     s1 = s1.toLowerCase();
     s2 = s2.toLowerCase();

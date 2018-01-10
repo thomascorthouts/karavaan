@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, NetInfo } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, KeyboardAvoidingView, Dimensions, NetInfo } from 'react-native';
 import { _currencies } from '../config/Data';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
@@ -9,8 +9,8 @@ import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
 import { parseMoney } from '../utils/parsemoney';
 import { getRate } from '../utils/getRate';
-import {standardStyles, specificStyles, backgroundColorStyles} from './screenStyles';
-import {InputWithLabel} from '../components/TextInput/InputWithLabel';
+import { standardStyles, specificStyles, backgroundColorStyles } from './screenStyles';
+import { InputWithLabel } from '../components/TextInput/InputWithLabel';
 
 interface IState {
     currencies: Currencies;
@@ -23,7 +23,7 @@ interface IState {
     rate: string;
 }
 
-class Converter extends Component<IDefaultNavProps, IState> {
+export default class Converter extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -160,11 +160,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
         });
     }
 
-    convert(amount: number, from: string, to: string) {
-        let conversion = amount * getRate(from, to, this.state.currencies);
-        return (isNaN(conversion)) ? 0 : conversion;
-    }
-
     async getExchangeRate(date: string) {
         let currs = JSON.parse(JSON.stringify(_currencies));
 
@@ -185,7 +180,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         currencies: currs, isLoading: false
                     });
                 } else {
-                    throw 'Mathias';
+                    throw 'Fetch Error';
                 }
             })
             .catch((error) => {
@@ -218,5 +213,3 @@ class Converter extends Component<IDefaultNavProps, IState> {
         }
     }
 }
-
-export default Converter;

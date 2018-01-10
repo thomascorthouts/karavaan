@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, ScrollView, AsyncStorage, StatusBar } from 'react-native';
 import { GroupItem } from '../../components/FeedItems/GroupFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
-import {specificStyles, standardStyles} from '../screenStyles';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IProps {
     navigation: any;
@@ -14,7 +14,7 @@ interface IState {
     groupArray: GroupList;
 }
 
-class Groups extends Component<IProps, IState> {
+export default class Groups extends Component<IProps, IState> {
 
     constructor(props: IProps, state: IState) {
         super(props, state);
@@ -77,5 +77,3 @@ class Groups extends Component<IProps, IState> {
             });
     }
 }
-
-export default Groups;

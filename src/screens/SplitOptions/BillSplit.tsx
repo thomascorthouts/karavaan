@@ -34,7 +34,7 @@ interface IState {
     error: string;
 }
 
-class BillSplit extends Component<IProps, IState> {
+export default class BillSplit extends Component<IProps, IState> {
 
     constructor(props: IProps, state: IState) {
         super(props, state);
@@ -230,5 +230,3 @@ class BillSplit extends Component<IProps, IState> {
         this.setState({ personArray, expenseArray });
     }
 }
-
-export default BillSplit;

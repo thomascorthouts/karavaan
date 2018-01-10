@@ -18,7 +18,7 @@ interface IState {
     update: boolean;
 }
 
-class GroupForm extends React.Component<IDefaultNavProps, IState> {
+export default class GroupForm extends React.Component<IDefaultNavProps, IState> {
 
     static navigationOptions = ({ navigation }: { navigation: any }) => {
         const { state } = navigation;
@@ -318,5 +318,3 @@ class GroupForm extends React.Component<IDefaultNavProps, IState> {
         this.setState({ group, personArray, allPersonsArray });
     }
 }
-
-export default GroupForm;

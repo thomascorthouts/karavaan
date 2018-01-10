@@ -11,7 +11,7 @@ interface IState {
     defaultCurrency: Currency;
 }
 
-class Settings extends Component<IDefaultNavProps, IState> {
+export default class Settings extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -25,7 +25,7 @@ class Settings extends Component<IDefaultNavProps, IState> {
     }
 
     render() {
-        const { navigate, dispatch, goBack } = this.props.navigation;
+        const { navigate, dispatch } = this.props.navigation;
 
         return (
             <View style={[specificStyles.container, backgroundColorStyles.lightGreen]}>
@@ -74,5 +74,3 @@ class Settings extends Component<IDefaultNavProps, IState> {
             });
     }
 }
-
-export default Settings;
