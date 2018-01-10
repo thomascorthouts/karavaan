@@ -1,10 +1,11 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, AsyncStorage, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, AsyncStorage, Text } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
 import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -33,7 +34,7 @@ interface IState {
     error: string;
 }
 
-class BillSplit extends Component<IProps, IState> {
+export default class BillSplit extends Component<IProps, IState> {
 
     constructor(props: IProps, state: IState) {
         super(props, state);
@@ -65,15 +66,15 @@ class BillSplit extends Component<IProps, IState> {
         const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>{this.state.options.description}</Text>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
+                <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 <ErrorText errorText={this.state.error} />
-                <View style={styles.flex}>
+                <View style={ standardStyles.flex }>
                     <Text>Who payed and how much?</Text>
                     <View style={{flex: 1.1}}>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)}  />
                     </View>
-                    <ScrollView style={styles.ScrollContainer}>
+                    <ScrollView style={ standardStyles.flex }>
                         {this.state.payerNodes}
                     </ScrollView>
                 </View>
@@ -83,12 +84,12 @@ class BillSplit extends Component<IProps, IState> {
                         {this.state.items}
                     </ScrollView>
                 </View>
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -166,11 +167,7 @@ class BillSplit extends Component<IProps, IState> {
         this.state.payers.map((val: Balance) => sumPayers += val.amount);
         this.state.dishes.map((item: Dish) => sumItems += item.amount);
 
-        if (sumPayers !== this.state.options.amount) {
-            throw 'The total balance is not equal to the total amount (=' + this.state.options.amount + ')';
-        }
-
-        if (sumPayers !== sumItems) {
+        if (sumPayers === sumItems) {
             this.state.dishes.map((item: Dish) => {
                 avg = item.amount / item.users.length;
                 item.users.map((val: Person) => {
@@ -185,7 +182,7 @@ class BillSplit extends Component<IProps, IState> {
                 });
             });
 
-            let expense = Object.assign({}, this.state.expense, { balances: balances });
+            let expense = Object.assign({}, this.state.expense, { balances: balances, amount: sumPayers });
             this.setState({ expense, error: '' });
         } else throw 'The total balance is not 0.';
     }
@@ -233,28 +230,3 @@ class BillSplit extends Component<IProps, IState> {
         this.setState({ personArray, expenseArray });
     }
 }
-
-export default BillSplit;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    ScrollContainer: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    }
-});

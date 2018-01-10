@@ -4,6 +4,7 @@ import { InputWithLabel } from './TextInput/InputWithLabel';
 import PersonPicker from './Pickers/PersonPicker';
 import { ErrorText } from './Text/ErrorText';
 import { GreenButton } from './Buttons/GreenButton';
+import { parseMoney } from '../utils/parsemoney';
 
 interface Options {
     navigation: any;
@@ -54,13 +55,14 @@ export default class AddDish extends Component<IDefaultNavProps, IState> {
                     <InputWithLabel
                         labelText={'amount'}
                         value={this.state.amount.toString()}
-                        onChangeText={(amount: string) => this.setState({ amount: parseFloat(amount) })}
+                        keyboardType={'numeric'}
+                        onChangeText={(amount: string) => this.setState({ amount: parseFloat(parseMoney(amount)) })}
                     />
-                    <View style={{ flex: 0.13 }}>
+                    <View style={{ flex: 0.2 }}>
                         <Text>Between who should the item be split?</Text>
                         <View style={styles.rowContainer}>
-                            <Text>Split between all users</Text>
-                            <Switch onTintColor={'#287E6F'} value={this.state.all} onValueChange={(all: boolean) => this.setState({ all })} />
+                            <Text>Split between all users of the group</Text>
+                            <Switch value={this.state.all} onValueChange={(all: boolean) => this.setState({ all })} />
                         </View>
                     </View>
                     <View style={styles.flex}>

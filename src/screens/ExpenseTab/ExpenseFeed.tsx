@@ -1,9 +1,10 @@
 import React, { Component, ReactNode } from 'react';
-import { View, ScrollView, StyleSheet, AsyncStorage, Picker, Dimensions } from 'react-native';
+import { View, ScrollView, AsyncStorage, Picker, Dimensions } from 'react-native';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
 import { ExpenseItem } from '../../components/FeedItems/ExpenseFeedItem';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { _currencies } from '../../config/Data';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface ExpenseMap {
     [index: string]: ExpenseList;
@@ -56,23 +57,23 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
         let { navigate } = this.props.navigation;
         let otherPickerOptions = [<Picker.Item label={'All Categories'} value={'All'} key={'all'} />];
         return (
-            <View style={styles.flex}>
+            <View style={standardStyles.flex}>
                 <CategoryPicker
                     selectedValue={this.state.category}
                     onValueChange={(category: string) => this.setState({ category }, () => this.updateView())}
                     otherOptions={otherPickerOptions}
                 />
 
-                <ScrollView style={[styles.flex, { borderTopWidth: 0.5, borderTopColor: '#111' }]}>
+                <ScrollView style={[standardStyles.flex, { borderTopWidth: 0.5, borderTopColor: '#111' }]}>
                     {this.state.feed}
                 </ScrollView>
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} buttonText={'Summaries'} onPress={() => this.viewSummaries(navigate)} />
+                <View style={[specificStyles.buttonContainer, standardStyles.rowContainer, { marginBottom: -7 }]}>
+                    <View style={standardStyles.flex}>
+                        <GreenButton buttonStyle={{ marginLeft: 2, marginRight: 1 }} buttonText={'Summaries'} onPress={() => this.viewSummaries(navigate)} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginHorizontal: 2 }} onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
+                    <View style={standardStyles.flex}>
+                        <GreenButton buttonStyle={{ marginRight: 2, marginLeft: 1 }} onPress={() => this.addExpense(navigate)} buttonText={'Add Expense'} />
                     </View>
                 </View>
             </View>
@@ -170,16 +171,3 @@ export default class ExpensesPerCategory extends Component<IDefaultNavProps, ISt
             });
     }
 }
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    rowContainer: {
-        flexDirection: 'row',
-        marginBottom: -7,
-        paddingTop: 3,
-        borderTopWidth: 0.5,
-        borderTopColor: '#111'
-    }
-});

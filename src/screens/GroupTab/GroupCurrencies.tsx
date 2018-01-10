@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar} from 'react-native';
+import { Text, View, ScrollView, StatusBar } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     currencies: Currencies;
@@ -8,7 +9,7 @@ interface IState {
     default: Currency;
 }
 
-class GroupCurrencies extends Component<IDefaultNavProps, IState> {
+export default class GroupCurrencies extends Component<IDefaultNavProps, IState> {
 
     static navigationOptions = () => {
         return {
@@ -35,20 +36,20 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
             let currency = this.state.currencies[key];
             if (currency.tag !== this.state.default.tag) {
                 if (this.state.selected.hasOwnProperty(key)) {
-                    currencies.push(<Text key={key} style={styles.selectedItem} onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
+                    currencies.push(<Text key={key} style={ specificStyles.selectedCurrency } onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
                 } else {
-                    currencies.push(<Text key={key} style={styles.item} onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
+                    currencies.push(<Text key={key} style={ specificStyles.currency } onPress={() => this.toggleSelected(key)}>{currency.tag} - {currency.name}</Text>);
                 }
             } else {
-                currencies.push(<Text key={key} style={styles.selectedItem}>{currency.tag} - {currency.name}</Text>);
+                currencies.push(<Text key={key} style={ specificStyles.selectedCurrency }>{currency.tag} - {currency.name}</Text>);
             }
         }
 
         return (
-            <View style={styles.container}>
+            <View style={ standardStyles.flex }>
                 <StatusBar hidden={true} />
                 
-                <ScrollView style={styles.ScrollContainer}>
+                <ScrollView style={ standardStyles.flex }>
                     {currencies}
                 </ScrollView>
 
@@ -81,31 +82,3 @@ class GroupCurrencies extends Component<IDefaultNavProps, IState> {
         this.setState({ selected });
     }
 }
-
-export default GroupCurrencies;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    ScrollContainer: {
-        flex: 1
-    },
-    item: {
-        flex: 1,
-        position: 'relative',
-        padding: 20,
-        paddingRight: 100,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#111'
-    },
-    selectedItem: {
-        flex: 1,
-        position: 'relative',
-        padding: 20,
-        paddingRight: 100,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#111',
-        backgroundColor: '#4B9382'
-    }
-});

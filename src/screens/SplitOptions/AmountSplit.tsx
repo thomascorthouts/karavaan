@@ -1,11 +1,11 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, KeyboardAvoidingView, Dimensions } from 'react-native';
 import BillSplitterItem from '../../components/BillSplitterItem';
 import PersonPicker from '../../components/Pickers/PersonPicker';
-import { ErrorText } from '../../components/Text/ErrorText';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
 import { showError } from '../../utils/popup';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -32,7 +32,7 @@ interface IState {
     splitEven: boolean;
 }
 
-class AmountSplit extends Component<IDefaultNavProps, IState> {
+export default class AmountSplit extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -71,46 +71,46 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         });
 
         return (
-            <View style={styles.container}>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar translucent={false} barStyle='light-content' />
 
-                <View style={[styles.flex, { height: height * 0.1 }]}>
-                    <Text style={styles.title}>{this.state.options.description}</Text>
+                <View style={ [standardStyles.flex, { height: height * 0.1 }] }>
+                    <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 </View>
 
                 <KeyboardAvoidingView>
                     <ScrollView style={{ height: height * 0.67, borderStyle: 'dashed', borderWidth: 0.5, borderRadius: 1, padding: 5 }} keyboardShouldPersistTaps={'always'} keyboardDismissMode='on-drag'>
-                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Payers</Text>
+                        <Text style={ [ standardStyles.boldText, { borderBottomWidth: 1 }] }>Payers</Text>
                         <PersonPicker persons={this.state.personArray} choose={this.addPayer.bind(this)} style={{ height: height * 0.2 }} />
                         <View style={{ borderTopWidth: 0.5 }}>{this.state.payerNodes}</View>
-                        <Text style={{ fontWeight: 'bold', borderBottomWidth: 1 }}>Receivers</Text>
+                        <Text style={ [ standardStyles.boldText, { borderBottomWidth: 1 }] }>Receivers</Text>
                         <View>{splitter}</View>
                     </ScrollView>
                 </KeyboardAvoidingView>
 
-                <View style={styles.flexCenter}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
+                <View style={ standardStyles.flexCenter }>
+                    <Text style={ [standardStyles.boldText, { fontSize: 16 }]}>Total: {this.state.options.currency.symbol}{this.state.expense.amount}</Text>
                 </View>
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.confirm(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
         );
     }
 
-    update(text: string, id: string) {
+    update(amount: number, id: string) {
         let balances = this.state.expense.balances;
         let balance = balances.find((val: Balance) => {
             return (val.person.id === id);
         });
         if (typeof balance !== 'undefined') {
-            balance.amount = parseFloat(text) * (-1); // 'Received' money gives a negative balance
+            balance.amount = amount * (-1); // 'Received' money gives a negative balance
             let expense = Object.assign({}, this.state.expense, { balances: balances });
             this.setState({ expense });
         }
@@ -213,8 +213,10 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         if (personArray) {
             let amounts = [] as Balances;
             const avg = (this.state.options.splitMode) ? parseFloat(((this.state.options.amount / personArray.length) * (-1)).toFixed(2)) : 0;
+            let diff = (personArray.length * avg) - this.state.options.amount;
+            let bool = (diff > 0);
             personArray.map((val: Person) => {
-                amounts.push({ person: val, amount: avg });
+                amounts.push({ person: val, amount: (bool) ? avg + 0.01 : avg });
             });
             expense = Object.assign({}, this.state.expense, { balances: amounts });
         }
@@ -226,30 +228,3 @@ class AmountSplit extends Component<IDefaultNavProps, IState> {
         }
     }
 }
-
-export default AmountSplit;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    }
-});

@@ -77,3 +77,4 @@ interface Balances extends Array<Balance> { }
 // ignore errors for javascript only packages
 declare module 'react-native-datepicker'
 declare module 'expo'
+declare module 'react-native-extended-stylesheet'

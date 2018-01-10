@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, AsyncStorage, KeyboardAvoidingView } from 'react-native';
 import { parseMoney } from '../../utils/parsemoney';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
@@ -7,6 +7,7 @@ import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetGroupState } from '../../utils/navigationactions';
 import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import { showError } from '../../utils/popup';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface Options {
     splitMode: boolean;
@@ -35,7 +36,7 @@ interface IState {
     amountString: string;
 }
 
-class TransSplit extends Component<IProps, IState> {
+export default class TransSplit extends Component<IProps, IState> {
     constructor(props: IProps, state: IState) {
         super(props, state);
 
@@ -65,14 +66,14 @@ class TransSplit extends Component<IProps, IState> {
         const { goBack, dispatch } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.options.description}</Text>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
+                <View style={ standardStyles.flex }>
+                    <Text style={ specificStyles.title }>{this.state.options.description}</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior='padding'>
-                    <View style={styles.rowContainer}>
-                        <View style={styles.inputAmount}>
+                    <View style={ standardStyles.rowContainer }>
+                        <View style={ standardStyles.doubleFlex }>
                             <InputWithoutLabel
                                 onChangeText={(value: string) => this.updateAmount(value)}
                                 value={this.state.amountString}
@@ -81,7 +82,7 @@ class TransSplit extends Component<IProps, IState> {
                                 keyboardType={'numeric'}
                             />
                         </View>
-                        <View style={styles.flex}>
+                        <View style={ standardStyles.flex }>
                             <CurrencyPicker
                                 currencies={this.state.group.currencies}
                                 onValueChange={(currency: Currency) => {
@@ -124,12 +125,12 @@ class TransSplit extends Component<IProps, IState> {
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton} buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} onPress={() => this.addTransaction(dispatch)} buttonText={'ADD'} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } onPress={() => this.addTransaction(dispatch)} buttonText={'ADD'} />
                     </View>
                 </View>
             </View>
@@ -239,28 +240,3 @@ class TransSplit extends Component<IProps, IState> {
         this.setState({ personArray, expenseArray });
     }
 }
-
-export default TransSplit;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
-    }
-});

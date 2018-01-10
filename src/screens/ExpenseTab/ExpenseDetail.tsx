@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from 'react';
-import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, StyleSheet, Image, Dimensions } from 'react-native';
+import { ScrollView, Text, View, StatusBar, AsyncStorage, NetInfo, Image, Dimensions } from 'react-native';
 import { GreenButton } from '../../components/Buttons/GreenButton';
 import { resetState, resetGroupState } from '../../utils/navigationactions';
 import { showError, confirmDelete } from '../../utils/popup';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     key: number;
@@ -15,7 +16,7 @@ interface IState {
     updatedConversion: boolean;
 }
 
-class ExpenseDetail extends Component<IDefaultNavProps, IState> {
+export default class ExpenseDetail extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -39,34 +40,34 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
         const { dispatch, goBack } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={specificStyles.container}>
                 <StatusBar hidden={true} />
 
-                <View style={styles.flex}>
-                    <Text style={styles.title}>{this.state.expense.description}</Text>
+                <View style={standardStyles.flex}>
+                    <Text style={specificStyles.title}>{this.state.expense.description}</Text>
                     <Text> </Text>
-                    <Text style={styles.textCenter}>Date: {this.state.expense.date}</Text>
-                    <Text style={styles.textCenter}>Currency used: {this.state.expense.currency.name}</Text>
+                    <Text style={standardStyles.textCenter}>Date: {this.state.expense.date}</Text>
+                    <Text style={standardStyles.textCenter}>Currency used: {this.state.expense.currency.name}</Text>
                     <Text> </Text>
-                    <Text style={styles.textCenter}> - - - </Text>
+                    <Text style={standardStyles.textCenter}> - - - </Text>
                     <Text> </Text>
 
-                    <ScrollView>
+                    <ScrollView style={{marginBottom: 10}}>
                         <View>{this.state.balances.length > 0 ? this.state.balances : <Text>Calculating</Text>}</View>
                     </ScrollView>
                 </View>
 
                 {image &&
-                    <View style={styles.flex}>
+                    <View style={standardStyles.flex}>
                         <Image source={{ uri: image }} style={{ flex: 1, width: width - 40, height: height * 0.2, resizeMode: 'contain' }} />
                     </View>}
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => this.returnToFeed(goBack, dispatch)} />
+                <View style={[standardStyles.rowContainer, { marginTop: 10 }]}>
+                    <View style={standardStyles.flex}>
+                        <GreenButton buttonStyle={specificStyles.leftButton} buttonText={'BACK'} onPress={() => this.returnToFeed(goBack, dispatch)} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
+                    <View style={standardStyles.flex}>
+                        <GreenButton buttonStyle={specificStyles.rightButton} buttonText={'DELETE'} onPress={() => confirmDelete('expense', () => this.deleteExpense(dispatch))} />
                     </View>
                 </View>
 
@@ -187,28 +188,3 @@ class ExpenseDetail extends Component<IDefaultNavProps, IState> {
             });
     }
 }
-
-export default ExpenseDetail;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        marginTop: 10
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 30,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    textCenter: {
-        textAlign: 'center'
-    }
-});

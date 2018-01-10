@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Image, StatusBar, KeyboardAvoidingView } from 'react-native';
+import { View, Image, StatusBar, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { resetState } from '../utils/navigationactions';
 import { GreenButton } from '../components/Buttons/GreenButton';
+import { specificStyles, standardStyles, backgroundColorStyles } from './screenStyles';
 
-class LoginScreen extends React.Component<IDefaultNavProps, {}> {
+export default class LoginScreen extends React.Component<IDefaultNavProps, {}> {
 
     constructor(props: IDefaultNavProps) {
         super(props);
@@ -14,13 +15,13 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
         const { dispatch } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
-                <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../../../images/Karavaan.png')} />
+                <View style={ [standardStyles.center, { flexGrow: 1 } ]}>
+                    <Image style={specificStyles.logo} source={require('../../../images/Karavaan.png')} />
                 </View>
                 <KeyboardAvoidingView behavior='padding'>
-                    <View style={styles.formContainer}>
+                    <View style={[ standardStyles.noFlex, { padding: 15}]}>
                         <StatusBar barStyle={'light-content'} />
 
                         <InputWithoutLabel
@@ -51,27 +52,3 @@ class LoginScreen extends React.Component<IDefaultNavProps, {}> {
         resetState('Home', dispatch);
     }
 }
-
-export default LoginScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#4B9382',
-        alignSelf: 'stretch'
-    },
-    logoContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexGrow: 1
-    },
-    logo: {
-        width: 200,
-        height: 200
-    },
-    formContainer: {
-        padding: 15,
-        flex: 0
-    }
-});

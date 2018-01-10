@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, StyleSheet, KeyboardAvoidingView, Dimensions, NetInfo } from 'react-native';
+import { View, Text, AsyncStorage, ActivityIndicator, StatusBar, KeyboardAvoidingView, Dimensions, NetInfo } from 'react-native';
 import { _currencies } from '../config/Data';
 import { InputWithoutLabel } from '../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../components/Pickers/CurrencyPicker';
@@ -7,7 +7,10 @@ import { GreenButton } from '../components/Buttons/GreenButton';
 import DatePicker from 'react-native-datepicker';
 import { NavigationActions } from 'react-navigation';
 import { showError } from '../utils/popup';
+import { parseMoney } from '../utils/parsemoney';
 import { getRate } from '../utils/getRate';
+import { standardStyles, specificStyles, backgroundColorStyles } from './screenStyles';
+import { InputWithLabel } from '../components/TextInput/InputWithLabel';
 
 interface IState {
     currencies: Currencies;
@@ -17,9 +20,10 @@ interface IState {
     date: string;
     latest: string;
     isLoading: boolean;
+    rate: string;
 }
 
-class Converter extends Component<IDefaultNavProps, IState> {
+export default class Converter extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -28,6 +32,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
         this.state = {
             currencies: _currencies,
             value: '0',
+            rate: '1',
             currency1: {
                 name: 'Euro', tag: 'EUR', rate: 1, symbol: '€'
             } as Currency,
@@ -48,55 +53,57 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         if (this.state.isLoading) {
             return (
-                <View style={styles.flexCenter}>
+                <View style={ standardStyles.flexCenter }>
                     <ActivityIndicator />
                 </View>
             );
         } else {
             return (
-                <View style={styles.container}>
+                <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                     <StatusBar hidden={true} />
 
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Currency Converter</Text>
+                    <View style={ [standardStyles.flex, { paddingBottom: 80 }] }>
+                        <Text style={ specificStyles.title }>Currency Converter</Text>
                     </View>
 
                     <KeyboardAvoidingView behavior={'padding'} style={{ height: height * 0.6 }}>
-                        <View style={styles.rowContainer}>
-                            <View style={styles.inputAmount}>
+                        <View style={ standardStyles.rowContainer }>
+                            <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
-                                    onChangeText={(value: any) => this.setState({ value })}
+                                    onChangeText={(value: any) => this.setState({ value: parseMoney(value) })}
                                     value={this.state.value}
                                     returnKeyType={'done'}
                                     keyboardType={'numeric'}
                                 />
                             </View>
-                            <View style={styles.flex}>
+                            <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
-                                    onValueChange={(currency1: any) => this.setState({ currency1 })}
+                                    onValueChange={(currency1: any) => this.setState({ currency1 }, () => this.updateRate())}
                                     selectedValue={this.state.currency1}
                                 />
                             </View>
                         </View>
 
-                        <View style={styles.rowContainer}>
-                            <View style={styles.inputAmount}>
+                        <View style={ standardStyles.rowContainer }>
+                            <View style={ standardStyles.doubleFlex }>
                                 <InputWithoutLabel
                                     onChangeText={(value: string) => this.setState({ value })}
-                                    value={this.convert(parseFloat(this.state.value), this.state.currency1.tag, this.state.currency2.tag).toString()}
+                                    value={(parseFloat(this.state.rate) * parseFloat(this.state.value)).toFixed(2)}
                                     editable={false}
                                 />
                             </View>
-                            <View style={styles.flex}>
+                            <View style={ standardStyles.flex }>
                                 <CurrencyPicker
                                     currencies={this.state.currencies}
-                                    onValueChange={(currency2: Currency) => this.setState({ currency2 })}
+                                    onValueChange={(currency2: Currency) => this.setState({ currency2 }, () => this.updateRate())}
                                     selectedValue={this.state.currency2}
                                 />
                             </View>
                         </View>
-
+                        <View>
+                            <InputWithLabel labelText={'Rate:'} value={this.state.rate} onChangeText={(text: string) => this.setState({rate: parseMoney(text)})}/>
+                        </View>
                         <DatePicker
                             style={{ width: width - 40 }}
                             date={this.state.date}
@@ -122,17 +129,22 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         />
                     </KeyboardAvoidingView>
 
-                    <View style={styles.rowContainer}>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'CLOSE'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
+                    <View style={ standardStyles.rowContainer }>
+                        <View style={ standardStyles.flex }>
+                            <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'CLOSE'} onPress={() => dispatch(NavigationActions.navigate({ routeName: 'Home' }))} />
                         </View>
-                        <View style={styles.flex}>
-                            <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
+                        <View style={ standardStyles.flex }>
+                            <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'SUBMIT DATE'} onPress={() => this.validate()} />
                         </View>
                     </View>
                 </View>
             );
         }
+    }
+
+    updateRate() {
+        let rate = getRate(this.state.currency1.tag, this.state.currency2.tag, this.state.currencies);
+        this.setState({rate: rate.toString()});
     }
 
     validate() {
@@ -146,11 +158,6 @@ class Converter extends Component<IDefaultNavProps, IState> {
                 showError('No internet connection available');
             }
         });
-    }
-
-    convert(amount: number, from: string, to: string) {
-        let conversion = amount * getRate(from, to, this.state.currencies);
-        return (isNaN(conversion)) ? 0 : conversion;
     }
 
     async getExchangeRate(date: string) {
@@ -173,7 +180,7 @@ class Converter extends Component<IDefaultNavProps, IState> {
                         currencies: currs, isLoading: false
                     });
                 } else {
-                    throw 'Mathias';
+                    throw 'Fetch Error';
                 }
             })
             .catch((error) => {
@@ -200,42 +207,9 @@ class Converter extends Component<IDefaultNavProps, IState> {
 
         if (currencies) {
             this.setState({
-                currency1: currency, currency2: currency, currencies: currencies.rates, latest: currencies.latest, isLoading: false
+                currency1: currency, currency2: currency, currencies: currencies.rates, latest: currencies.latest,
+                isLoading: false
             });
         }
     }
 }
-
-export default Converter;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    flexCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    titleContainer: {
-        flex: 1,
-        paddingBottom: 80
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
-    }
-});

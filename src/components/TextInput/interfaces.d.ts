@@ -10,6 +10,7 @@ interface ITextInputProps {
     maxHeight?: number;
     maxLength?: number;
     multiline?: boolean;
+    numberOfLines?: number;
     onBlur?: any;
     onChange?: any;
     onChangeText?: any;

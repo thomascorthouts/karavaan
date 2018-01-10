@@ -87,7 +87,6 @@ export const ExpenseStack = StackNavigator(
         ImageSelector: {
             screen: ImageSelector,
             navigationOptions: {
-                header: null,
                 swipeEnabled: false,
                 tabBarVisible: false
             }

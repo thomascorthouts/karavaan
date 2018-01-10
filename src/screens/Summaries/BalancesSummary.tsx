@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { BalanceFeedItem } from '../../components/FeedItems/BalanceFeedItem';
 import { getRate } from '../../utils/getRate';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
+import {specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     defaultCurrency: Currency;
@@ -55,12 +56,12 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         });
 
         return (
-            <View style={styles.container}>
-                <ScrollView style={styles.ScrollContainer}>
+            <View style={ standardStyles.flex }>
+                <ScrollView style={ standardStyles.flex }>
                     {balanceItems}
                 </ScrollView>
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
+                <View style={ specificStyles.feedContainer }>
+                    <View style={ standardStyles.flex }>
                         <CurrencyPicker currencies={this.state.currencies} onValueChange={(curr: Currency) => this.updateRate(curr)} selectedValue={this.state.currency} />
                     </View>
                 </View>
@@ -92,21 +93,3 @@ export default class BalancesSummary extends Component<IDefaultNavProps, IState>
         this.setState({ balances });
     }
 }
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1
-    },
-    ScrollContainer: {
-        flex: 1
-    },
-    rowContainer: {
-        flexDirection: 'row',
-        paddingTop: 3,
-        borderTopWidth: 0.5,
-        borderTopColor: '#111'
-    }
-});

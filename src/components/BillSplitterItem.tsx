@@ -33,6 +33,7 @@ export default class BillSplitterItem extends React.Component<IProps, IState> {
                 <View style={styles.expense}>
                     <InputWithoutLabel
                         inputStyle={{ width: 55 }}
+                        keyboardType={'numeric'}
                         value={this.state.amount.toString()}
                         onChangeText={(text: any) => {
                             this.update(text, this.props.keyval);

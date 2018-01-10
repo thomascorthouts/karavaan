@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, KeyboardAvoidingView, AsyncStorage, StatusBar, Dimensions } from 'react-native';
+import { Text, View, KeyboardAvoidingView, AsyncStorage, StatusBar, Dimensions } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { CurrencyPicker } from '../../components/Pickers/CurrencyPicker';
 import { CategoryPicker } from '../../components/Pickers/CategoryPicker';
@@ -10,6 +10,7 @@ import { InputWithLabel } from '../../components/TextInput/InputWithLabel';
 import DatePicker from 'react-native-datepicker';
 import { showError } from '../../utils/popup';
 import { resetState } from '../../utils/navigationactions';
+import {backgroundColorStyles, specificStyles, standardStyles} from '../screenStyles';
 
 interface IState {
     persons: PersonList;
@@ -21,7 +22,7 @@ interface IState {
     receiver: Person;
 }
 
-export class ExpenseForm extends Component<IDefaultNavProps, IState> {
+export default class ExpenseForm extends Component<IDefaultNavProps, IState> {
 
     constructor(props: IDefaultNavProps, state: IState) {
         super(props, state);
@@ -57,10 +58,10 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
         const { goBack, dispatch, navigate } = this.props.navigation;
 
         return (
-            <View style={styles.container}>
+            <View style={ [specificStyles.container, backgroundColorStyles.lightGreen] }>
                 <StatusBar hidden={true} />
-                <View style={styles.flex}>
-                    <Text style={styles.title}>New Expense</Text>
+                <View style={ standardStyles.flex }>
+                    <Text style={ specificStyles.title }>New Expense</Text>
                 </View>
 
                 <KeyboardAvoidingView behavior={'padding'}>
@@ -74,7 +75,6 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
                         returnKeyType={'next'}
                         autoCapitalize={'sentences'}
                     />
-
                     <DatePicker
                         style={{ width: width - 40 }}
                         date={this.state.expense.date}
@@ -130,8 +130,8 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
                         autoCapitalize={'words'}
                     />
 
-                    <View style={styles.rowContainer}>
-                        <View style={styles.inputAmount}>
+                    <View style={ standardStyles.rowContainer }>
+                        <View style={ standardStyles.doubleFlex }>
                             <InputWithoutLabel
                                 keyboardType={'numeric'}
                                 placeholder={'Amount'}
@@ -141,7 +141,7 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
                                 returnKeyType={'done'}
                             />
                         </View>
-                        <View style={styles.flex}>
+                        <View style={ standardStyles.flex }>
                             <CurrencyPicker
                                 currencies={this.state.currencies}
                                 onValueChange={(currency: any) => {
@@ -159,14 +159,14 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
                     />
                 </KeyboardAvoidingView>
 
-                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateImage })} />
+                <GreenButton buttonText='Select Image' onPress={() => navigate('ImageSelector', { expense: this.state.expense, updateImage: this.updateImage.bind(this) })} />
 
-                <View style={styles.rowContainer}>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginRight: 2 }} buttonText={'BACK'} onPress={() => goBack()} />
+                <View style={ standardStyles.rowContainer }>
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.leftButton } buttonText={'BACK'} onPress={() => goBack()} />
                     </View>
-                    <View style={styles.flex}>
-                        <GreenButton buttonStyle={{ marginLeft: 2 }} buttonText={'SAVE'} onPress={() => this.validate(dispatch)} />
+                    <View style={ standardStyles.flex }>
+                        <GreenButton buttonStyle={ specificStyles.rightButton } buttonText={'SAVE'} onPress={() => this.validate(dispatch)} />
                     </View>
                 </View>
             </View>
@@ -320,28 +320,3 @@ export class ExpenseForm extends Component<IDefaultNavProps, IState> {
         this.setState({ expense, currencies, persons });
     }
 }
-
-export default ExpenseForm;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    inputAmount: {
-        flex: 2
-    }
-});

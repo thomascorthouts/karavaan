@@ -1,14 +1,15 @@
 import React, { ReactNode } from 'react';
-import { View, Text, StatusBar, StyleSheet, AsyncStorage, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native';
 import { InputWithoutLabel } from '../../components/TextInput/InputWithoutLabel';
 import { DeleteButton } from '../../components/Buttons/DeleteButton';
 import { showError, confirmDelete } from '../../utils/popup';
+import { specificStyles, standardStyles } from '../screenStyles';
 
 interface IState {
     personArray: PersonList;
 }
 
-class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
+export default class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> {
 
     static navigationOptions = () => {
         return {
@@ -31,8 +32,8 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
 
         personArray.map((person: Person, key: any) => {
             members.push(
-                <View key={person.id} style={styles.rowContainer}>
-                    <View style={styles.currentMembers}>
+                <View key={person.id} style={standardStyles.rowContainer}>
+                    <View style={standardStyles.tripleFlex}>
                         <InputWithoutLabel
                             returnKeyType={'done'}
                             autoCapitalize={'words'}
@@ -40,10 +41,10 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
                             editable={false}
                         />
                     </View>
-                    <View style={styles.flex}>
+                    <View style={standardStyles.flex}>
                         <DeleteButton
                             buttonText={'X'}
-                            buttonStyle={styles.deleteButton}
+                            buttonStyle={specificStyles.deleteButton}
                             onPress={() =>
                                 confirmDelete(person.firstname + ' ' + person.lastname, () => this.deletePerson(key))
                             } />
@@ -55,10 +56,10 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
         let height = Dimensions.get('window').height;
 
         return (
-            <View style={styles.container}>
+            <View style={specificStyles.container}>
                 <StatusBar hidden={true} />
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Update Member Suggestions</Text>
+                <View style={standardStyles.flex}>
+                    <Text style={specificStyles.title}>Update Member Suggestions</Text>
                 </View>
                 <KeyboardAvoidingView>
                     <Text> Add Suggestions: </Text>
@@ -133,33 +134,3 @@ class UpdateMemberSuggestions extends React.Component<IDefaultNavProps, IState> 
             });
     }
 }
-
-export default UpdateMemberSuggestions;
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
-    },
-    container: {
-        flex: 1,
-        padding: 15,
-        paddingTop: 0,
-        backgroundColor: '#4B9382'
-    },
-    rowContainer: {
-        flexDirection: 'row'
-    },
-    title: {
-        fontSize: 40,
-        color: '#287E6F',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    currentMembers: {
-        flex: 3
-    },
-    deleteButton: {
-        height: 40,
-        paddingVertical: 10
-    }
-});
