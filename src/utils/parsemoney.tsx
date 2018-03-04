@@ -4,6 +4,7 @@ export const parseMoney = (value: string) => {
     if (v.length === 0) v = '0';
     if (v.length > 1) v = v.replace(/^0+/, '');
     // v = v.replace(/^\./, '0.');
+    v = v.slice(0, v.split('.', 2).join('.').length);
     v = v.slice(0, v.indexOf('.') >= 0 ? v.indexOf('.') + 3 : undefined);
     return v;
 };
